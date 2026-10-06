@@ -12,7 +12,7 @@ export const theme = createTheme({
     background: {
       default: "#F4F7FB",
       paper: "#FFFFFF",
-    }, 
+    },
     text: {
       primary: "#172033",
       secondary: "#667085",
@@ -30,6 +30,7 @@ export const theme = createTheme({
   typography: {
     fontFamily: "Poppins, sans-serif",
     h1: {
+      fontSize: "1.9rem",
       fontWeight: 700,
     },
     h2: {
@@ -46,6 +47,10 @@ export const theme = createTheme({
     },
     h6: {
       fontWeight: 600,
+    },
+    body1: {
+      fontSize: "1rem",
+      fontWeight: 400,
     },
   },
   shape: {
