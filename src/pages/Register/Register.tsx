@@ -1,19 +1,19 @@
 import { Box, Stack, TextField, Typography } from "@mui/material";
-import * as Styled from "./Login.styled";
+import * as Styled from "./Register.styled";
 import { ButtonBlue } from "../../components/Buttons/Buttons";
 import { Link as RouterLink } from "react-router-dom";
 import { theme } from "../../theme";
 import Logo from "../../assets/img/HealthFlow-Logo.png";
 
-export const Login = () => {
+export const Register = () => {
   return (
     <Styled.Container>
       <Styled.Illustration src={Logo} alt="Logo do HealthFlow" />
 
       <Stack alignItems="center">
-        <Styled.Title>Seja bem-vindo(a) de volta!</Styled.Title>
+        <Styled.Title>Seja bem-vindo(a)!</Styled.Title>
 
-        <Styled.Subtitle>Faça o seu login</Styled.Subtitle>
+        <Styled.Subtitle>Faça o seu cadastro</Styled.Subtitle>
       </Stack>
 
       <Stack
@@ -25,6 +25,21 @@ export const Login = () => {
         }}
         spacing={4}
       >
+        <Stack spacing={1} width="100%">
+          <Styled.Text>Nome completo:</Styled.Text>
+
+          <TextField
+            fullWidth
+            placeholder="Digite seu nome completo"
+            type="text"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "1.2rem",
+              },
+            }}
+          />
+        </Stack>
+
         <Stack spacing={1} width="100%">
           <Styled.Text>Email:</Styled.Text>
 
@@ -55,8 +70,23 @@ export const Login = () => {
           />
         </Stack>
 
+        <Stack spacing={1} width="100%">
+          <Styled.Text>Confirme sua senha:</Styled.Text>
+
+          <TextField
+            fullWidth
+            placeholder="Digite sua senha"
+            type="password"
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "1.2rem",
+              },
+            }}
+          />
+        </Stack>
+
         <Box>
-          <ButtonBlue text="Entrar" onClick={() => console.log("Clicou")} />
+          <ButtonBlue text="Enviar" onClick={() => console.log("Clicou")} />
         </Box>
 
         <Styled.OrContainer>
@@ -67,9 +97,9 @@ export const Login = () => {
 
         <Styled.CreateAccountContainer>
           <Typography color={theme.palette.text.secondary}>
-            Não tem conta?{" "}
-            <Styled.CreateAccountLink component={RouterLink} to="/register">
-              Crie agora
+            Já tem conta?{" "}
+            <Styled.CreateAccountLink component={RouterLink} to="/login">
+              Entre agora
             </Styled.CreateAccountLink>
           </Typography>
         </Styled.CreateAccountContainer>

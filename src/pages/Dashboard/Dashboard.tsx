@@ -1,10 +1,14 @@
 import React from 'react'
+import { SideBar } from '../../components/SideBar/SideBar'
+import { Stack, Typography } from '@mui/material'
 
 export const Dashboard = () => {
   return (
-    <div>
-      oii
-    </div>
+    <Stack direction={"row"}>
+      <SideBar />
+      
+    </Stack>
+    
   )
 }
 
