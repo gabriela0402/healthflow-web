@@ -28,7 +28,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Inter, Arial, sans-serif",
+    fontFamily: "Poppins, sans-serif",
     h1: {
       fontWeight: 700,
     },
