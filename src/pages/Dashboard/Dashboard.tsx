@@ -16,7 +16,7 @@ export const Dashboard = () => {
     <Stack direction={"row"}>
       <SideBar />
       <Styled.Container>
-        <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Styled.TitleContainer>
           <Stack spacing={1.4}>
             <Typography variant="h4">Bem vindo(a), Gabriela</Typography>
             <Typography variant="body1">
@@ -24,25 +24,76 @@ export const Dashboard = () => {
             </Typography>
           </Stack>
 
-          <Stack spacing={0.5} sx={{ flexDirection: "row", alignItems: "center" }}>
+          <Stack
+            spacing={0.5}
+            sx={{ flexDirection: "row", alignItems: "center" }}
+          >
             <CalendarTodayIcon sx={{ color: "#4a5568", fontSize: "1.2rem" }} />
             <Typography sx={{ color: "#4a5568", fontWeight: 500 }}>
               {dataFormatada}
             </Typography>
           </Stack>
-        </Stack>
+        </Styled.TitleContainer>
 
-        <Stack
-          sx={{
-            marginTop: "1rem",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
+        <Styled.CardContainer
         >
-          <Card icon={PeopleIcon} title="Pacientes" num={"1,234"} />
+          <Card icon={PeopleIcon} title="Pacientes" num={"234"} />
           <Card icon={CalendarTodayIcon} title="Agendamentos" num={"234"} />
           <Card icon={PeopleIcon} title="Profissionais" num={"34"} />
           <Card icon={AccessTimeIcon} title="Pendentes" num={"4"} />
+        </Styled.CardContainer>
+        <Stack
+         sx={{
+           flexDirection: "row",
+           width: " 100%",
+           justifyContent:" space-between"
+        }}
+        >
+          <Stack
+            sx={{
+              marginTop: "1rem",
+              backgroundColor: "white",
+              width: "68%",
+              minHeight: " 20rem",
+              borderRadius: "0.7rem",
+            }}
+          >oii</Stack>
+          <Stack
+            sx={{
+              marginTop: "1rem",
+              backgroundColor: "white",
+              width: "30%",
+              minHeight: " 40%",
+              borderRadius: "0.7rem",
+            }}
+          >oii</Stack>
+        </Stack>
+
+        <Stack
+         sx={{
+           flexDirection: "row",
+           width: " 100%",
+           justifyContent:" space-between"
+        }}
+        >
+          <Stack
+            sx={{
+              marginTop: "1rem",
+              backgroundColor: "white",
+              width: "68%",
+              minHeight: " 20rem",
+              borderRadius: "0.7rem",
+            }}
+          >oii</Stack>
+          <Stack
+            sx={{
+              marginTop: "1rem",
+              backgroundColor: "white",
+              width: "30%",
+              minHeight: " 40%",
+              borderRadius: "0.7rem",
+            }}
+          >oii</Stack>
         </Stack>
       </Styled.Container>
     </Stack>
