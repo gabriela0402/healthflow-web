@@ -27,12 +27,12 @@ export const TitleContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export const CardContainer = styled(Stack)({
+export const CardContainer = styled(Box)({
+  display: "grid",
+  gridTemplateColumns: "repeat(auto-fit, minmax(15rem, 1fr))",
+  gap: "1rem",
   marginTop: "1rem",
   width: "100%",
-  flexDirection: "row",
-  flexWrap: "wrap",
-  gap: "1rem",
 });
 
 export const OverviewDepartmentContainer = styled(Stack)(

@@ -1,29 +1,30 @@
 import styled from "@emotion/styled";
 import { Stack } from "@mui/material";
+import type { ContainerProps } from "./Card.types";
 
-export const Container = styled(Stack)(({ theme }) => ({
+export const Container = styled(Stack, {
+  shouldForwardProp: (prop) => prop !== "cardType",
+})<ContainerProps>(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
-  boxSizing: "border-box",
-
-  width: "calc(25% - 0.75rem)",
+  width: "100%",
+  minWidth: 0,
   minHeight: "6rem",
+  boxSizing: "border-box",
+  padding: "0 0.3rem",
+  overflow: "hidden",
 
   backgroundColor: theme.palette.background.paper,
-  borderRadius: "0.7rem",
   border: "0.1rem solid #00000011",
-  padding: "0 0.3rem",
+  borderRadius: "0.7rem",
+
   transition: "transform 0.2s ease-in-out",
+
   "&:hover": {
-    transform: "scale(1.05)",
+    transform: "translateY(-3px)",
   },
 
-  [theme.breakpoints.down("lg")]: {
-    width: "calc(50% - 0.5rem)",
-  },
-
-  [theme.breakpoints.down("md")]: {
-    width: "100%",
+  [theme.breakpoints.down("sm")]: {
+    minHeight: "5.5rem",
   },
 }));
-

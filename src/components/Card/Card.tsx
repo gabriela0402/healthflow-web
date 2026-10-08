@@ -1,9 +1,15 @@
 import { Stack, Typography } from "@mui/material";
 import * as Styled from "./Card.styled";
+import type { CardProps } from "./Card.types";
 
-export const Card = ({ title, num, icon: Icon }) => {
+export const Card = ({
+  title,
+  num,
+  icon: Icon,
+  type,
+}: CardProps) => {
   return (
-    <Styled.Container>
+    <Styled.Container cardType={type}>
       <Stack
         sx={{
           padding: "0.5rem",
@@ -27,6 +33,7 @@ export const Card = ({ title, num, icon: Icon }) => {
           </Stack>
         )}
       </Stack>
+
       <Stack
         sx={{
           padding: "1rem",
@@ -41,6 +48,7 @@ export const Card = ({ title, num, icon: Icon }) => {
         >
           {title}
         </Typography>
+
         <Typography
           variant="h4"
           sx={{
@@ -49,15 +57,18 @@ export const Card = ({ title, num, icon: Icon }) => {
         >
           {num}
         </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            fontSize: "0.8rem",
-            color: "#757575",
-          }}
-        >
-          last month
-        </Typography>
+
+        {type === "dashboard" && (
+          <Typography
+            variant="body1"
+            sx={{
+              fontSize: "0.8rem",
+              color: "#757575",
+            }}
+          >
+            last month
+          </Typography>
+        )}
       </Stack>
     </Styled.Container>
   );

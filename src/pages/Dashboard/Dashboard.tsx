@@ -52,10 +52,10 @@ export const Dashboard = () => {
         </Styled.TitleContainer>
 
         <Styled.CardContainer>
-          <Card icon={PeopleIcon} title="Pacientes" num={"234"} />
-          <Card icon={CalendarTodayIcon} title="Agendamentos" num={"234"} />
-          <Card icon={PeopleIcon} title="Profissionais" num={"34"} />
-          <Card icon={AccessTimeIcon} title="Pendentes" num={"4"} />
+          <Card icon={PeopleIcon} title="Pacientes" num={"234"}  type="dashboard"/>
+          <Card icon={CalendarTodayIcon} title="Agendamentos" num={"234"}  type="dashboard"/>
+          <Card icon={PeopleIcon} title="Profissionais" num={"34"}  type="dashboard"/>
+          <Card icon={AccessTimeIcon} title="Pendentes" num={"4"} type="dashboard" />
         </Styled.CardContainer>
         <Styled.OverviewDepartmentContainer>
           <Styled.OverviewContainer>
