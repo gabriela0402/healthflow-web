@@ -117,12 +117,16 @@ export const PercentageText = styled(Stack)({
   alignItems: "center",
 });
 
-export const DepartmentStats = styled(Stack)({
+export const DepartmentStats = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
   justifyContent: "center",
   width: "100%",
   marginTop: "1rem",
-});
+
+  [theme.breakpoints.down("lg")]: {
+    flexDirection:"column",
+  },
+}));
 
 export const DepartmentStat = styled(Stack)({
   flex: 1,
@@ -163,5 +167,22 @@ export const UpcomingContainer = styled(Stack)(({ theme }) => ({
 
   [theme.breakpoints.down("md")]: {
     width: "100%",
+  },
+}));
+
+import { Button } from "@mui/material";
+
+export const SeeAllButton = styled(Button)(({ theme }) => ({
+  color: "#4b6cb3",
+  fontSize: "0.8rem",
+  fontWeight: 600,
+  textTransform: "none",
+  padding: 0,
+  minWidth: "auto",
+  background: "none",
+  "&:hover": {
+    backgroundColor: "transparent",
+    textDecoration: "underline", 
+    opacity: 0.8,
   },
 }));

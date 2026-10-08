@@ -175,7 +175,7 @@ export const Dashboard = () => {
             </Styled.DepartmentStats>
           </Styled.DepartmentContainer>
         </Styled.OverviewDepartmentContainer>
-        <Stack sx={{ flexDirection: "row", marginTop: "0.5rem", gap: "1rem" }}>
+        <Styled.OverviewDepartmentContainer>
           <Styled.ActivityContainer>
             <Stack
               sx={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -183,11 +183,9 @@ export const Dashboard = () => {
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Atividade Recente
               </Typography>
-              <Typography
-                sx={{ color: "#4b6cb3", fontSize: "0.8rem", fontWeight: "600" }}
-              >
+              <Styled.SeeAllButton onClick={() => {}}>
                 Ver Tudo
-              </Typography>
+              </Styled.SeeAllButton>
             </Stack>
             <Stack sx={{ mt: 2 }}>
               <Activity
@@ -215,13 +213,14 @@ export const Dashboard = () => {
               sx={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
-                Agendamentos Futuros
+                Agendamentos
               </Typography>
-              <Typography
-                sx={{ color: "#4b6cb3", fontSize: "0.8rem", fontWeight: "600" }}
+              <Styled.SeeAllButton
+                onClick={() => {
+                }}
               >
                 Ver Tudo
-              </Typography>
+              </Styled.SeeAllButton>
             </Stack>
             <Stack>
               <UpcomingAppoiment
@@ -250,7 +249,7 @@ export const Dashboard = () => {
               />
             </Stack>
           </Styled.UpcomingContainer>
-        </Stack>
+        </Styled.OverviewDepartmentContainer>
       </Styled.Container>
     </Stack>
   );

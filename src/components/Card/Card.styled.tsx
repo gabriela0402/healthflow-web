@@ -13,6 +13,10 @@ export const Container = styled(Stack)(({ theme }) => ({
   borderRadius: "0.7rem",
   border: "0.1rem solid #00000011",
   padding: "0 0.3rem",
+  transition: "transform 0.2s ease-in-out",
+  "&:hover": {
+    transform: "scale(1.05)",
+  },
 
   [theme.breakpoints.down("lg")]: {
     width: "calc(50% - 0.5rem)",

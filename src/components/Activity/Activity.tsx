@@ -11,7 +11,7 @@ export const Activity = ({
   time,
 }: ActivityProps) => {
   return (
-    <Stack
+    <Styled.Container
       sx={{
         flexDirection: "row",
         justifyContent: "space-between",
@@ -52,6 +52,6 @@ export const Activity = ({
           {time}
         </Typography>
       </Box>
-    </Stack>
+    </Styled.Container>
   );
 };
