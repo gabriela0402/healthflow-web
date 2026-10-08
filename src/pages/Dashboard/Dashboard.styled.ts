@@ -154,7 +154,7 @@ export const ActivityContainer = styled(Stack)(({ theme }) => ({
 export const UpcomingContainer = styled(Stack)(({ theme }) => ({
   marginTop: "1rem",
   backgroundColor: theme.palette.background.paper,
-  width: "60%",
+  width: "40%",
   minHeight: "20rem",
   borderRadius: "0.7rem",
   border: "0.1rem solid #00000011",

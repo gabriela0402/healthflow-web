@@ -20,6 +20,7 @@ import {
 import { getFormattedDate } from "./Dashboard.utils";
 import { appointmentData } from "./Dashboard.utils";
 import { Activity } from "../../components/Activity/Activity";
+import { UpcomingAppoiment } from "../../components/UpcomingAppoiment/UpcomingAppoiment";
 
 export const Dashboard = () => {
   const dataFormatada = getFormattedDate();
@@ -42,7 +43,9 @@ export const Dashboard = () => {
             spacing={0.5}
             sx={{ flexDirection: "row", alignItems: "center" }}
           >
-            <Typography sx={{ color: "#4a5568", fontWeight: 500, fontSize: "0.8rem" }}>
+            <Typography
+              sx={{ color: "#4a5568", fontWeight: 500, fontSize: "0.8rem" }}
+            >
               {dataFormatada}
             </Typography>
           </Stack>
@@ -117,11 +120,19 @@ export const Dashboard = () => {
 
             <Styled.HealthPercentage>
               <Styled.PercentageText>
-                <Typography variant="h4" fontWeight={700} sx={{fontSize: "1.5rem"}}>
+                <Typography
+                  variant="h4"
+                  fontWeight={700}
+                  sx={{ fontSize: "1.5rem" }}
+                >
                   92%
                 </Typography>
 
-                <Typography variant="body2" color="text.secondary" sx={{fontSize: "0.8rem"}}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: "0.8rem" }}
+                >
                   saudável
                 </Typography>
               </Styled.PercentageText>
@@ -129,7 +140,9 @@ export const Dashboard = () => {
 
             <Styled.DepartmentStats>
               <Styled.DepartmentStat>
-                <Typography variant="h5" sx={{fontSize: "1rem"}}>58</Typography>
+                <Typography variant="h5" sx={{ fontSize: "1rem" }}>
+                  58
+                </Typography>
 
                 <Typography variant="body2" color="text.secondary">
                   Profissionais
@@ -139,9 +152,11 @@ export const Dashboard = () => {
               <Styled.StatDivider />
 
               <Styled.DepartmentStat>
-                <Typography variant="h5" sx={{fontSize: "1rem"}}>12</Typography>
+                <Typography variant="h5" sx={{ fontSize: "1rem" }}>
+                  12
+                </Typography>
 
-                <Typography variant="body2" color="text.secondary" >
+                <Typography variant="body2" color="text.secondary">
                   Especialidades
                 </Typography>
               </Styled.DepartmentStat>
@@ -149,7 +164,9 @@ export const Dashboard = () => {
               <Styled.StatDivider />
 
               <Styled.DepartmentStat>
-                <Typography variant="h5" sx={{fontSize: "1rem"}}>4.8</Typography>
+                <Typography variant="h5" sx={{ fontSize: "1rem" }}>
+                  4.8
+                </Typography>
 
                 <Typography variant="body2" color="text.secondary">
                   Avaliação
@@ -158,7 +175,7 @@ export const Dashboard = () => {
             </Styled.DepartmentStats>
           </Styled.DepartmentContainer>
         </Styled.OverviewDepartmentContainer>
-        <Stack sx={{ flexDirection: "row", marginTop: "1rem" }}>
+        <Stack sx={{ flexDirection: "row", marginTop: "0.5rem", gap: "1rem" }}>
           <Styled.ActivityContainer>
             <Stack
               sx={{ flexDirection: "row", justifyContent: "space-between" }}
@@ -166,30 +183,73 @@ export const Dashboard = () => {
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Atividade Recente
               </Typography>
-              <Typography sx={{ color: "#4b6cb3", fontSize: "0.8rem"}}>Ver Tudo</Typography>
+              <Typography
+                sx={{ color: "#4b6cb3", fontSize: "0.8rem", fontWeight: "600" }}
+              >
+                Ver Tudo
+              </Typography>
             </Stack>
             <Stack sx={{ mt: 2 }}>
               <Activity
-                icon={PeopleIcon} 
+                icon={PeopleIcon}
                 title="New appoiment"
                 description="oioioioioio"
                 time="123hrs ago"
               />
               <Activity
-                icon={PeopleIcon} 
+                icon={PeopleIcon}
                 title="New appoiment"
                 description="oioioioioio"
                 time="123hrs ago"
               />
               <Activity
-                icon={PeopleIcon} 
+                icon={PeopleIcon}
                 title="New appoiment"
                 description="oioioioioio"
                 time="123hrs ago"
               />
             </Stack>
           </Styled.ActivityContainer>
-          
+          <Styled.UpcomingContainer>
+            <Stack
+              sx={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
+                Agendamentos Futuros
+              </Typography>
+              <Typography
+                sx={{ color: "#4b6cb3", fontSize: "0.8rem", fontWeight: "600" }}
+              >
+                Ver Tudo
+              </Typography>
+            </Stack>
+            <Stack>
+              <UpcomingAppoiment
+                time="13:30"
+                name="Taylor Swift"
+                job="Cardiologista"
+                status="Confirmado"
+              />
+              <UpcomingAppoiment
+                time="10:10"
+                name="Justin Bieber"
+                job="Psiquiatra"
+                status="Pendente"
+              />
+              <UpcomingAppoiment
+                time="20:10"
+                name="Beyonce"
+                job="Fisioterapeuta"
+                status="Pendente"
+              />
+              <UpcomingAppoiment
+                time="20:10"
+                name="Shakira"
+                job="Cirugião Plástico"
+                status="Confirmado"
+              />
+            </Stack>
+          </Styled.UpcomingContainer>
         </Stack>
       </Styled.Container>
     </Stack>
