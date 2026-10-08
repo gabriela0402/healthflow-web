@@ -7,12 +7,12 @@ export const Container = styled(Stack)(({ theme }) => ({
   boxSizing: "border-box",
 
   width: "calc(25% - 0.75rem)",
-  minHeight: "7rem",
+  minHeight: "6rem",
 
   backgroundColor: theme.palette.background.paper,
   borderRadius: "0.7rem",
   border: "0.1rem solid #00000011",
-  padding: "0 1rem",
+  padding: "0 0.3rem",
 
   [theme.breakpoints.down("lg")]: {
     width: "calc(50% - 0.5rem)",

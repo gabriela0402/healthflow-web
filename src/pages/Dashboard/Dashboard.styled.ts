@@ -135,3 +135,33 @@ export const StatDivider = styled(Box)(({ theme }) => ({
   width: "1px",
   backgroundColor: theme.palette.divider,
 }));
+
+export const ActivityContainer = styled(Stack)(({ theme }) => ({
+  marginTop: "1rem",
+  backgroundColor: theme.palette.background.paper,
+  width: "60%",
+  minHeight: "20rem",
+  borderRadius: "0.7rem",
+  border: "0.1rem solid #00000011",
+  padding: "1.5rem",
+  boxSizing: "border-box",
+
+  [theme.breakpoints.down("md")]: {
+    width: "100%",
+  },
+}));
+
+export const UpcomingContainer = styled(Stack)(({ theme }) => ({
+  marginTop: "1rem",
+  backgroundColor: theme.palette.background.paper,
+  width: "60%",
+  minHeight: "20rem",
+  borderRadius: "0.7rem",
+  border: "0.1rem solid #00000011",
+  padding: "1.5rem",
+  boxSizing: "border-box",
+
+  [theme.breakpoints.down("md")]: {
+    width: "100%",
+  },
+}));

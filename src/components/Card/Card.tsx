@@ -6,20 +6,25 @@ export const Card = ({ title, num, icon: Icon }) => {
     <Styled.Container>
       <Stack
         sx={{
-          padding: "1rem",
+          padding: "0.5rem",
           justifyContent: "center",
         }}
       >
         {Icon && (
-            <Stack sx={{padding: "1rem", backgroundColor:"#f8f9fa", borderRadius: "2rem"}}>
-                <Icon
-            sx={{ 
-                fontSize: "2rem", 
-                color: "#348ad1", 
-             }}
-          />
-            </Stack>
-          
+          <Stack
+            sx={{
+              padding: "1rem",
+              backgroundColor: "#f8f9fa",
+              borderRadius: "2rem",
+            }}
+          >
+            <Icon
+              sx={{
+                fontSize: "2rem",
+                color: "#348ad1",
+              }}
+            />
+          </Stack>
         )}
       </Stack>
       <Stack
@@ -39,7 +44,7 @@ export const Card = ({ title, num, icon: Icon }) => {
         <Typography
           variant="h4"
           sx={{
-            fontSize: "2rem",
+            fontSize: "1.4rem",
           }}
         >
           {num}
