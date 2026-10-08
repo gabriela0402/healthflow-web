@@ -1,46 +1,67 @@
-import React from 'react'
-import { Button } from '@mui/material';
-import { theme } from '../../theme';
+import { Button } from "@mui/material";
+import { theme } from "../../theme";
 
+type ButtonProps = {
+  text: string;
+  onClick?: () => void;
+};
 
-export const ButtonBlue = ({text, onClick}) => {
+export const ButtonBlue = ({ text, onClick }: ButtonProps) => {
   return (
     <Button
-        variant='contained'
-        sx={{
-            width: "100%",
-            height: "50px",
-            textTransform: "none",
-            backgroundColor: theme.palette.primary.main,
-            '&:hover': {
-                backgroundColor: "#2266c5",
-                opacity: 0.9
-            }
-        }}
-    >
-        {text}
-    </Button>
-      
-  )
-}
+      variant="contained"
+      onClick={onClick}
+      sx={{
+        width: "100%",
+        height: "50px",
+        textTransform: "none",
+        backgroundColor: theme.palette.primary.main,
+        borderRadius: "0.6rem",
+        boxShadow: "none",
 
-export const ButtonWhite = ({text, onClick}) => {
+        "&:hover": {
+          backgroundColor: "#2266C5",
+          opacity: 0.9,
+          boxShadow: "none",
+        },
+
+        [theme.breakpoints.down("md")]: {
+          width:"50%"
+        },
+      }}
+    >
+      {text}
+    </Button>
+  );
+};
+
+export const ButtonWhite = ({ text, onClick }: ButtonProps) => {
   return (
     <Button
-        variant='contained'
-        sx={{
-            width: "100%",
-            height: "50px",
-            backgroundColor: "#fafafa",
-            color: theme.palette.text.primary,
-            '&:hover': {
-                backgroundColor: "#f1f1f1",
-                opacity: 0.9
-            }
-        }}
+      variant="outlined"
+      onClick={onClick}
+      sx={{
+        width: "100%",
+        height: "50px",
+        textTransform: "none",
+        backgroundColor: "#FFFFFF",
+        color: theme.palette.text.primary,
+        borderColor: theme.palette.divider,
+        borderRadius: "0.6rem",
+        boxShadow: "none",
+
+        "&:hover": {
+          backgroundColor: "#F1F6FC",
+          borderColor: theme.palette.primary.main,
+          boxShadow: "none",
+        },
+
+        [theme.breakpoints.down("md")]: {
+          width:"50%"
+        },
+      }}
     >
-        {text}
+      {text}
     </Button>
-      
-  )
-}
+  );
+};
