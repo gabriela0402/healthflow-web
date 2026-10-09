@@ -38,11 +38,6 @@ export const itemsAdmin: SideBarItem[] = [
     icon: CalendarTodayIcon,
   },
   {
-    label: "Relatórios",
-    path: "/reports",
-    icon: AssessmentIcon,
-  },
-  {
     label: "Configurações",
     path: "/settings",
     icon: SettingsIcon,

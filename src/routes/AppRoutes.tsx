@@ -7,6 +7,8 @@ import { Professionals } from "../pages/Professionals/Professionals";
 import { Specialties } from "../pages/Specialties/Specialties";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { Register } from "../pages/Register/Register";
+import { Settings } from "../pages/Settings/Settings";
+
 
 export function AppRoutes() {
   return (
@@ -20,6 +22,7 @@ export function AppRoutes() {
         <Route path="/specialties" element={<Specialties />} />
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />
