@@ -5,5 +5,5 @@ export type UserRole =
 
 export const mockUser = {
   name: "Gabriela",
-  role: "admin" as UserRole,
+  role: "professional" as UserRole,
 };

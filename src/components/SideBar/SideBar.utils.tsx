@@ -54,7 +54,7 @@ export const itemsAdmin: SideBarItem[] = [
 export const itemsProfessional: SideBarItem[] = [
   {
     label: "Dashboard",
-    path: "/dashboard",
+    path: "/dashboard-professional",
     icon: DashboardIcon,
   },
   {

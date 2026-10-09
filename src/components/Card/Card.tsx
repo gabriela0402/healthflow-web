@@ -58,17 +58,6 @@ export const Card = ({
           {num}
         </Typography>
 
-        {type === "dashboard" && (
-          <Typography
-            variant="body1"
-            sx={{
-              fontSize: "0.8rem",
-              color: "#757575",
-            }}
-          >
-            last month
-          </Typography>
-        )}
       </Stack>
     </Styled.Container>
   );
