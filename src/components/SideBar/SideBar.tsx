@@ -8,25 +8,29 @@ import LogoImage from "../../assets/img/HealthFlow-Logo.png";
 import { itemsAdmin } from "./SideBar.utils";
 import * as Styled from "./SideBar.styled";
 
-export function SideBar() {
+import { mockUser } from "../../auth/mockUser";
+import { getSidebarItems } from "./SideBar.utils";
+
+export const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const bottomItemLabels = [
-    "Configurações",
-    "Sair",
-  ];
+  const bottomItemLabels = ["Configurações", "Sair"];
 
-  const mainItems = itemsAdmin.filter(
-    (item) => !bottomItemLabels.includes(item.label),
-  );
-
-  const bottomItems = itemsAdmin.filter(
-    (item) => bottomItemLabels.includes(item.label),
-  );
+  
 
   const closeMenu = () => {
     setIsOpen(false);
   };
+
+  const sidebarItems = getSidebarItems(mockUser.role);
+
+  const mainItems = sidebarItems.filter(
+    (item) => !bottomItemLabels.includes(item.label),
+  );
+
+  const bottomItems = sidebarItems.filter((item) =>
+    bottomItemLabels.includes(item.label),
+  );
 
   return (
     <>
@@ -37,16 +41,11 @@ export function SideBar() {
         {isOpen ? <CloseIcon /> : <MenuIcon />}
       </Styled.MenuButton>
 
-      {isOpen && (
-        <Styled.Overlay onClick={closeMenu} />
-      )}
+      {isOpen && <Styled.Overlay onClick={closeMenu} />}
 
       <Styled.Container className={isOpen ? "open" : ""}>
         <Styled.LogoContainer>
-          <Styled.Logo
-            src={LogoImage}
-            alt="Logo HealthFlow"
-          />
+          <Styled.Logo src={LogoImage} alt="Logo HealthFlow" />
         </Styled.LogoContainer>
 
         <Styled.ItemsContainer>
@@ -89,4 +88,4 @@ export function SideBar() {
       </Styled.Container>
     </>
   );
-}
+};

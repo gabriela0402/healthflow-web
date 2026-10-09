@@ -11,6 +11,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddIcon from "@mui/icons-material/Add";
 
+
 export const itemsAdmin: SideBarItem[] = [
   {
     label: "Dashboard",
@@ -116,3 +117,15 @@ export const itemsPatient: SideBarItem[] = [
     icon: ExitToAppIcon,
   },
 ];
+
+export function getSidebarItems(role: UserRole) {
+  if (role === "professional") {
+    return itemsProfessional;
+  }
+
+  if (role === "patient") {
+    return itemsPatient;
+  }
+
+  return itemsAdmin;
+}
