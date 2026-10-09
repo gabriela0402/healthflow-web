@@ -11,7 +11,7 @@ export const Container = styled(Stack)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   overflowX: "hidden",
 
-  [theme.breakpoints.down("sm")]: {
+  [theme.breakpoints.down("sm")]: { 
     width: "100%",
     marginLeft: 0,
     padding: "5rem 1rem 2rem",
