@@ -9,6 +9,7 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import { Register } from "../pages/Register/Register";
 import { Settings } from "../pages/Settings/Settings";
 import { ProfessionalDashboard } from "../pages/ProfessionalDashboard/ProfessionalDashboard";
+import { ProfessionalSchedule } from "../pages/ProfessionalSchedule/ProfessionalSchedule";
 
 export function AppRoutes() {
   return (
@@ -23,7 +24,9 @@ export function AppRoutes() {
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/register" element={<Register />} />
         <Route path="/settings" element={<Settings />} />
+
         <Route path="/dashboard-professional" element={<ProfessionalDashboard />} />
+        <Route path="/my-schedule" element={<ProfessionalSchedule  />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />
