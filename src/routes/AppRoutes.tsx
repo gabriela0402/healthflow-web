@@ -12,6 +12,7 @@ import { ProfessionalDashboard } from "../pages/ProfessionalDashboard/Profession
 import { ProfessionalSchedule } from "../pages/ProfessionalSchedule/ProfessionalSchedule";
 import { ProfessionalPatients } from "../pages/ProfessionalPatients/ProfessionalPatients";
 import { ProfessioanlAppointments } from "../pages/ProfessioanlAppointments/ProfessioanlAppointments";
+import { ProfessionalProfile } from "../pages/ProfessionalProfile/ProfessionalProfile";
 
 export function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ export function AppRoutes() {
         <Route path="/my-schedule" element={<ProfessionalSchedule  />} />
         <Route path="/my-patients" element={<ProfessionalPatients  />} />
         <Route path="/my-appointments" element={<ProfessioanlAppointments  />} />
+        <Route path="/profile" element={<ProfessionalProfile  />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />
