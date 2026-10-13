@@ -10,6 +10,8 @@ import { Register } from "../pages/Register/Register";
 import { Settings } from "../pages/Settings/Settings";
 import { ProfessionalDashboard } from "../pages/ProfessionalDashboard/ProfessionalDashboard";
 import { ProfessionalSchedule } from "../pages/ProfessionalSchedule/ProfessionalSchedule";
+import { ProfessionalPatients } from "../pages/ProfessionalPatients/ProfessionalPatients";
+import { ProfessioanlAppointments } from "../pages/ProfessioanlAppointments/ProfessioanlAppointments";
 
 export function AppRoutes() {
   return (
@@ -27,6 +29,8 @@ export function AppRoutes() {
 
         <Route path="/dashboard-professional" element={<ProfessionalDashboard />} />
         <Route path="/my-schedule" element={<ProfessionalSchedule  />} />
+        <Route path="/my-patients" element={<ProfessionalPatients  />} />
+        <Route path="/my-appointments" element={<ProfessioanlAppointments  />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />

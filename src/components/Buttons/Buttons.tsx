@@ -18,6 +18,7 @@ export const ButtonBlue = ({ text, onClick }: ButtonProps) => {
         backgroundColor: theme.palette.primary.main,
         borderRadius: "0.6rem",
         boxShadow: "none",
+        minWidth:"200px",
 
         "&:hover": {
           backgroundColor: "#2266C5",

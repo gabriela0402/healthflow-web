@@ -27,7 +27,7 @@ export const ProfessionalSchedule = () => {
   } = useProfessionalSchedule();
 
   return (
-    <>
+    <Stack>
       <SideBar />
 
       <Styled.Container>
@@ -319,6 +319,6 @@ export const ProfessionalSchedule = () => {
           </Styled.SummaryColumn>
         </Styled.MainContent>
       </Styled.Container>
-    </>
+    </Stack>
   );
 };

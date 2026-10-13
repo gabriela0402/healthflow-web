@@ -175,8 +175,6 @@ export const AppointmentCard = styled(Stack)(
   }),
 );
 
-
-
 export const AppointmentTop = styled(Stack)({
   flexDirection: "row",
   alignItems: "center",
