@@ -15,6 +15,8 @@ import { ProfessioanlAppointments } from "../pages/ProfessioanlAppointments/Prof
 import { ProfessionalProfile } from "../pages/ProfessionalProfile/ProfessionalProfile";
 import { PatientHome } from "../pages/PatientHome/PatientHome";
 import { PatientBooking } from "../pages/PatientBooking/PatientBooking";
+import { PatientData } from "../pages/PatientData/PatientData";
+import { PatientNotifications } from "../pages/PatientNotifications/PatientNotifications";
 
 export function AppRoutes() {
   return (
@@ -38,6 +40,9 @@ export function AppRoutes() {
 
         <Route path="/home" element={<PatientHome/>}/>
         <Route path="/book-appointment" element={<PatientBooking/>}/>
+        <Route path="/my-data" element={<PatientData />} />
+        <Route path="/notifications" element={<PatientNotifications />} />
+        
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />

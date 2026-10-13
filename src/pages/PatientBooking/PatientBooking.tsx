@@ -62,14 +62,14 @@ export const PatientBooking = () => {
           variant="h4"
           sx={{
             color: "#102A56",
-            fontSize: "1.6rem",
+            fontSize: "1.2rem",
             fontWeight: 700,
           }}
         >
           Agendar consulta
         </Typography>
 
-        <Typography color="text.secondary" sx={{ fontSize: "0.85rem" }}>
+        <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
           Encontre o profissional ideal para o seu atendimento
         </Typography>
 
