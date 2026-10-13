@@ -88,7 +88,7 @@ export const itemsProfessional: SideBarItem[] = [
 export const itemsPatient: SideBarItem[] = [
   {
     label: "Início",
-    path: "/",
+    path: "/home",
     icon: DashboardIcon,
   },
   {

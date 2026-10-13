@@ -13,6 +13,8 @@ import { ProfessionalSchedule } from "../pages/ProfessionalSchedule/Professional
 import { ProfessionalPatients } from "../pages/ProfessionalPatients/ProfessionalPatients";
 import { ProfessioanlAppointments } from "../pages/ProfessioanlAppointments/ProfessioanlAppointments";
 import { ProfessionalProfile } from "../pages/ProfessionalProfile/ProfessionalProfile";
+import { PatientHome } from "../pages/PatientHome/PatientHome";
+import { PatientBooking } from "../pages/PatientBooking/PatientBooking";
 
 export function AppRoutes() {
   return (
@@ -33,6 +35,9 @@ export function AppRoutes() {
         <Route path="/my-patients" element={<ProfessionalPatients  />} />
         <Route path="/my-appointments" element={<ProfessioanlAppointments  />} />
         <Route path="/profile" element={<ProfessionalProfile  />} />
+
+        <Route path="/home" element={<PatientHome/>}/>
+        <Route path="/book-appointment" element={<PatientBooking/>}/>
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />
