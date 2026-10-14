@@ -1,9 +1,11 @@
-import { useState } from "react";
 import type {
   AppointmentStatus,
   ScheduleAppointment,
   ScheduleDay,
 } from "./ProfessionalSchedule.types";
+
+import { useState } from "react";
+import type { AvailabilityForm } from "../../components/AvailabilityModal/AvailabilityModal.types";
 
 const weekDays: ScheduleDay[] = [
   {
@@ -196,6 +198,44 @@ export function useProfessionalSchedule() {
 
   const selectedDay = weekDays.find((day) => day.fullDate === selectedDate);
 
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+
+  const [availabilityForm, setAvailabilityForm] = useState<AvailabilityForm>({
+    day: "",
+    startTime: "",
+    endTime: "",
+  });
+
+  function openAvailabilityModal() {
+    setIsAvailabilityModalOpen(true);
+  }
+
+  function closeAvailabilityModal() {
+    setIsAvailabilityModalOpen(false);
+
+    setAvailabilityForm({
+      day: "",
+      startTime: "",
+      endTime: "",
+    });
+  }
+
+  function handleAvailabilityChange(
+    field: keyof AvailabilityForm,
+    value: string,
+  ) {
+    setAvailabilityForm((previous) => ({
+      ...previous,
+      [field]: value,
+    }));
+  }
+
+  function saveAvailability() {
+    console.log("Nova disponibilidade:", availabilityForm);
+
+    closeAvailabilityModal();
+  }
+
   function getAppointmentsByDay(day: string) {
     return appointments.filter((appointment) => appointment.day === day);
   }
@@ -245,7 +285,6 @@ export function useProfessionalSchedule() {
   return {
     weekDays,
     selectedDate,
-    selectedDay,
     setSelectedDate,
     getAppointmentsByDay,
     getStatusLabel,
@@ -254,5 +293,12 @@ export function useProfessionalSchedule() {
     handlePreviousWeek,
     handleNextWeek,
     handleToday,
+
+    isAvailabilityModalOpen,
+    availabilityForm,
+    openAvailabilityModal,
+    closeAvailabilityModal,
+    handleAvailabilityChange,
+    saveAvailability,
   };
 }

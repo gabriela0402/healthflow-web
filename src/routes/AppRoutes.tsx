@@ -20,6 +20,7 @@ import { PatientNotifications } from "../pages/PatientNotifications/PatientNotif
 import { PatientCreate } from "../pages/PatientCreate/PatientCreate";
 import { ProfessionalCreate } from "../pages/ProfessionalCreate/ProfessionalCreate";
 import { SpecialtyCreate } from "../pages/SpecialtyCreate/SpecialtyCreate";
+import { AppointmentCreate } from "../pages/AppointmentCreate/AppointmentCreate";
 
 export function AppRoutes() {
   return (
@@ -34,8 +35,8 @@ export function AppRoutes() {
         <Route path="/professionals/new" element={<ProfessionalCreate />} />
         <Route path="/specialties" element={<Specialties />} />
         <Route path="/specialties/new" element={<SpecialtyCreate />} />
-
         <Route path="/appointments" element={<Appointments />} />
+        <Route path="/appointments/new" element={<AppointmentCreate />} />
         <Route path="/register" element={<Register />} />
         <Route path="/settings" element={<Settings />} />
 

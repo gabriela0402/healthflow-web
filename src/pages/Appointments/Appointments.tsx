@@ -17,32 +17,61 @@ import { SideBar } from "../../components/SideBar/SideBar";
 import { ButtonBlue } from "../../components/Buttons/Buttons";
 import * as Styled from "./Appointments.styled";
 
-import {
-  appointments,
-  getInitials,
-  getStatusLabel,
-} from './Appoiments.utils';
+import { appointments, getInitials, getStatusLabel } from "./Appoiments.utils";
+
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export const Appointments = () => {
+  const navigate = useNavigate();
+  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
+
+  const upcomingAppointments = [
+    {
+      id: 1,
+      name: "Charlotte Lewis",
+      specialty: "Cardiologia",
+      time: "14:00",
+    },
+    {
+      id: 2,
+      name: "Daniel Walker",
+      specialty: "Neurologia",
+      time: "14:30",
+    },
+    {
+      id: 3,
+      name: "Mia Hall",
+      specialty: "Dermatologia",
+      time: "15:00",
+    },
+    {
+      id: 4,
+      name: "Lucas Brown",
+      specialty: "Pediatria",
+      time: "15:30",
+    },
+    {
+      id: 5,
+      name: "Emma Wilson",
+      specialty: "Ortopedia",
+      time: "16:00",
+    },
+  ];
+
   return (
-    <>
+    <Stack>
       <SideBar />
 
       <Styled.Container>
         <Styled.HeaderContainer>
           <Styled.TitleContainer>
             <Stack>
-              <Typography
-                variant="h4"
-                sx={{ fontSize: "1.6rem" }}
-              >
+              <Typography variant="h4" sx={{ fontSize: "1.6rem" }}>
                 Agendamentos
               </Typography>
 
-              <Typography
-                variant="body1"
-                color="text.secondary"
-              >
+              <Typography variant="body1" color="text.secondary">
                 Administre os agendamentos da clínica.
               </Typography>
             </Stack>
@@ -50,11 +79,7 @@ export const Appointments = () => {
             <Styled.AddButtonContainer>
               <ButtonBlue
                 text="+ Adicionar agendamento"
-                onClick={() => {
-                  console.log(
-                    "Abrir cadastro de agendamento",
-                  );
-                }}
+                onClick={() => navigate("/appointments/new")}
               />
             </Styled.AddButtonContainer>
           </Styled.TitleContainer>
@@ -77,15 +102,9 @@ export const Appointments = () => {
           </Styled.FilterSelect>
 
           <Styled.FilterSelect defaultValue="professional">
-            <option value="professional">
-              Profissional
-            </option>
-            <option value="sarah">
-              Dra. Sarah Miller
-            </option>
-            <option value="michael">
-              Dr. Michael Chen
-            </option>
+            <option value="professional">Profissional</option>
+            <option value="sarah">Dra. Sarah Miller</option>
+            <option value="michael">Dr. Michael Chen</option>
           </Styled.FilterSelect>
 
           <Styled.FilterSelect defaultValue="status">
@@ -99,14 +118,9 @@ export const Appointments = () => {
         <Styled.ContentContainer>
           <Styled.ScheduleContainer>
             <Styled.ScheduleHeader>
-              <Typography variant="h6">
-                Agenda de hoje
-              </Typography>
+              <Typography variant="h6">Agenda de hoje</Typography>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-              >
+              <Typography variant="body2" color="text.secondary">
                 Terça-feira, 12 de março de 2024
               </Typography>
             </Styled.ScheduleHeader>
@@ -120,23 +134,15 @@ export const Appointments = () => {
                     <TableCell>Profissional</TableCell>
                     <TableCell>Especialidade</TableCell>
                     <TableCell>Status</TableCell>
-                    <TableCell align="right">
-                      Ações
-                    </TableCell>
+                    <TableCell align="right">Ações</TableCell>
                   </TableRow>
                 </TableHead>
 
                 <TableBody>
                   {appointments.map((appointment) => (
-                    <Styled.StyledTableRow
-                      key={appointment.id}
-                      hover
-                    >
+                    <Styled.StyledTableRow key={appointment.id} hover>
                       <TableCell>
-                        <Typography
-                          variant="body2"
-                          fontWeight={600}
-                        >
+                        <Typography variant="body2" fontWeight={600}>
                           {appointment.time}
                         </Typography>
                       </TableCell>
@@ -144,16 +150,11 @@ export const Appointments = () => {
                       <TableCell>
                         <Styled.PatientCell>
                           <Styled.Avatar>
-                            {getInitials(
-                              appointment.patient,
-                            )}
+                            {getInitials(appointment.patient)}
                           </Styled.Avatar>
 
                           <Stack>
-                            <Typography
-                              variant="body2"
-                              fontWeight={600}
-                            >
+                            <Typography variant="body2" fontWeight={600}>
                               {appointment.patient}
                             </Typography>
 
@@ -180,12 +181,8 @@ export const Appointments = () => {
                       </TableCell>
 
                       <TableCell>
-                        <Styled.Status
-                          status={appointment.status}
-                        >
-                          {getStatusLabel(
-                            appointment.status,
-                          )}
+                        <Styled.Status status={appointment.status}>
+                          {getStatusLabel(appointment.status)}
                         </Styled.Status>
                       </TableCell>
 
@@ -204,80 +201,58 @@ export const Appointments = () => {
           <Styled.SideSummaryContainer>
             <Styled.SummaryCard>
               <Styled.SummaryCardHeader>
-                <Typography variant="h6">
-                  Resumo diário
-                </Typography>
-
+                <Typography variant="h6">Resumo diário</Typography>
               </Styled.SummaryCardHeader>
 
-              <Styled.SummaryItem
-                sx={{ backgroundColor: "#EAF3FF" }}
-              >
+              <Styled.SummaryItem sx={{ backgroundColor: "#EAF3FF" }}>
                 <CalendarToday color="primary" />
 
                 <Stack>
                   <Typography
                     variant="h5"
-                    sx={{fontSize:"1.3rem"}}
+                    sx={{ fontSize: "1.3rem" }}
                     fontWeight={700}
                   >
                     42
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     agendamentos
                   </Typography>
                 </Stack>
               </Styled.SummaryItem>
 
-              <Styled.SummaryItem
-                sx={{ backgroundColor: "#E7F7EF" }}
-              >
-                <CheckCircle
-                  sx={{ color: "#219653" }}
-                />
+              <Styled.SummaryItem sx={{ backgroundColor: "#E7F7EF" }}>
+                <CheckCircle sx={{ color: "#219653" }} />
 
                 <Stack>
                   <Typography
                     variant="h5"
-                    sx={{fontSize:"1.3rem"}}
+                    sx={{ fontSize: "1.3rem" }}
                     fontWeight={700}
                   >
                     28
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     confirmados
                   </Typography>
                 </Stack>
               </Styled.SummaryItem>
 
-              <Styled.SummaryItem
-                sx={{ backgroundColor: "#FFF5DD" }}
-              >
-                <AccessTime
-                  sx={{ color: "#D99400" }}
-                />
+              <Styled.SummaryItem sx={{ backgroundColor: "#FFF5DD" }}>
+                <AccessTime sx={{ color: "#D99400" }} />
 
                 <Stack>
                   <Typography
                     variant="h5"
-                    sx={{fontSize:"1.3rem"}}
+                    sx={{ fontSize: "1.3rem" }}
                     fontWeight={700}
                   >
                     4
                   </Typography>
 
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                  >
+                  <Typography variant="body2" color="text.secondary">
                     pendentes
                   </Typography>
                 </Stack>
@@ -285,161 +260,87 @@ export const Appointments = () => {
             </Styled.SummaryCard>
 
             <Styled.SummaryCard>
-              <Typography variant="h6">
-                Status dos agendamentos
-              </Typography>
+              <Typography variant="h6">Status dos agendamentos</Typography>
 
               <Styled.Donut>
                 <Styled.DonutValue>
-                  <Typography
-                    variant="h5"
-                    fontWeight={700}
-                  >
+                  <Typography variant="h5" fontWeight={700}>
                     42
                   </Typography>
 
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
+                  <Typography variant="caption" color="text.secondary">
                     Total
                   </Typography>
                 </Styled.DonutValue>
               </Styled.Donut>
 
               <Styled.LegendItem>
-                <Styled.LegendColor
-                  color="#4CAF91"
-                />
-                <Typography variant="body2">
-                  Confirmados
-                </Typography>
-                <Typography variant="body2">
-                  28
-                </Typography>
+                <Styled.LegendColor color="#4CAF91" />
+                <Typography variant="body2">Confirmados</Typography>
+                <Typography variant="body2">28</Typography>
               </Styled.LegendItem>
 
               <Styled.LegendItem>
-                <Styled.LegendColor
-                  color="#42A5F5"
-                />
-                <Typography variant="body2">
-                  Agendados
-                </Typography>
-                <Typography variant="body2">
-                  8
-                </Typography>
+                <Styled.LegendColor color="#42A5F5" />
+                <Typography variant="body2">Agendados</Typography>
+                <Typography variant="body2">8</Typography>
               </Styled.LegendItem>
 
               <Styled.LegendItem>
-                <Styled.LegendColor
-                  color="#F4C95D"
-                />
-                <Typography variant="body2">
-                  Pendentes
-                </Typography>
-                <Typography variant="body2">
-                  4
-                </Typography>
+                <Styled.LegendColor color="#F4C95D" />
+                <Typography variant="body2">Pendentes</Typography>
+                <Typography variant="body2">4</Typography>
               </Styled.LegendItem>
 
               <Styled.LegendItem>
-                <Styled.LegendColor
-                  color="#E57373"
-                />
-                <Typography variant="body2">
-                  Cancelados
-                </Typography>
-                <Typography variant="body2">
-                  2
-                </Typography>
+                <Styled.LegendColor color="#E57373" />
+                <Typography variant="body2">Cancelados</Typography>
+                <Typography variant="body2">2</Typography>
               </Styled.LegendItem>
             </Styled.SummaryCard>
 
             <Styled.SummaryCard>
               <Styled.SummaryCardHeader>
-                <Typography variant="h6">
-                  Próximos
-                </Typography>
+                <Typography variant="h6">Próximos</Typography>
 
                 <Typography
                   variant="body2"
                   color="primary"
-                  sx={{ cursor: "pointer" }}
+                  onClick={() => setShowAllUpcoming((previous) => !previous)}
+                  sx={{
+                    cursor: "pointer",
+                    "&:hover": {
+                      textDecoration: "underline",
+                    },
+                  }}
                 >
-                  Ver todos
+                  {showAllUpcoming ? "Ver menos" : "Ver todos"}
                 </Typography>
               </Styled.SummaryCardHeader>
 
-              <Styled.UpcomingItem>
-                <Stack>
-                  <Typography variant="body2">
-                    Charlotte Lewis
-                  </Typography>
+              {upcomingAppointments
+                .slice(showAllUpcoming ? 0 : 3)
+                .map((appointment) => (
+                  <Styled.UpcomingItem key={appointment.id}>
+                    <Stack>
+                      <Typography variant="body2">
+                        {appointment.name}
+                      </Typography>
 
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
-                    Cardiologia
-                  </Typography>
-                </Stack>
+                      <Typography variant="caption" color="text.secondary">
+                        {appointment.specialty}
+                      </Typography>
+                    </Stack>
 
-                <Typography
-                  variant="caption"
-                  color="primary"
-                >
-                  14:00
-                </Typography>
-              </Styled.UpcomingItem>
-
-              <Styled.UpcomingItem>
-                <Stack>
-                  <Typography variant="body2">
-                    Daniel Walker
-                  </Typography>
-
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
-                    Neurologia
-                  </Typography>
-                </Stack>
-
-                <Typography
-                  variant="caption"
-                  color="warning.main"
-                >
-                  14:30
-                </Typography>
-              </Styled.UpcomingItem>
-
-              <Styled.UpcomingItem>
-                <Stack>
-                  <Typography variant="body2">
-                    Mia Hall
-                  </Typography>
-
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                  >
-                    Dermatologia
-                  </Typography>
-                </Stack>
-
-                <Typography
-                  variant="caption"
-                  color="primary"
-                >
-                  15:00
-                </Typography>
-              </Styled.UpcomingItem>
+                    <Typography variant="caption" color="primary">
+                      {appointment.time}
+                    </Typography>
+                  </Styled.UpcomingItem>
+                ))}
             </Styled.SummaryCard>
           </Styled.SideSummaryContainer>
         </Styled.ContentContainer>
       </Styled.Container>
-    </>
+    </Stack>
   );
 };

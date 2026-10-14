@@ -14,6 +14,7 @@ export const ButtonBlue = ({
       sx={{
         width: "auto",
         height: "50px",
+        minWidth:"200px",
         borderRadius: "0.6rem",
         backgroundColor: theme.palette.primary.main,
         textTransform: "none",

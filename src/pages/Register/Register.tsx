@@ -22,6 +22,7 @@ export const Register = () => {
           maxWidth: "600px",
           marginTop: "3rem",
           marginBottom: "3rem",
+          alignItems: "center",
         }}
         spacing={4}
       >
@@ -33,6 +34,13 @@ export const Register = () => {
             placeholder="Digite seu nome completo"
             type="text"
             sx={{
+              minWidth: {
+                xs: 0,
+                sm: "20rem",
+                md: "30rem",
+                lg: "40rem",
+              },
+              width: "100%",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "1.2rem",
               },
@@ -48,6 +56,13 @@ export const Register = () => {
             placeholder="Digite seu e-mail"
             type="email"
             sx={{
+              minWidth: {
+                xs: 0,
+                sm: "20rem",
+                md: "30rem",
+                lg: "40rem",
+              },
+              width: "100%",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "1.2rem",
               },
@@ -63,6 +78,13 @@ export const Register = () => {
             placeholder="Digite sua senha"
             type="password"
             sx={{
+              minWidth: {
+                xs: 0,
+                sm: "20rem",
+                md: "30rem",
+                lg: "40rem",
+              },
+              width: "100%",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "1.2rem",
               },
@@ -78,6 +100,13 @@ export const Register = () => {
             placeholder="Digite sua senha"
             type="password"
             sx={{
+              minWidth: {
+                xs: 0,
+                sm: "20rem",
+                md: "30rem",
+                lg: "40rem",
+              },
+              width: "100%",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "1.2rem",
               },

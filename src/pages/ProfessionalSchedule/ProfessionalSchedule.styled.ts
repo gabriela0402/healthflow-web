@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Stack } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 
 export const Container = styled(Stack)(({ theme }) => ({
   flexDirection: "column",
@@ -329,4 +329,19 @@ export const UpcomingStatus = styled(Box)<{
   fontSize: "0.6rem",
   fontWeight: 600,
   whiteSpace: "nowrap",
+}));
+
+export const SeeAllButton = styled(Button)(({ theme }) => ({
+  color: "#4b6cb3",
+  fontSize: "0.8rem",
+  fontWeight: 600,
+  textTransform: "none",
+  padding: 0,
+  minWidth: "auto",
+  background: "none",
+  "&:hover": {
+    backgroundColor: "transparent",
+    textDecoration: "underline", 
+    opacity: 0.8,
+  },
 }));

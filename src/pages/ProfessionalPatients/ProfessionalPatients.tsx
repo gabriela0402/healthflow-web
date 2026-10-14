@@ -1,19 +1,37 @@
-import { Checkbox, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import {
+  Checkbox,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import * as Styled from "./ProfessionalPatients.styled";
 import { SideBar } from "../../components/SideBar/SideBar";
 import { ButtonBlue, ButtonWhite } from "../../components/Buttons/Buttons";
-import { CalendarToday, DescriptionOutlined, FilterList, MoreHoriz, Search } from "@mui/icons-material";
+import {
+  CalendarToday,
+  DescriptionOutlined,
+  FilterList,
+  MoreHoriz,
+  Search,
+} from "@mui/icons-material";
 
 import { usePatients } from "./ProfessionalPatients.hooks";
 import { getInitials } from "./ProfessionalPatients.utils";
-
 
 import { Card } from "../../components/Card/Card";
 import PeopleIcon from "@mui/icons-material/People";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
+import { useNavigate } from "react-router-dom";
+
 export const ProfessionalPatients = () => {
   const { search, setSearch, patients } = usePatients();
+  const navigate = useNavigate();
+
   return (
     <Stack direction={"row"}>
       <SideBar />
@@ -41,7 +59,10 @@ export const ProfessionalPatients = () => {
           </Stack>
 
           <Styled.HeaderActions>
-            <ButtonBlue text="+ Adicionar paciente" />
+            <ButtonBlue
+              text="+ Adicionar paciente"
+              onClick={() => navigate("/patients/new")}
+            />
           </Styled.HeaderActions>
         </Styled.Header>
         <Styled.FiltersContainer>
@@ -86,15 +107,7 @@ export const ProfessionalPatients = () => {
             <option value="Psicologia">Psicologia</option>
           </Styled.FilterSelect>
 
-          <Styled.MoreFiltersButton
-            type="button"
-            onClick={() => {
-              console.log("Abrir filtros adicionais");
-            }}
-          >
-            <FilterList fontSize="small" />
-            Mais filtros
-          </Styled.MoreFiltersButton>
+        
         </Styled.FiltersContainer>
         <Styled.CardContainer>
           <Card

@@ -1,10 +1,5 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import {
-  Button,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { SideBar } from "../../components/SideBar/SideBar";
@@ -15,12 +10,7 @@ import { usePatientCreate } from "./PatientCreate.hook";
 export const PatientCreate = () => {
   const navigate = useNavigate();
 
-  const {
-    form,
-    handleChange,
-    handleSubmit,
-    handleCancel,
-  } = usePatientCreate();
+  const { form, handleChange, handleSubmit, handleCancel } = usePatientCreate();
 
   return (
     <Stack direction="row">
@@ -29,11 +19,11 @@ export const PatientCreate = () => {
       <Styled.Container>
         <Button
           startIcon={<ArrowBack />}
-          onClick={() => navigate("/patients")}
+          onClick={() => navigate(-1)}
           sx={{
             alignSelf: "flex-start",
-            textTransform: "none",
             color: "text.secondary",
+            textTransform: "none",
           }}
         >
           Voltar para pacientes
@@ -51,10 +41,7 @@ export const PatientCreate = () => {
             Adicionar paciente
           </Typography>
 
-          <Typography
-            color="text.secondary"
-            sx={{ fontSize: "0.85rem" }}
-          >
+          <Typography color="text.secondary" sx={{ fontSize: "0.85rem" }}>
             Cadastre um novo paciente na clínica.
           </Typography>
         </Styled.Header>
@@ -70,10 +57,7 @@ export const PatientCreate = () => {
                 size="small"
                 value={form.fullName}
                 onChange={(event) =>
-                  handleChange(
-                    "fullName",
-                    event.target.value,
-                  )
+                  handleChange("fullName", event.target.value)
                 }
                 placeholder="Digite o nome completo"
               />
@@ -88,9 +72,7 @@ export const PatientCreate = () => {
                 size="small"
                 type="email"
                 value={form.email}
-                onChange={(event) =>
-                  handleChange("email", event.target.value)
-                }
+                onChange={(event) => handleChange("email", event.target.value)}
                 placeholder="Digite o e-mail"
               />
             </Styled.Field>
@@ -103,9 +85,7 @@ export const PatientCreate = () => {
               <TextField
                 size="small"
                 value={form.phone}
-                onChange={(event) =>
-                  handleChange("phone", event.target.value)
-                }
+                onChange={(event) => handleChange("phone", event.target.value)}
                 placeholder="(00) 00000-0000"
               />
             </Styled.Field>
@@ -120,10 +100,7 @@ export const PatientCreate = () => {
                 type="date"
                 value={form.birthDate}
                 onChange={(event) =>
-                  handleChange(
-                    "birthDate",
-                    event.target.value,
-                  )
+                  handleChange("birthDate", event.target.value)
                 }
                 InputLabelProps={{ shrink: true }}
               />
@@ -139,9 +116,7 @@ export const PatientCreate = () => {
                 native
                 size="small"
                 value={form.gender}
-                onChange={(event) =>
-                  handleChange("gender", event.target.value)
-                }
+                onChange={(event) => handleChange("gender", event.target.value)}
               >
                 <option value="">Selecione</option>
                 <option value="female">Feminino</option>
@@ -158,9 +133,7 @@ export const PatientCreate = () => {
               <TextField
                 size="small"
                 value={form.cpf}
-                onChange={(event) =>
-                  handleChange("cpf", event.target.value)
-                }
+                onChange={(event) => handleChange("cpf", event.target.value)}
                 placeholder="000.000.000-00"
               />
             </Styled.Field>
@@ -174,10 +147,7 @@ export const PatientCreate = () => {
                 size="small"
                 value={form.address}
                 onChange={(event) =>
-                  handleChange(
-                    "address",
-                    event.target.value,
-                  )
+                  handleChange("address", event.target.value)
                 }
                 placeholder="Digite o endereço completo"
               />
@@ -193,10 +163,7 @@ export const PatientCreate = () => {
               Limpar
             </Button>
 
-            <ButtonBlue
-              text="Cadastrar paciente"
-              onClick={handleSubmit}
-            />
+            <ButtonBlue text="Cadastrar paciente" onClick={handleSubmit} />
           </Styled.Actions>
         </Styled.FormCard>
       </Styled.Container>

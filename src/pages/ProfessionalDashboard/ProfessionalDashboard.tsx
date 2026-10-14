@@ -22,7 +22,11 @@ import {
 } from "recharts";
 import { UpcomingAppoiment } from "../../components/UpcomingAppoiment/UpcomingAppoiment";
 
+import { useNavigate } from "react-router-dom";
+
+
 export const ProfessionalDashboard = () => {
+  const navigate = useNavigate();
   const dataFormatada = getFormattedDate();
 
   return (
@@ -131,7 +135,7 @@ export const ProfessionalDashboard = () => {
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Próximos Atendimentos
               </Typography>
-              <Styled.SeeAllButton onClick={() => {}}>
+              <Styled.SeeAllButton onClick={() => navigate("/my-appointments")}>
                 Ver Tudo
               </Styled.SeeAllButton>
             </Stack>

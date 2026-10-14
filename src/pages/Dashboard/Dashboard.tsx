@@ -28,7 +28,7 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const dataFormatada = getFormattedDate();
 
-  return (
+  return ( 
     <Stack direction={"row"}>
       <SideBar />
       <Styled.Container>

@@ -7,15 +7,17 @@ import EventAvailable from "@mui/icons-material/EventAvailable";
 import { IconButton, Stack, Typography } from "@mui/material";
 
 import { SideBar } from "../../components/SideBar/SideBar";
+import { AvailabilityModal } from "../../components/AvailabilityModal/AvailabilityModal";
+
 import * as Styled from "./ProfessionalSchedule.styled";
 import { useProfessionalSchedule } from "./ProfessionalSchedule.hook";
 import { ButtonBlue, ButtonWhite } from "../../components/Buttons/Buttons";
+import { useNavigate } from "react-router-dom";
 
 export const ProfessionalSchedule = () => {
   const {
     weekDays,
     selectedDate,
-    selectedDay,
     setSelectedDate,
     getAppointmentsByDay,
     getStatusLabel,
@@ -24,7 +26,15 @@ export const ProfessionalSchedule = () => {
     handlePreviousWeek,
     handleNextWeek,
     handleToday,
+    isAvailabilityModalOpen,
+    availabilityForm,
+    openAvailabilityModal,
+    closeAvailabilityModal,
+    handleAvailabilityChange,
+    saveAvailability,
   } = useProfessionalSchedule();
+
+  const navigate = useNavigate();
 
   return (
     <Stack>
@@ -54,8 +64,10 @@ export const ProfessionalSchedule = () => {
           </Stack>
 
           <Styled.HeaderActions>
-            <ButtonWhite text="Hoje" />
-            <ButtonBlue text="+ Nova disponibilidade" />
+            <ButtonBlue
+              text="+ Nova disponibilidade"
+              onClick={openAvailabilityModal}
+            />
           </Styled.HeaderActions>
         </Styled.Header>
 
@@ -235,13 +247,11 @@ export const ProfessionalSchedule = () => {
                   Próximos atendimentos
                 </Typography>
 
-                <Typography
-                  variant="body2"
-                  color="primary"
-                  sx={{ cursor: "pointer" }}
+                <Styled.SeeAllButton
+                  onClick={() => navigate("/my-appointments")}
                 >
-                  Ver todos
-                </Typography>
+                  Ver Tudo
+                </Styled.SeeAllButton>
               </Styled.SummaryHeader>
 
               <Styled.UpcomingItem>
@@ -319,6 +329,13 @@ export const ProfessionalSchedule = () => {
           </Styled.SummaryColumn>
         </Styled.MainContent>
       </Styled.Container>
+      <AvailabilityModal
+        open={isAvailabilityModalOpen}
+        form={availabilityForm}
+        onClose={closeAvailabilityModal}
+        onChange={handleAvailabilityChange}
+        onSave={saveAvailability}
+      />
     </Stack>
   );
 };

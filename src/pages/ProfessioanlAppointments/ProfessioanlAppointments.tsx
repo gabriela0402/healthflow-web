@@ -124,13 +124,6 @@ export const ProfessioanlAppointments = () => {
                 {view === "list" ? "Agenda de hoje" : "Calendário semanal"}
               </Typography>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ fontSize: "0.72rem" }}
-              >
-                Terça-feira, 12 de março de 2024
-              </Typography>
             </Styled.ScheduleHeader>
 
             {view === "list" ? (
@@ -295,9 +288,6 @@ export const ProfessioanlAppointments = () => {
                   Hoje
                 </Typography>
 
-                <Typography variant="caption" color="text.secondary">
-                  12 mar. 2024
-                </Typography>
               </Stack>
 
               <Styled.SummaryItem sx={{ backgroundColor: "#F1F7FF" }}>

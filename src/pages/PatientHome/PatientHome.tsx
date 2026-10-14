@@ -12,8 +12,18 @@ import { SideBar } from "../../components/SideBar/SideBar";
 import { Card } from "../../components/Card/Card";
 import { getFormattedDate } from "./PatientHome.utils";
 
+import { SpecialtiesModal } from "../../components/SpecialtiesModal/SpecialtiesModal";
+import { patientSpecialties } from "./PatientHome.utils";
+import { usePatientHome } from "./PatientHome.hook";
+
 export const PatientHome = () => {
   const dataFormatada = getFormattedDate();
+  const {
+    isSpecialtiesModalOpen,
+    openSpecialtiesModal,
+    closeSpecialtiesModal,
+    handleSchedule,
+  } = usePatientHome();
 
   return (
     <Stack direction="row">
@@ -99,18 +109,12 @@ export const PatientHome = () => {
                   Próximos atendimentos
                 </Typography>
 
-                <Typography
-                  color="text.secondary"
-                  sx={{ fontSize: "0.8rem" }}
-                >
+                <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
                   Seus agendamentos e consultas futuras.
                 </Typography>
               </Stack>
 
-              <Styled.SectionLink
-                component={Link}
-                to="/my-appointments"
-              >
+              <Styled.SectionLink component={Link} to="/my-appointments">
                 Ver todos
                 <ChevronRightIcon fontSize="small" />
               </Styled.SectionLink>
@@ -123,13 +127,9 @@ export const PatientHome = () => {
                   <span>ABR</span>
                 </Styled.DateBox>
 
-                <Styled.Time>
-                  14:30
-                </Styled.Time>
+                <Styled.Time>14:30</Styled.Time>
 
-                <Styled.ProfessionalAvatar>
-                  AL
-                </Styled.ProfessionalAvatar>
+                <Styled.ProfessionalAvatar>AL</Styled.ProfessionalAvatar>
 
                 <Stack flex={1} minWidth={0}>
                   <Typography
@@ -155,13 +155,9 @@ export const PatientHome = () => {
                   </Styled.Location>
                 </Stack>
 
-                <Styled.Status status="confirmed">
-                  Confirmada
-                </Styled.Status>
+                <Styled.Status status="confirmed">Confirmada</Styled.Status>
 
-                <ChevronRightIcon
-                  sx={{ color: "text.secondary" }}
-                />
+                <ChevronRightIcon sx={{ color: "text.secondary" }} />
               </Styled.AppointmentItem>
 
               <Styled.AppointmentItem>
@@ -170,13 +166,9 @@ export const PatientHome = () => {
                   <span>ABR</span>
                 </Styled.DateBox>
 
-                <Styled.Time>
-                  10:00
-                </Styled.Time>
+                <Styled.Time>10:00</Styled.Time>
 
-                <Styled.ProfessionalAvatar>
-                  RP
-                </Styled.ProfessionalAvatar>
+                <Styled.ProfessionalAvatar>RP</Styled.ProfessionalAvatar>
 
                 <Stack flex={1} minWidth={0}>
                   <Typography
@@ -202,13 +194,9 @@ export const PatientHome = () => {
                   </Styled.Location>
                 </Stack>
 
-                <Styled.Status status="confirmed">
-                  Confirmada
-                </Styled.Status>
+                <Styled.Status status="confirmed">Confirmada</Styled.Status>
 
-                <ChevronRightIcon
-                  sx={{ color: "text.secondary" }}
-                />
+                <ChevronRightIcon sx={{ color: "text.secondary" }} />
               </Styled.AppointmentItem>
 
               <Styled.AppointmentItem>
@@ -217,13 +205,9 @@ export const PatientHome = () => {
                   <span>MAI</span>
                 </Styled.DateBox>
 
-                <Styled.Time>
-                  09:30
-                </Styled.Time>
+                <Styled.Time>09:30</Styled.Time>
 
-                <Styled.ProfessionalAvatar>
-                  CS
-                </Styled.ProfessionalAvatar>
+                <Styled.ProfessionalAvatar>CS</Styled.ProfessionalAvatar>
 
                 <Stack flex={1} minWidth={0}>
                   <Typography
@@ -249,13 +233,9 @@ export const PatientHome = () => {
                   </Styled.Location>
                 </Stack>
 
-                <Styled.Status status="pending">
-                  Pendente
-                </Styled.Status>
+                <Styled.Status status="pending">Pendente</Styled.Status>
 
-                <ChevronRightIcon
-                  sx={{ color: "text.secondary" }}
-                />
+                <ChevronRightIcon sx={{ color: "text.secondary" }} />
               </Styled.AppointmentItem>
             </Styled.AppointmentList>
           </Styled.AppointmentsCard>
@@ -283,21 +263,18 @@ export const PatientHome = () => {
                 textAlign: "center",
               }}
             >
-              Agende uma consulta, encontre especialistas
-              e cuide da sua saúde com mais facilidade.
+              Agende uma consulta, encontre especialistas e cuide da sua saúde
+              com mais facilidade.
             </Typography>
 
-            <Styled.HelpButton
-              component={Link}
-              to="/book-appointment"
-            >
+            <Styled.HelpButton component={Link} to="/book-appointment">
               <CalendarTodayIcon fontSize="small" />
               Agendar consulta
             </Styled.HelpButton>
 
             <Styled.HelpOutlineButton
-              component={Link}
-              to="/specialists"
+              type="button"
+              onClick={openSpecialtiesModal}
             >
               <PeopleIcon fontSize="small" />
               Ver especialistas
@@ -305,6 +282,12 @@ export const PatientHome = () => {
           </Styled.HelpCard>
         </Styled.ContentGrid>
       </Styled.Container>
+      <SpecialtiesModal
+        open={isSpecialtiesModalOpen}
+        specialties={patientSpecialties}
+        onClose={closeSpecialtiesModal}
+        onSchedule={handleSchedule}
+      />
     </Stack>
   );
 };
