@@ -11,8 +11,12 @@ import PeopleIcon from "@mui/icons-material/People";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { ProfessionalCard } from "../../components/ProfessionalCard/ProfessionalCard";
 
+import { useNavigate } from "react-router-dom";
+
 export const Professionals = () => {
   const { search, setSearch, professioanals } = useProfessionals();
+  const navigate = useNavigate();
+
   return (
     <Stack sx={{ flexDirection: "row" }}>
       <SideBar />
@@ -31,9 +35,7 @@ export const Professionals = () => {
           <Stack sx={{ minWidth: "190px" }}>
             <ButtonBlue
               text="+ Adicionar profissional"
-              onClick={() => {
-                console.log("Abrir cadastro de paciente");
-              }}
+              onClick={() => navigate("/professionals/new")}
             />
           </Stack>
         </Styled.TitleContainer>

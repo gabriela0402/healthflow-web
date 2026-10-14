@@ -27,8 +27,13 @@ import {
 import { usePatients } from "./Patients.hook";
 import { getInitials } from "./Patients.utils";
 
+import { useNavigate } from "react-router-dom";
+
 export const Patients = () => {
-  const { search, setSearch, patients } = usePatients();
+  const navigate = useNavigate();
+  const { search, setSearch, patients, showMoreFilters, toggleMoreFilters } =
+    usePatients();
+
   return (
     <Stack sx={{ flexDirection: "row" }}>
       <SideBar />
@@ -48,9 +53,7 @@ export const Patients = () => {
           <Stack sx={{ minWidth: "190px" }}>
             <ButtonBlue
               text="+ Adicionar paciente"
-              onClick={() => {
-                console.log("Abrir cadastro de paciente");
-              }}
+              onClick={() => navigate("/patients/new")}
             />
           </Stack>
         </Styled.TitleContainer>
@@ -99,16 +102,41 @@ export const Patients = () => {
             <option value="other">Outro</option>
           </Styled.FilterSelect>
 
-          <Styled.MoreFiltersButton
-            type="button"
-            onClick={() => {
-              console.log("Abrir filtros adicionais");
-            }}
-          >
+          <Styled.MoreFiltersButton type="button" onClick={toggleMoreFilters}>
             <FilterList fontSize="small" />
-            Mais filtros
+            {showMoreFilters ? "Ocultar filtros" : "Mais filtros"}
           </Styled.MoreFiltersButton>
         </Styled.FiltersContainer>
+        {showMoreFilters && (
+          <Styled.AdvancedFiltersContainer>
+            <Styled.FilterSelect defaultValue="">
+              <option value="" disabled>
+                Plano de saúde
+              </option>
+              <option value="particular">Particular</option>
+              <option value="unimed">Unimed</option>
+              <option value="amil">Amil</option>
+            </Styled.FilterSelect>
+
+            <Styled.FilterSelect defaultValue="">
+              <option value="" disabled>
+                Última consulta
+              </option>
+              <option value="recent">Últimos 30 dias</option>
+              <option value="three-months">Últimos 3 meses</option>
+              <option value="older">Mais de 3 meses</option>
+            </Styled.FilterSelect>
+
+            <Styled.FilterSelect defaultValue="">
+              <option value="" disabled>
+                Tipo de atendimento
+              </option>
+              <option value="in-person">Presencial</option>
+              <option value="online">Online</option>
+            </Styled.FilterSelect>
+          </Styled.AdvancedFiltersContainer>
+        )}
+
         <Styled.CardContainer>
           <Card
             icon={PeopleIcon}
@@ -131,12 +159,12 @@ export const Patients = () => {
         </Styled.CardContainer>
 
         <Styled.TableContainer>
-          <Stack sx={{padding: "1.4rem"}}>
+          <Stack sx={{ padding: "1.4rem" }}>
             <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
               Diretório de Pacientes
             </Typography>
           </Stack>
-          
+
           <Table>
             <TableHead>
               <TableRow>

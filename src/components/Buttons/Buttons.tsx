@@ -1,33 +1,25 @@
 import { Button } from "@mui/material";
 import { theme } from "../../theme";
+import type { ButtonProps } from "./Buttons.type";
 
-type ButtonProps = {
-  text: string;
-  onClick?: () => void;
-};
 
-export const ButtonBlue = ({ text, onClick }: ButtonProps) => {
+export const ButtonBlue = ({
+  text,
+  onClick,
+}: ButtonProps) => {
   return (
     <Button
       variant="contained"
       onClick={onClick}
       sx={{
-        width: "100%",
+        width: "auto",
         height: "50px",
-        textTransform: "none",
-        backgroundColor: theme.palette.primary.main,
         borderRadius: "0.6rem",
-        boxShadow: "none",
-        minWidth:"200px",
+        backgroundColor: theme.palette.primary.main,
+        textTransform: "none",
 
         "&:hover": {
-          backgroundColor: "#2266C5",
-          opacity: 0.9,
-          boxShadow: "none",
-        },
-
-        [theme.breakpoints.down("md")]: {
-          width:"50%"
+          backgroundColor: "#2266c5",
         },
       }}
     >
@@ -36,7 +28,10 @@ export const ButtonBlue = ({ text, onClick }: ButtonProps) => {
   );
 };
 
-export const ButtonWhite = ({ text, onClick }: ButtonProps) => {
+export const ButtonWhite = ({
+  text,
+  onClick,
+}: ButtonProps) => {
   return (
     <Button
       variant="outlined"
@@ -44,22 +39,9 @@ export const ButtonWhite = ({ text, onClick }: ButtonProps) => {
       sx={{
         width: "100%",
         height: "50px",
-        textTransform: "none",
-        backgroundColor: "#FFFFFF",
-        color: theme.palette.text.primary,
-        borderColor: theme.palette.divider,
         borderRadius: "0.6rem",
-        boxShadow: "none",
-
-        "&:hover": {
-          backgroundColor: "#F1F6FC",
-          borderColor: theme.palette.primary.main,
-          boxShadow: "none",
-        },
-
-        [theme.breakpoints.down("md")]: {
-          width:"50%"
-        },
+        color: theme.palette.text.primary,
+        textTransform: "none",
       }}
     >
       {text}

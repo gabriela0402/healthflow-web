@@ -17,8 +17,20 @@ import { appointmentData } from "./Specialties.utils";
 
 import { SpecialtyCard } from "../../components/SpecialtyCard/SpecialtyCard";
 
+import { useNavigate } from "react-router-dom";
+
 export const Specialties = () => {
-  const { search, setSearch, specialties } = useSpecialties();
+  const navigate = useNavigate();
+
+  const {
+    search,
+    setSearch,
+    sort,
+    setSort,
+    specialties,
+    showMoreFilters,
+    toggleMoreFilters,
+  } = useSpecialties();
 
   return (
     <Stack sx={{ flexDirection: "row" }}>
@@ -38,9 +50,7 @@ export const Specialties = () => {
           <Stack sx={{ minWidth: "190px" }}>
             <ButtonBlue
               text="+ Adicionar especialidade"
-              onClick={() => {
-                console.log("Abrir cadastro de paciente");
-              }}
+              onClick={() => navigate("/specialties/new")}
             />
           </Stack>
         </Styled.TitleContainer>
@@ -173,10 +183,8 @@ export const Specialties = () => {
 
             <Styled.SearchInput
               value={search}
-              onChange={(event) => {
-                setSearch(event.target.value);
-              }}
-              placeholder="Buscar especialidade..."
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Buscar especialidade"
             />
           </Styled.SearchContainer>
 
@@ -197,16 +205,42 @@ export const Specialties = () => {
             <option value="other">Outro</option>
           </Styled.FilterSelect>
 
-          <Styled.MoreFiltersButton
-            type="button"
-            onClick={() => {
-              console.log("Abrir filtros adicionais");
-            }}
-          >
+          <Styled.MoreFiltersButton type="button" onClick={toggleMoreFilters}>
             <FilterList fontSize="small" />
-            Mais filtros
+            {showMoreFilters ? "Ocultar filtros" : "Mais filtros"}
           </Styled.MoreFiltersButton>
         </Styled.FiltersContainer>
+        {showMoreFilters && (
+          <Styled.AdvancedFiltersContainer>
+            <Styled.FilterSelect
+              value={sort}
+              onChange={(event) => setSort(event.target.value)}
+            >
+              <option value="default">Ordenação padrão</option>
+
+              <option value="name-asc">Nome: A-Z</option>
+
+              <option value="name-desc">Nome: Z-A</option>
+            </Styled.FilterSelect>
+
+            <Styled.FilterSelect defaultValue="all">
+              <option value="all">Todos os profissionais</option>
+
+              <option value="with-professionals">Com profissionais</option>
+
+              <option value="without-professionals">Sem profissionais</option>
+            </Styled.FilterSelect>
+
+            <Styled.FilterSelect defaultValue="all">
+              <option value="all">Todos os atendimentos</option>
+
+              <option value="most-used">Mais utilizadas</option>
+
+              <option value="least-used">Menos utilizadas</option>
+            </Styled.FilterSelect>
+          </Styled.AdvancedFiltersContainer>
+        )}
+
         <Styled.SpecialtiesGrid>
           {specialties.map((specialty) => (
             <SpecialtyCard

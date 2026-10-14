@@ -1,0 +1,205 @@
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import {
+  Button,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
+import { SideBar } from "../../components/SideBar/SideBar";
+import { ButtonBlue } from "../../components/Buttons/Buttons";
+import * as Styled from "./PatientCreate.styled";
+import { usePatientCreate } from "./PatientCreate.hook";
+
+export const PatientCreate = () => {
+  const navigate = useNavigate();
+
+  const {
+    form,
+    handleChange,
+    handleSubmit,
+    handleCancel,
+  } = usePatientCreate();
+
+  return (
+    <Stack direction="row">
+      <SideBar />
+
+      <Styled.Container>
+        <Button
+          startIcon={<ArrowBack />}
+          onClick={() => navigate("/patients")}
+          sx={{
+            alignSelf: "flex-start",
+            textTransform: "none",
+            color: "text.secondary",
+          }}
+        >
+          Voltar para pacientes
+        </Button>
+
+        <Styled.Header>
+          <Typography
+            variant="h4"
+            sx={{
+              color: "#102A56",
+              fontSize: "1.6rem",
+              fontWeight: 700,
+            }}
+          >
+            Adicionar paciente
+          </Typography>
+
+          <Typography
+            color="text.secondary"
+            sx={{ fontSize: "0.85rem" }}
+          >
+            Cadastre um novo paciente na clínica.
+          </Typography>
+        </Styled.Header>
+
+        <Styled.FormCard>
+          <Styled.FormGrid>
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
+                Nome completo
+              </Typography>
+
+              <TextField
+                size="small"
+                value={form.fullName}
+                onChange={(event) =>
+                  handleChange(
+                    "fullName",
+                    event.target.value,
+                  )
+                }
+                placeholder="Digite o nome completo"
+              />
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
+                E-mail
+              </Typography>
+
+              <TextField
+                size="small"
+                type="email"
+                value={form.email}
+                onChange={(event) =>
+                  handleChange("email", event.target.value)
+                }
+                placeholder="Digite o e-mail"
+              />
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
+                Telefone
+              </Typography>
+
+              <TextField
+                size="small"
+                value={form.phone}
+                onChange={(event) =>
+                  handleChange("phone", event.target.value)
+                }
+                placeholder="(00) 00000-0000"
+              />
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
+                Data de nascimento
+              </Typography>
+
+              <TextField
+                size="small"
+                type="date"
+                value={form.birthDate}
+                onChange={(event) =>
+                  handleChange(
+                    "birthDate",
+                    event.target.value,
+                  )
+                }
+                InputLabelProps={{ shrink: true }}
+              />
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
+                Gênero
+              </Typography>
+
+              <TextField
+                select
+                native
+                size="small"
+                value={form.gender}
+                onChange={(event) =>
+                  handleChange("gender", event.target.value)
+                }
+              >
+                <option value="">Selecione</option>
+                <option value="female">Feminino</option>
+                <option value="male">Masculino</option>
+                <option value="other">Outro</option>
+              </TextField>
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
+                CPF
+              </Typography>
+
+              <TextField
+                size="small"
+                value={form.cpf}
+                onChange={(event) =>
+                  handleChange("cpf", event.target.value)
+                }
+                placeholder="000.000.000-00"
+              />
+            </Styled.Field>
+
+            <Styled.FullWidthField>
+              <Typography variant="body2" fontWeight={600}>
+                Endereço
+              </Typography>
+
+              <TextField
+                size="small"
+                value={form.address}
+                onChange={(event) =>
+                  handleChange(
+                    "address",
+                    event.target.value,
+                  )
+                }
+                placeholder="Digite o endereço completo"
+              />
+            </Styled.FullWidthField>
+          </Styled.FormGrid>
+
+          <Styled.Actions>
+            <Button
+              variant="outlined"
+              onClick={handleCancel}
+              sx={{ textTransform: "none" }}
+            >
+              Limpar
+            </Button>
+
+            <ButtonBlue
+              text="Cadastrar paciente"
+              onClick={handleSubmit}
+            />
+          </Styled.Actions>
+        </Styled.FormCard>
+      </Styled.Container>
+    </Stack>
+  );
+};

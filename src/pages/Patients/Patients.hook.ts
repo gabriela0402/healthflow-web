@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { mockPatients } from "./Patients.utils";
+import { useMemo, useState } from "react";
 
 export function usePatients() {
   const [search, setSearch] = useState("");
@@ -13,9 +13,17 @@ export function usePatients() {
     );
   });
 
+  const [showMoreFilters, setShowMoreFilters] = useState(false);
+
+  function toggleMoreFilters() {
+    setShowMoreFilters((previous) => !previous);
+  }
+
   return {
     search,
     setSearch,
     patients: filteredPatients,
+    showMoreFilters,
+    toggleMoreFilters,
   };
 }

@@ -7,6 +7,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 
+import { useNavigate } from "react-router-dom";
+
 import {
   CartesianGrid,
   Line,
@@ -23,6 +25,7 @@ import { Activity } from "../../components/Activity/Activity";
 import { UpcomingAppoiment } from "../../components/UpcomingAppoiment/UpcomingAppoiment";
 
 export const Dashboard = () => {
+  const navigate = useNavigate();
   const dataFormatada = getFormattedDate();
 
   return (
@@ -52,10 +55,30 @@ export const Dashboard = () => {
         </Styled.TitleContainer>
 
         <Styled.CardContainer>
-          <Card icon={PeopleIcon} title="Pacientes" num={"234"}  type="dashboard"/>
-          <Card icon={CalendarTodayIcon} title="Agendamentos" num={"234"}  type="dashboard"/>
-          <Card icon={PeopleIcon} title="Profissionais" num={"34"}  type="dashboard"/>
-          <Card icon={AccessTimeIcon} title="Pendentes" num={"4"} type="dashboard" />
+          <Card
+            icon={PeopleIcon}
+            title="Pacientes"
+            num={"234"}
+            type="dashboard"
+          />
+          <Card
+            icon={CalendarTodayIcon}
+            title="Agendamentos"
+            num={"234"}
+            type="dashboard"
+          />
+          <Card
+            icon={PeopleIcon}
+            title="Profissionais"
+            num={"34"}
+            type="dashboard"
+          />
+          <Card
+            icon={AccessTimeIcon}
+            title="Pendentes"
+            num={"4"}
+            type="dashboard"
+          />
         </Styled.CardContainer>
         <Styled.OverviewDepartmentContainer>
           <Styled.OverviewContainer>
@@ -183,8 +206,11 @@ export const Dashboard = () => {
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Atividade Recente
               </Typography>
-              <Styled.SeeAllButton onClick={() => {}}>
-                Ver Tudo
+              <Styled.SeeAllButton
+                type="button"
+                onClick={() => navigate("/appointments")}
+              >
+                Ver tudo
               </Styled.SeeAllButton>
             </Stack>
             <Stack sx={{ mt: 2 }}>
@@ -216,10 +242,10 @@ export const Dashboard = () => {
                 Agendamentos
               </Typography>
               <Styled.SeeAllButton
-                onClick={() => {
-                }}
+                type="button"
+                onClick={() => navigate("/appointments")}
               >
-                Ver Tudo
+                Ver tudo
               </Styled.SeeAllButton>
             </Stack>
             <Stack>

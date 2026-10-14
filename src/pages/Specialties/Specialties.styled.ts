@@ -247,3 +247,26 @@ export const SpecialtiesGrid = styled(Stack)(({ theme }) => ({
     gridTemplateColumns: "1fr",
   },
 }));
+
+export const AdvancedFiltersContainer = styled(Box)(
+  ({ theme }) => ({
+    display: "grid",
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+    gap: "0.7rem",
+    width: "100%",
+    marginTop: "0.7rem",
+    padding: "0.8rem",
+    boxSizing: "border-box",
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: "0.6rem",
+    backgroundColor: "#F8FBFF",
+
+    [theme.breakpoints.down("md")]: {
+      gridTemplateColumns: "1fr 1fr",
+    },
+
+    [theme.breakpoints.down("sm")]: {
+      gridTemplateColumns: "1fr",
+    },
+  }),
+);
