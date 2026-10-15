@@ -4,10 +4,8 @@ import Healing from "@mui/icons-material/Healing";
 import Person from "@mui/icons-material/Person";
 import Schedule from "@mui/icons-material/Schedule";
 import Search from "@mui/icons-material/Search";
-import ArrowForward from "@mui/icons-material/ArrowForward";
-import ArrowBack from "@mui/icons-material/ArrowBack";
 
-import { Stack, Typography } from "@mui/material";
+import {  Stack, Typography } from "@mui/material";
 
 import { SideBar } from "../../components/SideBar/SideBar";
 import { ButtonBlue } from "../../components/Buttons/Buttons";
@@ -53,8 +51,11 @@ export const PatientBooking = () => {
       .toUpperCase();
   }
 
+
+
   return (
     <Stack direction="row">
+
       <SideBar />
 
       <Styled.Container>
