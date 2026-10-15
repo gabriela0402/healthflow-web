@@ -3,7 +3,7 @@ export type BookingStep = 1 | 2 | 3 | 4;
 export type Specialty = {
   id: number;
   name: string;
-  description: string;
+  description?: string;
 };
 
 export type Professional = {

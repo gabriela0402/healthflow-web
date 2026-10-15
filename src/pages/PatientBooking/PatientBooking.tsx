@@ -5,7 +5,7 @@ import Person from "@mui/icons-material/Person";
 import Schedule from "@mui/icons-material/Schedule";
 import Search from "@mui/icons-material/Search";
 
-import {  Stack, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 import { SideBar } from "../../components/SideBar/SideBar";
 import { ButtonBlue } from "../../components/Buttons/Buttons";
@@ -24,6 +24,8 @@ export const PatientBooking = () => {
     availableDates,
     availableTimes,
     selectedDate,
+    isLoadingSpecialties,
+    specialtiesError,
     selectSpecialty,
     selectProfessional,
     selectDate,
@@ -51,11 +53,8 @@ export const PatientBooking = () => {
       .toUpperCase();
   }
 
-
-
   return (
     <Stack direction="row">
-
       <SideBar />
 
       <Styled.Container>
@@ -133,7 +132,7 @@ export const PatientBooking = () => {
                   <Search
                     sx={{
                       position: "absolute",
-                      top: "65%",
+                      top: "50%",
                       left: "0.8rem",
                       zIndex: 1,
                       color: "text.secondary",
@@ -146,45 +145,90 @@ export const PatientBooking = () => {
                     value={search}
                     onChange={(event) => setSearch(event.target.value)}
                     placeholder="Buscar especialidade"
-                    style={{ paddingLeft: "2.5rem" }}
+                    style={{
+                      paddingLeft: "2.5rem",
+                    }}
                   />
                 </Stack>
 
-                <Styled.SpecialtyGrid>
-                  {filteredSpecialties.map((specialty) => (
-                    <Styled.SpecialtyCard
-                      key={specialty.id}
-                      selected={booking.specialty?.id === specialty.id}
-                      onClick={() => selectSpecialty(specialty.id)}
+                {isLoadingSpecialties && (
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    Carregando especialidades...
+                  </Typography>
+                )}
+
+                {specialtiesError && (
+                  <Typography
+                    color="error"
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    {specialtiesError}
+                  </Typography>
+                )}
+
+                {!isLoadingSpecialties &&
+                  !specialtiesError &&
+                  filteredSpecialties.length === 0 && (
+                    <Typography
+                      color="text.secondary"
+                      sx={{
+                        marginTop: "1rem",
+                        fontSize: "0.85rem",
+                      }}
                     >
-                      <Styled.SelectionIcon>
-                        <Healing />
-                      </Styled.SelectionIcon>
+                      Nenhuma especialidade encontrada.
+                    </Typography>
+                  )}
 
-                      <Stack>
-                        <Typography
-                          sx={{
-                            fontSize: "0.85rem",
-                            fontWeight: 700,
-                          }}
+                {!isLoadingSpecialties &&
+                  !specialtiesError &&
+                  filteredSpecialties.length > 0 && (
+                    <Styled.SpecialtyGrid>
+                      {filteredSpecialties.map((specialty) => (
+                        <Styled.SpecialtyCard
+                          key={specialty.id}
+                          selected={booking.specialty?.id === specialty.id}
+                          onClick={() => selectSpecialty(specialty.id)}
                         >
-                          {specialty.name}
-                        </Typography>
+                          <Styled.SelectionIcon>
+                            <Healing />
+                          </Styled.SelectionIcon>
 
-                        <Typography
-                          color="text.secondary"
-                          sx={{
-                            marginTop: "0.3rem",
-                            fontSize: "0.7rem",
-                            lineHeight: 1.4,
-                          }}
-                        >
-                          {specialty.description}
-                        </Typography>
-                      </Stack>
-                    </Styled.SpecialtyCard>
-                  ))}
-                </Styled.SpecialtyGrid>
+                          <Stack>
+                            <Typography
+                              sx={{
+                                fontSize: "0.85rem",
+                                fontWeight: 700,
+                              }}
+                            >
+                              {specialty.name}
+                            </Typography>
+
+                            <Typography
+                              color="text.secondary"
+                              sx={{
+                                marginTop: "0.3rem",
+                                fontSize: "0.7rem",
+                                lineHeight: 1.4,
+                              }}
+                            >
+                              {specialty.description ||
+                                "Especialidade disponível para agendamento."}
+                            </Typography>
+                          </Stack>
+                        </Styled.SpecialtyCard>
+                      ))}
+                    </Styled.SpecialtyGrid>
+                  )}
               </>
             )}
 
@@ -203,6 +247,18 @@ export const PatientBooking = () => {
                 <Typography color="text.secondary" sx={{ fontSize: "0.78rem" }}>
                   Profissionais disponíveis em {booking.specialty?.name}.
                 </Typography>
+
+                {filteredProfessionals.length === 0 && (
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    Nenhum profissional disponível para esta especialidade.
+                  </Typography>
+                )}
 
                 <Styled.ProfessionalList>
                   {filteredProfessionals.map((professional) => (
@@ -399,7 +455,12 @@ export const PatientBooking = () => {
                   Especialidade
                 </Typography>
 
-                <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
+                <Typography
+                  sx={{
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                  }}
+                >
                   {booking.specialty?.name || "Selecione uma especialidade"}
                 </Typography>
               </Stack>
@@ -415,7 +476,12 @@ export const PatientBooking = () => {
                   Profissional
                 </Typography>
 
-                <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
+                <Typography
+                  sx={{
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                  }}
+                >
                   {booking.professional?.name || "Selecione um profissional"}
                 </Typography>
               </Stack>
@@ -431,8 +497,14 @@ export const PatientBooking = () => {
                   Data e horário
                 </Typography>
 
-                <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
+                <Typography
+                  sx={{
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                  }}
+                >
                   {selectedDate?.label || "Selecione uma data"}
+
                   {booking.time && ` às ${booking.time}`}
                 </Typography>
               </Stack>

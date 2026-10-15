@@ -1,40 +1,94 @@
-import { useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+
+import { api } from "../../services/api";
 
 import type {
   BookingData,
   BookingStep,
+  Specialty,
 } from "./PatientBooking.types";
 
 import {
   availableDates,
   availableTimes,
   professionals,
-  specialties,
 } from "./PatientBooking.utils";
 
 export function usePatientBooking() {
-  const [step, setStep] = useState<BookingStep>(1);
+  const [step, setStep] =
+    useState<BookingStep>(1);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] =
+    useState("");
 
-  const [booking, setBooking] = useState<BookingData>({
-    specialty: null,
-    professional: null,
-    date: "",
-    time: "",
-  });
+  const [specialties, setSpecialties] =
+    useState<Specialty[]>([]);
+
+  const [
+    isLoadingSpecialties,
+    setIsLoadingSpecialties,
+  ] = useState(true);
+
+  const [
+    specialtiesError,
+    setSpecialtiesError,
+  ] = useState("");
+
+  const [booking, setBooking] =
+    useState<BookingData>({
+      specialty: null,
+      professional: null,
+      date: "",
+      time: "",
+    });
+
+  useEffect(() => {
+    async function loadSpecialties() {
+      try {
+        setIsLoadingSpecialties(true);
+        setSpecialtiesError("");
+
+        const response = await api.get<Specialty[]>(
+          "/specialties",
+        );
+
+        setSpecialties(response.data);
+      } catch (error) {
+        console.error(
+          "Erro ao carregar especialidades:",
+          error,
+        );
+
+        setSpecialtiesError(
+          "Não foi possível carregar as especialidades.",
+        );
+      } finally {
+        setIsLoadingSpecialties(false);
+      }
+    }
+
+    loadSpecialties();
+  }, []);
 
   const filteredSpecialties = useMemo(() => {
-    const searchValue = search.toLowerCase().trim();
+    const searchValue = search
+      .toLowerCase()
+      .trim();
 
     if (!searchValue) {
       return specialties;
     }
 
     return specialties.filter((specialty) =>
-      specialty.name.toLowerCase().includes(searchValue),
+      specialty.name
+        .toLowerCase()
+        .includes(searchValue),
     );
-  }, [search]);
+  }, [search, specialties]);
 
   const filteredProfessionals = useMemo(() => {
     if (!booking.specialty) {
@@ -43,16 +97,19 @@ export function usePatientBooking() {
 
     return professionals.filter(
       (professional) =>
-        professional.specialty === booking.specialty?.name,
+        professional.specialty ===
+        booking.specialty?.name,
     );
   }, [booking.specialty]);
 
   function selectSpecialty(
     specialtyId: number,
   ) {
-    const selectedSpecialty = specialties.find(
-      (specialty) => specialty.id === specialtyId,
-    );
+    const selectedSpecialty =
+      specialties.find(
+        (specialty) =>
+          specialty.id === specialtyId,
+      );
 
     if (!selectedSpecialty) {
       return;
@@ -70,9 +127,11 @@ export function usePatientBooking() {
   function selectProfessional(
     professionalId: number,
   ) {
-    const selectedProfessional = professionals.find(
-      (professional) => professional.id === professionalId,
-    );
+    const selectedProfessional =
+      professionals.find(
+        (professional) =>
+          professional.id === professionalId,
+      );
 
     if (!selectedProfessional) {
       return;
@@ -111,7 +170,9 @@ export function usePatientBooking() {
     }
 
     if (step === 3) {
-      return Boolean(booking.date && booking.time);
+      return Boolean(
+        booking.date && booking.time,
+      );
     }
 
     return true;
@@ -123,29 +184,42 @@ export function usePatientBooking() {
     }
 
     if (step < 4) {
-      setStep((previous) => (previous + 1) as BookingStep);
+      setStep(
+        (previous) =>
+          (previous + 1) as BookingStep,
+      );
     }
   }
 
   function previousStep() {
     if (step > 1) {
-      setStep((previous) => (previous - 1) as BookingStep);
+      setStep(
+        (previous) =>
+          (previous - 1) as BookingStep,
+      );
     }
   }
 
-  function goToStep(targetStep: BookingStep) {
+  function goToStep(
+    targetStep: BookingStep,
+  ) {
     if (targetStep < step) {
       setStep(targetStep);
     }
   }
 
   function confirmAppointment() {
-    console.log("Consulta confirmada:", booking);
+    console.log(
+      "Consulta confirmada:",
+      booking,
+    );
   }
 
-  const selectedDate = availableDates.find(
-    (date) => date.value === booking.date,
-  );
+  const selectedDate =
+    availableDates.find(
+      (date) =>
+        date.value === booking.date,
+    );
 
   return {
     step,
@@ -157,6 +231,8 @@ export function usePatientBooking() {
     availableDates,
     availableTimes,
     selectedDate,
+    isLoadingSpecialties,
+    specialtiesError,
     selectSpecialty,
     selectProfessional,
     selectDate,
