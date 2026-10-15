@@ -5,7 +5,10 @@ import { Link as RouterLink } from "react-router-dom";
 import { theme } from "../../theme";
 import Logo from "../../assets/img/HealthFlow-Logo.png";
 
+import { useLogin } from "./Login.hook";
+
 export const Login = () => {
+  const { form, isLoading, handleChange, handleSubmit } = useLogin();
   return (
     <Styled.Container>
       <Styled.Illustration src={Logo} alt="Logo do HealthFlow" />
@@ -33,6 +36,8 @@ export const Login = () => {
             fullWidth
             placeholder="Digite seu e-mail"
             type="email"
+            value={form.email}
+            onChange={(event) => handleChange("email", event.target.value)}
             sx={{
               minWidth: {
                 xs: 0,
@@ -55,6 +60,8 @@ export const Login = () => {
             fullWidth
             placeholder="Digite sua senha"
             type="password"
+            value={form.password}
+            onChange={(event) => handleChange("password", event.target.value)}
             sx={{
               minWidth: {
                 xs: 0,
@@ -71,7 +78,10 @@ export const Login = () => {
         </Stack>
 
         <Box>
-          <ButtonBlue text="Entrar" onClick={() => console.log("Clicou")} />
+          <ButtonBlue
+            text={isLoading ? "Entrando..." : "Entrar"}
+            onClick={handleSubmit}
+          />
         </Box>
 
         <Styled.OrContainer>

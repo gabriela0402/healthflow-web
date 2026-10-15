@@ -5,7 +5,15 @@ import { Link as RouterLink } from "react-router-dom";
 import { theme } from "../../theme";
 import Logo from "../../assets/img/HealthFlow-Logo.png";
 
+import { useRegister } from "./Register.hook";
+
 export const Register = () => {
+  const {
+    form,
+    isLoading,
+    handleChange,
+    handleSubmit,
+  } = useRegister();
   return (
     <Styled.Container>
       <Styled.Illustration src={Logo} alt="Logo do HealthFlow" />
@@ -33,6 +41,8 @@ export const Register = () => {
             fullWidth
             placeholder="Digite seu nome completo"
             type="text"
+            value={form.name}
+            onChange={(event) => handleChange("name", event.target.value)}
             sx={{
               minWidth: {
                 xs: 0,
@@ -55,6 +65,8 @@ export const Register = () => {
             fullWidth
             placeholder="Digite seu e-mail"
             type="email"
+            value={form.email}
+            onChange={(event) => handleChange("email", event.target.value)}
             sx={{
               minWidth: {
                 xs: 0,
@@ -77,6 +89,8 @@ export const Register = () => {
             fullWidth
             placeholder="Digite sua senha"
             type="password"
+            value={form.password}
+            onChange={(event) => handleChange("password", event.target.value)}
             sx={{
               minWidth: {
                 xs: 0,
@@ -99,6 +113,10 @@ export const Register = () => {
             fullWidth
             placeholder="Digite sua senha"
             type="password"
+            value={form.confirmPassword}
+            onChange={(event) =>
+              handleChange("confirmPassword", event.target.value)
+            }
             sx={{
               minWidth: {
                 xs: 0,
@@ -115,7 +133,10 @@ export const Register = () => {
         </Stack>
 
         <Box>
-          <ButtonBlue text="Enviar" onClick={() => console.log("Clicou")} />
+          <ButtonBlue
+            text={isLoading ? "Cadastrando..." : "Criar minha conta"}
+            onClick={handleSubmit}
+          />
         </Box>
 
         <Styled.OrContainer>
