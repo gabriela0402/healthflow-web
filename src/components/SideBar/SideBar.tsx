@@ -14,13 +14,9 @@ export const SideBar = () => {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] =
-    useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const bottomItemLabels = [
-    "Configurações",
-    "Sair",
-  ];
+  const bottomItemLabels = ["Configurações", "Sair"];
 
   const sidebarItems = getSidebarItems(mockUser.role);
 
@@ -47,18 +43,16 @@ export const SideBar = () => {
 
   function handleLogoutConfirm() {
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
-
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("patientId");
+    localStorage.removeItem("userName");
 
     setIsLogoutModalOpen(false);
     navigate("/login");
   }
 
-  function renderNavigationItem(
-    item: (typeof sidebarItems)[number],
-  ) {
+  function renderNavigationItem(item: (typeof sidebarItems)[number]) {
     const Icon = item.icon;
 
     return (
@@ -79,29 +73,20 @@ export const SideBar = () => {
     <>
       <Styled.MenuButton
         onClick={() => setIsOpen((previous) => !previous)}
-        aria-label={
-          isOpen ? "Fechar menu" : "Abrir menu"
-        }
+        aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
       >
         {isOpen ? <CloseIcon /> : <MenuIcon />}
       </Styled.MenuButton>
 
-      {isOpen && (
-        <Styled.Overlay onClick={closeMenu} />
-      )}
+      {isOpen && <Styled.Overlay onClick={closeMenu} />}
 
       <Styled.Container className={isOpen ? "open" : ""}>
         <Styled.LogoContainer>
-          <Styled.Logo
-            src={LogoImage}
-            alt="Logo HealthFlow"
-          />
+          <Styled.Logo src={LogoImage} alt="Logo HealthFlow" />
         </Styled.LogoContainer>
 
         <Styled.ItemsContainer>
-          {mainItems.map((item) =>
-            renderNavigationItem(item),
-          )}
+          {mainItems.map((item) => renderNavigationItem(item))}
         </Styled.ItemsContainer>
 
         <Styled.BottomItems>
@@ -117,9 +102,7 @@ export const SideBar = () => {
                 >
                   <Icon />
 
-                  <ListItemText
-                    primary={item.label}
-                  />
+                  <ListItemText primary={item.label} />
                 </Styled.StyledItemButton>
               );
             }

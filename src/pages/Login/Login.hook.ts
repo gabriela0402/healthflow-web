@@ -57,7 +57,6 @@ export function useLogin() {
 
       const data = response.data;
 
-
       localStorage.setItem("token", data.token);
 
       if (data.role) {
@@ -66,6 +65,10 @@ export function useLogin() {
 
       if (data.userId) {
         localStorage.setItem("userId", String(data.userId));
+      }
+      
+      if (data.patientId) {
+        localStorage.setItem("patientId", String(data.patientId));
       }
 
       if (data.name) {
@@ -77,7 +80,6 @@ export function useLogin() {
       navigate(getHomeRoute(data.role), {
         replace: true,
       });
-
     } catch (error: any) {
       console.error("Erro ao realizar login:", error);
 
