@@ -7,16 +7,13 @@ import {
 import { api } from "../../services/api";
 
 import type {
+  AvailableDate,
   BookingData,
   BookingStep,
+  Professional,
+  ProfessionalAvailability,
   Specialty,
 } from "./PatientBooking.types";
-
-import {
-  availableDates,
-  availableTimes,
-  professionals,
-} from "./PatientBooking.utils";
 
 export function usePatientBooking() {
   const [step, setStep] =
@@ -28,15 +25,43 @@ export function usePatientBooking() {
   const [specialties, setSpecialties] =
     useState<Specialty[]>([]);
 
+  const [professionals, setProfessionals] =
+    useState<Professional[]>([]);
+
   const [
     isLoadingSpecialties,
     setIsLoadingSpecialties,
   ] = useState(true);
 
   const [
+    isLoadingProfessionals,
+    setIsLoadingProfessionals,
+  ] = useState(false);
+
+  const [
+    isLoadingAvailability,
+    setIsLoadingAvailability,
+  ] = useState(false);
+
+  const [
     specialtiesError,
     setSpecialtiesError,
   ] = useState("");
+
+  const [
+    professionalsError,
+    setProfessionalsError,
+  ] = useState("");
+
+  const [
+    availabilityError,
+    setAvailabilityError,
+  ] = useState("");
+
+  const [
+    professionalAvailabilities,
+    setProfessionalAvailabilities,
+  ] = useState<ProfessionalAvailability[]>([]);
 
   const [booking, setBooking] =
     useState<BookingData>({
@@ -74,6 +99,72 @@ export function usePatientBooking() {
     loadSpecialties();
   }, []);
 
+  useEffect(() => {
+    async function loadProfessionals() {
+      try {
+        setIsLoadingProfessionals(true);
+        setProfessionalsError("");
+
+        const response = await api.get<Professional[]>(
+          "/professionals",
+        );
+
+        setProfessionals(response.data);
+      } catch (error) {
+        console.error(
+          "Erro ao carregar profissionais:",
+          error,
+        );
+
+        setProfessionalsError(
+          "Não foi possível carregar os profissionais.",
+        );
+      } finally {
+        setIsLoadingProfessionals(false);
+      }
+    }
+
+    loadProfessionals();
+  }, []);
+
+  useEffect(() => {
+    async function loadAvailability() {
+      if (!booking.professional) {
+        setProfessionalAvailabilities([]);
+        return;
+      }
+
+      try {
+        setIsLoadingAvailability(true);
+        setAvailabilityError("");
+
+        const response =
+          await api.get<ProfessionalAvailability[]>(
+            `/professionals/${booking.professional.id}/availability`,
+          );
+
+        setProfessionalAvailabilities(
+          response.data,
+        );
+      } catch (error) {
+        console.error(
+          "Erro ao carregar disponibilidade:",
+          error,
+        );
+
+        setProfessionalAvailabilities([]);
+
+        setAvailabilityError(
+          "Não foi possível carregar a disponibilidade deste profissional.",
+        );
+      } finally {
+        setIsLoadingAvailability(false);
+      }
+    }
+
+    loadAvailability();
+  }, [booking.professional]);
+
   const filteredSpecialties = useMemo(() => {
     const searchValue = search
       .toLowerCase()
@@ -97,10 +188,209 @@ export function usePatientBooking() {
 
     return professionals.filter(
       (professional) =>
-        professional.specialty ===
-        booking.specialty?.name,
+        professional.specialtyId ===
+        booking.specialty?.id,
     );
-  }, [booking.specialty]);
+  }, [booking.specialty, professionals]);
+
+  function getDayOfWeekNumber(
+    dayOfWeek: number | string,
+  ) {
+    if (typeof dayOfWeek === "number") {
+      return dayOfWeek;
+    }
+
+    const normalizedDay =
+      dayOfWeek.toLowerCase();
+
+    const days: Record<string, number> = {
+      sunday: 0,
+      monday: 1,
+      tuesday: 2,
+      wednesday: 3,
+      thursday: 4,
+      friday: 5,
+      saturday: 6,
+
+      domingo: 0,
+      segunda: 1,
+      "segunda-feira": 1,
+      terca: 2,
+      terça: 2,
+      "terça-feira": 2,
+      quarta: 3,
+      "quarta-feira": 3,
+      quinta: 4,
+      "quinta-feira": 4,
+      sexta: 5,
+      "sexta-feira": 5,
+      sabado: 6,
+      sábado: 6,
+      "sábado-feira": 6,
+    };
+
+    return days[normalizedDay];
+  }
+
+  function formatDateValue(date: Date) {
+    const year = date.getFullYear();
+    const month = String(
+      date.getMonth() + 1,
+    ).padStart(2, "0");
+    const day = String(
+      date.getDate(),
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  function parseDateValue(value: string) {
+    const [year, month, day] =
+      value.split("-").map(Number);
+
+    return new Date(year, month - 1, day);
+  }
+
+  function getMinutesFromTime(
+    time: string,
+  ) {
+    const [hours, minutes] =
+      time.split(":").map(Number);
+
+    return hours * 60 + minutes;
+  }
+
+  function formatMinutesAsTime(
+    totalMinutes: number,
+  ) {
+    const hours = Math.floor(
+      totalMinutes / 60,
+    );
+
+    const minutes = totalMinutes % 60;
+
+    return `${String(hours).padStart(2, "0")}:${String(
+      minutes,
+    ).padStart(2, "0")}`;
+  }
+
+  const availableDates = useMemo<
+    AvailableDate[]
+  >(() => {
+    if (
+      !booking.professional ||
+      professionalAvailabilities.length === 0
+    ) {
+      return [];
+    }
+
+    const dates: AvailableDate[] = [];
+    const today = new Date();
+
+    for (let index = 1; index <= 60; index++) {
+      const date = new Date(today);
+
+      date.setDate(
+        today.getDate() + index,
+      );
+
+      const dateDayOfWeek =
+        date.getDay();
+
+      const hasAvailability =
+        professionalAvailabilities.some(
+          (availability) =>
+            getDayOfWeekNumber(
+              availability.dayOfWeek,
+            ) === dateDayOfWeek,
+        );
+
+      if (!hasAvailability) {
+        continue;
+      }
+
+      const weekday = new Intl.DateTimeFormat(
+        "pt-BR",
+        {
+          weekday: "long",
+        },
+      ).format(date);
+
+      const label = new Intl.DateTimeFormat(
+        "pt-BR",
+        {
+          day: "2-digit",
+          month: "short",
+        },
+      ).format(date);
+
+      dates.push({
+        value: formatDateValue(date),
+        label,
+        weekday:
+          weekday.charAt(0).toUpperCase() +
+          weekday.slice(1),
+      });
+    }
+
+    return dates;
+  }, [
+    booking.professional,
+    professionalAvailabilities,
+  ]);
+
+  const availableTimes = useMemo(() => {
+    if (!booking.date) {
+      return [];
+    }
+
+    const selectedDate =
+      parseDateValue(booking.date);
+
+    const selectedDayOfWeek =
+      selectedDate.getDay();
+
+    const availability =
+      professionalAvailabilities.find(
+        (item) =>
+          getDayOfWeekNumber(
+            item.dayOfWeek,
+          ) === selectedDayOfWeek,
+      );
+
+    if (!availability) {
+      return [];
+    }
+
+    const startMinutes =
+      getMinutesFromTime(
+        availability.startTime,
+      );
+
+    const endMinutes =
+      getMinutesFromTime(
+        availability.endTime,
+      );
+
+    const times: string[] = [];
+
+    for (
+      let current = startMinutes;
+      current < endMinutes;
+      current += availability.slotDurationInMinutes
+    ) {
+      times.push(
+        formatMinutesAsTime(current),
+      );
+    }
+
+    return times;
+  }, [
+    booking.date,
+    professionalAvailabilities,
+  ]);
+
+  const filteredTimes = availableTimes;
 
   function selectSpecialty(
     specialtyId: number,
@@ -122,6 +412,9 @@ export function usePatientBooking() {
       date: "",
       time: "",
     }));
+
+    setProfessionalAvailabilities([]);
+    setAvailabilityError("");
   }
 
   function selectProfessional(
@@ -143,6 +436,9 @@ export function usePatientBooking() {
       date: "",
       time: "",
     }));
+
+    setProfessionalAvailabilities([]);
+    setAvailabilityError("");
   }
 
   function selectDate(date: string) {
@@ -229,10 +525,14 @@ export function usePatientBooking() {
     filteredSpecialties,
     filteredProfessionals,
     availableDates,
-    availableTimes,
+    availableTimes: filteredTimes,
     selectedDate,
     isLoadingSpecialties,
     specialtiesError,
+    isLoadingProfessionals,
+    professionalsError,
+    isLoadingAvailability,
+    availabilityError,
     selectSpecialty,
     selectProfessional,
     selectDate,

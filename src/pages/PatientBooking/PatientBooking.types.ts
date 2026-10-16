@@ -8,9 +8,25 @@ export type Specialty = {
 
 export type Professional = {
   id: number;
-  name: string;
-  specialty: string;
-  registration: string;
+  fullName: string;
+  registrationNumber: string;
+  specialtyId: number;
+  specialtyName: string;
+};
+
+export type ProfessionalAvailability = {
+  id: number;
+  professionalId: number;
+  dayOfWeek: number | string;
+  startTime: string;
+  endTime: string;
+  slotDurationInMinutes: number;
+};
+
+export type AvailableDate = {
+  value: string;
+  label: string;
+  weekday: string;
 };
 
 export type BookingData = {

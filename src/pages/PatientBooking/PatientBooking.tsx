@@ -26,6 +26,10 @@ export const PatientBooking = () => {
     selectedDate,
     isLoadingSpecialties,
     specialtiesError,
+    isLoadingProfessionals,
+    professionalsError,
+    isLoadingAvailability,
+    availabilityError,
     selectSpecialty,
     selectProfessional,
     selectDate,
@@ -234,6 +238,30 @@ export const PatientBooking = () => {
 
             {step === 2 && (
               <>
+                {isLoadingProfessionals && (
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    Carregando profissionais...
+                  </Typography>
+                )}
+
+                {professionalsError && (
+                  <Typography
+                    color="error"
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    {professionalsError}
+                  </Typography>
+                )}
+
                 <Typography
                   sx={{
                     color: "#102A56",
@@ -268,7 +296,7 @@ export const PatientBooking = () => {
                       onClick={() => selectProfessional(professional.id)}
                     >
                       <Styled.ProfessionalAvatar>
-                        {getInitials(professional.name)}
+                        {getInitials(professional.fullName)}
                       </Styled.ProfessionalAvatar>
 
                       <Stack>
@@ -278,21 +306,21 @@ export const PatientBooking = () => {
                             fontWeight: 700,
                           }}
                         >
-                          {professional.name}
+                          {professional.fullName}
                         </Typography>
 
                         <Typography
                           color="text.secondary"
                           sx={{ fontSize: "0.72rem" }}
                         >
-                          {professional.specialty}
+                          {professional.specialtyName}
                         </Typography>
 
                         <Typography
                           color="text.secondary"
                           sx={{ fontSize: "0.68rem" }}
                         >
-                          {professional.registration}
+                          {professional.registrationNumber}
                         </Typography>
                       </Stack>
                     </Styled.ProfessionalCard>
@@ -316,32 +344,73 @@ export const PatientBooking = () => {
                 <Typography color="text.secondary" sx={{ fontSize: "0.78rem" }}>
                   Selecione um dos horários disponíveis.
                 </Typography>
+                {isLoadingAvailability && (
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    Carregando disponibilidade...
+                  </Typography>
+                )}
 
-                <Styled.DateGrid>
-                  {availableDates.map((date) => (
-                    <Styled.DateCard
-                      key={date.value}
-                      selected={booking.date === date.value}
-                      onClick={() => selectDate(date.value)}
+                {availabilityError && (
+                  <Typography
+                    color="error"
+                    sx={{
+                      marginTop: "1rem",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    {availabilityError}
+                  </Typography>
+                )}
+
+                {!isLoadingAvailability &&
+                  !availabilityError &&
+                  availableDates.length > 0 && (
+                    <Styled.DateGrid>
+                      {availableDates.map((date) => (
+                        <Styled.DateCard
+                          key={date.value}
+                          selected={booking.date === date.value}
+                          onClick={() => selectDate(date.value)}
+                        >
+                          <Typography
+                            sx={{
+                              fontSize: "0.82rem",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {date.label}
+                          </Typography>
+
+                          <Typography
+                            color="text.secondary"
+                            sx={{ fontSize: "0.7rem" }}
+                          >
+                            {date.weekday}
+                          </Typography>
+                        </Styled.DateCard>
+                      ))}
+                    </Styled.DateGrid>
+                  )}
+
+                {!isLoadingAvailability &&
+                  !availabilityError &&
+                  availableDates.length === 0 && (
+                    <Typography
+                      color="text.secondary"
+                      sx={{
+                        marginTop: "1rem",
+                        fontSize: "0.85rem",
+                      }}
                     >
-                      <Typography
-                        sx={{
-                          fontSize: "0.82rem",
-                          fontWeight: 700,
-                        }}
-                      >
-                        {date.label}
-                      </Typography>
-
-                      <Typography
-                        color="text.secondary"
-                        sx={{ fontSize: "0.7rem" }}
-                      >
-                        {date.weekday}
-                      </Typography>
-                    </Styled.DateCard>
-                  ))}
-                </Styled.DateGrid>
+                      Este profissional não possui horários cadastrados.
+                    </Typography>
+                  )}
 
                 {booking.date && (
                   <>
@@ -356,17 +425,29 @@ export const PatientBooking = () => {
                       Horários disponíveis
                     </Typography>
 
-                    <Styled.TimeGrid>
-                      {availableTimes.map((time) => (
-                        <Styled.TimeButton
-                          key={time}
-                          selected={booking.time === time}
-                          onClick={() => selectTime(time)}
-                        >
-                          {time}
-                        </Styled.TimeButton>
-                      ))}
-                    </Styled.TimeGrid>
+                    {availableTimes.length === 0 ? (
+                      <Typography
+                        color="text.secondary"
+                        sx={{
+                          marginTop: "0.8rem",
+                          fontSize: "0.8rem",
+                        }}
+                      >
+                        Não existem horários disponíveis para esta data.
+                      </Typography>
+                    ) : (
+                      <Styled.TimeGrid>
+                        {availableTimes.map((time) => (
+                          <Styled.TimeButton
+                            key={time}
+                            selected={booking.time === time}
+                            onClick={() => selectTime(time)}
+                          >
+                            {time}
+                          </Styled.TimeButton>
+                        ))}
+                      </Styled.TimeGrid>
+                    )}
                   </>
                 )}
               </>
@@ -398,7 +479,8 @@ export const PatientBooking = () => {
                   </Typography>
 
                   <Typography>
-                    <strong>Profissional:</strong> {booking.professional?.name}
+                    <strong>Profissional:</strong>{" "}
+                    {booking.professional?.fullName}
                   </Typography>
 
                   <Typography>
