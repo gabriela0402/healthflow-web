@@ -93,7 +93,7 @@ export const itemsPatient: SideBarItem[] = [
   },
   {
     label: "Meus Agendamentos",
-    path: "/my-appointments",
+    path: "/my-appoiments-patient",
     icon: CalendarTodayIcon,
   },
   {

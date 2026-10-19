@@ -21,6 +21,7 @@ import { PatientCreate } from "../pages/PatientCreate/PatientCreate";
 import { ProfessionalCreate } from "../pages/ProfessionalCreate/ProfessionalCreate";
 import { SpecialtyCreate } from "../pages/SpecialtyCreate/SpecialtyCreate";
 import { AppointmentCreate } from "../pages/AppointmentCreate/AppointmentCreate";
+import { PatientAppointments } from "../pages/PatientAppointments/PatientAppointments";
 
 export function AppRoutes() {
   return (
@@ -40,10 +41,7 @@ export function AppRoutes() {
         <Route path="/register" element={<Register />} />
         <Route path="/settings" element={<Settings />} />
 
-        <Route
-          path="/dashboard-professional"
-          element={<ProfessionalDashboard />}
-        />
+        <Route path="/dashboard-professional" element={<ProfessionalDashboard />} />
         <Route path="/my-schedule" element={<ProfessionalSchedule />} />
         <Route path="/my-patients" element={<ProfessionalPatients />} />
         <Route path="/my-appointments" element={<ProfessioanlAppointments />} />
@@ -53,6 +51,8 @@ export function AppRoutes() {
         <Route path="/book-appointment" element={<PatientBooking />} />
         <Route path="/my-data" element={<PatientData />} />
         <Route path="/notifications" element={<PatientNotifications />} />
+        <Route path="/my-appoiments-patient" element={<PatientAppointments />} />
+
       </Route>
 
       <Route path="/" element={<Navigate to="/login" replace />} />

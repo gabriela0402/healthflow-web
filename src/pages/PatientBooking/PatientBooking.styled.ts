@@ -101,7 +101,6 @@ export const MainCard = styled(Stack)(({ theme }) => ({
 export const SearchInput = styled("input")(({ theme }) => ({
   width: "100%",
   height: "44px",
-  marginTop: "1rem",
   padding: "0 1rem",
   boxSizing: "border-box",
   border: `1px solid ${theme.palette.divider}`,

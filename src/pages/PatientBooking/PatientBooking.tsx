@@ -552,7 +552,7 @@ export const PatientBooking = () => {
                     fontWeight: 600,
                   }}
                 >
-                  {booking.professional?.name || "Selecione um profissional"}
+                  {booking.professional?.fullName || "Selecione um profissional"}
                 </Typography>
               </Stack>
             </Styled.SummaryItem>
