@@ -39,6 +39,7 @@ export const PatientBooking = () => {
     previousStep,
     goToStep,
     confirmAppointment,
+    isSubmittingAppointment,
   } = usePatientBooking();
 
   const steps = [
@@ -505,8 +506,14 @@ export const PatientBooking = () => {
                 <ButtonBlue text="Continuar" onClick={nextStep} />
               ) : (
                 <ButtonBlue
-                  text="Confirmar consulta"
+                  text={
+                    isSubmittingAppointment
+                      ? "Confirmando..."
+                      : "Confirmar consulta"
+                  }
                   onClick={confirmAppointment}
+                  disabled={isSubmittingAppointment}
+                  
                 />
               )}
             </Styled.FooterActions>

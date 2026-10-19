@@ -1,8 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { api } from "../../services/api";
 
@@ -15,61 +11,44 @@ import type {
   Specialty,
 } from "./PatientBooking.types";
 
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 export function usePatientBooking() {
-  const [step, setStep] =
-    useState<BookingStep>(1);
+  const navigate = useNavigate();
 
-  const [search, setSearch] =
-    useState("");
+  const [isSubmittingAppointment, setIsSubmittingAppointment] = useState(false);
 
-  const [specialties, setSpecialties] =
-    useState<Specialty[]>([]);
+  const [step, setStep] = useState<BookingStep>(1);
 
-  const [professionals, setProfessionals] =
-    useState<Professional[]>([]);
+  const [search, setSearch] = useState("");
 
-  const [
-    isLoadingSpecialties,
-    setIsLoadingSpecialties,
-  ] = useState(true);
+  const [specialties, setSpecialties] = useState<Specialty[]>([]);
 
-  const [
-    isLoadingProfessionals,
-    setIsLoadingProfessionals,
-  ] = useState(false);
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
 
-  const [
-    isLoadingAvailability,
-    setIsLoadingAvailability,
-  ] = useState(false);
+  const [isLoadingSpecialties, setIsLoadingSpecialties] = useState(true);
 
-  const [
-    specialtiesError,
-    setSpecialtiesError,
-  ] = useState("");
+  const [isLoadingProfessionals, setIsLoadingProfessionals] = useState(false);
 
-  const [
-    professionalsError,
-    setProfessionalsError,
-  ] = useState("");
+  const [isLoadingAvailability, setIsLoadingAvailability] = useState(false);
 
-  const [
-    availabilityError,
-    setAvailabilityError,
-  ] = useState("");
+  const [specialtiesError, setSpecialtiesError] = useState("");
 
-  const [
-    professionalAvailabilities,
-    setProfessionalAvailabilities,
-  ] = useState<ProfessionalAvailability[]>([]);
+  const [professionalsError, setProfessionalsError] = useState("");
 
-  const [booking, setBooking] =
-    useState<BookingData>({
-      specialty: null,
-      professional: null,
-      date: "",
-      time: "",
-    });
+  const [availabilityError, setAvailabilityError] = useState("");
+
+  const [professionalAvailabilities, setProfessionalAvailabilities] = useState<
+    ProfessionalAvailability[]
+  >([]);
+
+  const [booking, setBooking] = useState<BookingData>({
+    specialty: null,
+    professional: null,
+    date: "",
+    time: "",
+  });
 
   useEffect(() => {
     async function loadSpecialties() {
@@ -77,20 +56,13 @@ export function usePatientBooking() {
         setIsLoadingSpecialties(true);
         setSpecialtiesError("");
 
-        const response = await api.get<Specialty[]>(
-          "/specialties",
-        );
+        const response = await api.get<Specialty[]>("/specialties");
 
         setSpecialties(response.data);
       } catch (error) {
-        console.error(
-          "Erro ao carregar especialidades:",
-          error,
-        );
+        console.error("Erro ao carregar especialidades:", error);
 
-        setSpecialtiesError(
-          "Não foi possível carregar as especialidades.",
-        );
+        setSpecialtiesError("Não foi possível carregar as especialidades.");
       } finally {
         setIsLoadingSpecialties(false);
       }
@@ -105,20 +77,13 @@ export function usePatientBooking() {
         setIsLoadingProfessionals(true);
         setProfessionalsError("");
 
-        const response = await api.get<Professional[]>(
-          "/professionals",
-        );
+        const response = await api.get<Professional[]>("/professionals");
 
         setProfessionals(response.data);
       } catch (error) {
-        console.error(
-          "Erro ao carregar profissionais:",
-          error,
-        );
+        console.error("Erro ao carregar profissionais:", error);
 
-        setProfessionalsError(
-          "Não foi possível carregar os profissionais.",
-        );
+        setProfessionalsError("Não foi possível carregar os profissionais.");
       } finally {
         setIsLoadingProfessionals(false);
       }
@@ -138,19 +103,13 @@ export function usePatientBooking() {
         setIsLoadingAvailability(true);
         setAvailabilityError("");
 
-        const response =
-          await api.get<ProfessionalAvailability[]>(
-            `/professionals/${booking.professional.id}/availability`,
-          );
+        const response = await api.get<ProfessionalAvailability[]>(
+          `/professionals/${booking.professional.id}/availability`,
+        );
 
-        setProfessionalAvailabilities(
-          response.data,
-        );
+        setProfessionalAvailabilities(response.data);
       } catch (error) {
-        console.error(
-          "Erro ao carregar disponibilidade:",
-          error,
-        );
+        console.error("Erro ao carregar disponibilidade:", error);
 
         setProfessionalAvailabilities([]);
 
@@ -166,18 +125,14 @@ export function usePatientBooking() {
   }, [booking.professional]);
 
   const filteredSpecialties = useMemo(() => {
-    const searchValue = search
-      .toLowerCase()
-      .trim();
+    const searchValue = search.toLowerCase().trim();
 
     if (!searchValue) {
       return specialties;
     }
 
     return specialties.filter((specialty) =>
-      specialty.name
-        .toLowerCase()
-        .includes(searchValue),
+      specialty.name.toLowerCase().includes(searchValue),
     );
   }, [search, specialties]);
 
@@ -187,21 +142,16 @@ export function usePatientBooking() {
     }
 
     return professionals.filter(
-      (professional) =>
-        professional.specialtyId ===
-        booking.specialty?.id,
+      (professional) => professional.specialtyId === booking.specialty?.id,
     );
   }, [booking.specialty, professionals]);
 
-  function getDayOfWeekNumber(
-    dayOfWeek: number | string,
-  ) {
+  function getDayOfWeekNumber(dayOfWeek: number | string) {
     if (typeof dayOfWeek === "number") {
       return dayOfWeek;
     }
 
-    const normalizedDay =
-      dayOfWeek.toLowerCase();
+    const normalizedDay = dayOfWeek.toLowerCase();
 
     const days: Record<string, number> = {
       sunday: 0,
@@ -234,53 +184,37 @@ export function usePatientBooking() {
 
   function formatDateValue(date: Date) {
     const year = date.getFullYear();
-    const month = String(
-      date.getMonth() + 1,
-    ).padStart(2, "0");
-    const day = String(
-      date.getDate(),
-    ).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   }
 
   function parseDateValue(value: string) {
-    const [year, month, day] =
-      value.split("-").map(Number);
+    const [year, month, day] = value.split("-").map(Number);
 
     return new Date(year, month - 1, day);
   }
 
-  function getMinutesFromTime(
-    time: string,
-  ) {
-    const [hours, minutes] =
-      time.split(":").map(Number);
+  function getMinutesFromTime(time: string) {
+    const [hours, minutes] = time.split(":").map(Number);
 
     return hours * 60 + minutes;
   }
 
-  function formatMinutesAsTime(
-    totalMinutes: number,
-  ) {
-    const hours = Math.floor(
-      totalMinutes / 60,
-    );
+  function formatMinutesAsTime(totalMinutes: number) {
+    const hours = Math.floor(totalMinutes / 60);
 
     const minutes = totalMinutes % 60;
 
-    return `${String(hours).padStart(2, "0")}:${String(
-      minutes,
-    ).padStart(2, "0")}`;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0",
+    )}`;
   }
 
-  const availableDates = useMemo<
-    AvailableDate[]
-  >(() => {
-    if (
-      !booking.professional ||
-      professionalAvailabilities.length === 0
-    ) {
+  const availableDates = useMemo<AvailableDate[]>(() => {
+    if (!booking.professional || professionalAvailabilities.length === 0) {
       return [];
     }
 
@@ -290,87 +224,58 @@ export function usePatientBooking() {
     for (let index = 1; index <= 60; index++) {
       const date = new Date(today);
 
-      date.setDate(
-        today.getDate() + index,
+      date.setDate(today.getDate() + index);
+
+      const dateDayOfWeek = date.getDay();
+
+      const hasAvailability = professionalAvailabilities.some(
+        (availability) =>
+          getDayOfWeekNumber(availability.dayOfWeek) === dateDayOfWeek,
       );
-
-      const dateDayOfWeek =
-        date.getDay();
-
-      const hasAvailability =
-        professionalAvailabilities.some(
-          (availability) =>
-            getDayOfWeekNumber(
-              availability.dayOfWeek,
-            ) === dateDayOfWeek,
-        );
 
       if (!hasAvailability) {
         continue;
       }
 
-      const weekday = new Intl.DateTimeFormat(
-        "pt-BR",
-        {
-          weekday: "long",
-        },
-      ).format(date);
+      const weekday = new Intl.DateTimeFormat("pt-BR", {
+        weekday: "long",
+      }).format(date);
 
-      const label = new Intl.DateTimeFormat(
-        "pt-BR",
-        {
-          day: "2-digit",
-          month: "short",
-        },
-      ).format(date);
+      const label = new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "short",
+      }).format(date);
 
       dates.push({
         value: formatDateValue(date),
         label,
-        weekday:
-          weekday.charAt(0).toUpperCase() +
-          weekday.slice(1),
+        weekday: weekday.charAt(0).toUpperCase() + weekday.slice(1),
       });
     }
 
     return dates;
-  }, [
-    booking.professional,
-    professionalAvailabilities,
-  ]);
+  }, [booking.professional, professionalAvailabilities]);
 
   const availableTimes = useMemo(() => {
     if (!booking.date) {
       return [];
     }
 
-    const selectedDate =
-      parseDateValue(booking.date);
+    const selectedDate = parseDateValue(booking.date);
 
-    const selectedDayOfWeek =
-      selectedDate.getDay();
+    const selectedDayOfWeek = selectedDate.getDay();
 
-    const availability =
-      professionalAvailabilities.find(
-        (item) =>
-          getDayOfWeekNumber(
-            item.dayOfWeek,
-          ) === selectedDayOfWeek,
-      );
+    const availability = professionalAvailabilities.find(
+      (item) => getDayOfWeekNumber(item.dayOfWeek) === selectedDayOfWeek,
+    );
 
     if (!availability) {
       return [];
     }
 
-    const startMinutes =
-      getMinutesFromTime(
-        availability.startTime,
-      );
+    const startMinutes = getMinutesFromTime(availability.startTime);
 
-    const endMinutes =
-      getMinutesFromTime(
-        availability.endTime,
-      );
+    const endMinutes = getMinutesFromTime(availability.endTime);
 
     const times: string[] = [];
 
@@ -379,27 +284,18 @@ export function usePatientBooking() {
       current < endMinutes;
       current += availability.slotDurationInMinutes
     ) {
-      times.push(
-        formatMinutesAsTime(current),
-      );
+      times.push(formatMinutesAsTime(current));
     }
 
     return times;
-  }, [
-    booking.date,
-    professionalAvailabilities,
-  ]);
+  }, [booking.date, professionalAvailabilities]);
 
   const filteredTimes = availableTimes;
 
-  function selectSpecialty(
-    specialtyId: number,
-  ) {
-    const selectedSpecialty =
-      specialties.find(
-        (specialty) =>
-          specialty.id === specialtyId,
-      );
+  function selectSpecialty(specialtyId: number) {
+    const selectedSpecialty = specialties.find(
+      (specialty) => specialty.id === specialtyId,
+    );
 
     if (!selectedSpecialty) {
       return;
@@ -417,14 +313,10 @@ export function usePatientBooking() {
     setAvailabilityError("");
   }
 
-  function selectProfessional(
-    professionalId: number,
-  ) {
-    const selectedProfessional =
-      professionals.find(
-        (professional) =>
-          professional.id === professionalId,
-      );
+  function selectProfessional(professionalId: number) {
+    const selectedProfessional = professionals.find(
+      (professional) => professional.id === professionalId,
+    );
 
     if (!selectedProfessional) {
       return;
@@ -466,9 +358,7 @@ export function usePatientBooking() {
     }
 
     if (step === 3) {
-      return Boolean(
-        booking.date && booking.time,
-      );
+      return Boolean(booking.date && booking.time);
     }
 
     return true;
@@ -480,42 +370,69 @@ export function usePatientBooking() {
     }
 
     if (step < 4) {
-      setStep(
-        (previous) =>
-          (previous + 1) as BookingStep,
-      );
+      setStep((previous) => (previous + 1) as BookingStep);
     }
   }
 
   function previousStep() {
     if (step > 1) {
-      setStep(
-        (previous) =>
-          (previous - 1) as BookingStep,
-      );
+      setStep((previous) => (previous - 1) as BookingStep);
     }
   }
 
-  function goToStep(
-    targetStep: BookingStep,
-  ) {
+  function goToStep(targetStep: BookingStep) {
     if (targetStep < step) {
       setStep(targetStep);
     }
   }
 
-  function confirmAppointment() {
-    console.log(
-      "Consulta confirmada:",
-      booking,
-    );
+  async function confirmAppointment() {
+    const patientId = Number(localStorage.getItem("patientId"));
+
+    if (!patientId) {
+      toast.error("Não foi possível identificar o paciente.");
+      return;
+    }
+
+    if (!booking.professional) {
+      toast.error("Selecione um profissional.");
+      return;
+    }
+
+    if (!booking.date || !booking.time) {
+      toast.error("Selecione uma data e um horário.");
+      return;
+    }
+
+    try {
+      setIsSubmittingAppointment(true);
+
+      const scheduledAt = `${booking.date}T${booking.time}:00`;
+
+      await api.post("/appointments", {
+        patientId,
+        professionalId: booking.professional.id,
+        scheduledAt,
+        notes: null,
+      });
+
+      toast.success("Consulta agendada com sucesso!");
+
+      navigate("/my-appointments");
+    } catch (error: any) {
+      console.error("Erro ao confirmar consulta:", error);
+
+      const message = error.response?.data?.message;
+
+      toast.error(message || "Não foi possível confirmar a consulta.");
+    } finally {
+      setIsSubmittingAppointment(false);
+    }
   }
 
-  const selectedDate =
-    availableDates.find(
-      (date) =>
-        date.value === booking.date,
-    );
+  const selectedDate = availableDates.find(
+    (date) => date.value === booking.date,
+  );
 
   return {
     step,
@@ -533,6 +450,7 @@ export function usePatientBooking() {
     professionalsError,
     isLoadingAvailability,
     availabilityError,
+    isSubmittingAppointment,
     selectSpecialty,
     selectProfessional,
     selectDate,
