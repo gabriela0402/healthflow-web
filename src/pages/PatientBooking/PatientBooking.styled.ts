@@ -331,3 +331,11 @@ export const ConfirmationIcon = styled(Box)(({ theme }) => ({
   backgroundColor: "#E7F7EF",
   color: "#219653",
 }));
+
+export const LoadingBox = styled(Box)({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "100%",
+  padding: "2rem 0",
+});

@@ -5,7 +5,7 @@ import Person from "@mui/icons-material/Person";
 import Schedule from "@mui/icons-material/Schedule";
 import Search from "@mui/icons-material/Search";
 
-import { Stack, Typography } from "@mui/material";
+import { CircularProgress, Stack, Typography } from "@mui/material";
 
 import { SideBar } from "../../components/SideBar/SideBar";
 import { ButtonBlue } from "../../components/Buttons/Buttons";
@@ -157,15 +157,9 @@ export const PatientBooking = () => {
                 </Stack>
 
                 {isLoadingSpecialties && (
-                  <Typography
-                    color="text.secondary"
-                    sx={{
-                      marginTop: "1rem",
-                      fontSize: "0.85rem",
-                    }}
-                  >
-                    Carregando especialidades...
-                  </Typography>
+                  <Styled.LoadingBox>
+                    <CircularProgress size={32} />
+                  </Styled.LoadingBox>
                 )}
 
                 {specialtiesError && (
@@ -240,15 +234,9 @@ export const PatientBooking = () => {
             {step === 2 && (
               <>
                 {isLoadingProfessionals && (
-                  <Typography
-                    color="text.secondary"
-                    sx={{
-                      marginTop: "1rem",
-                      fontSize: "0.85rem",
-                    }}
-                  >
-                    Carregando profissionais...
-                  </Typography>
+                  <Styled.LoadingBox>
+                    <CircularProgress size={32} />
+                  </Styled.LoadingBox>
                 )}
 
                 {professionalsError && (
@@ -346,15 +334,9 @@ export const PatientBooking = () => {
                   Selecione um dos horários disponíveis.
                 </Typography>
                 {isLoadingAvailability && (
-                  <Typography
-                    color="text.secondary"
-                    sx={{
-                      marginTop: "1rem",
-                      fontSize: "0.85rem",
-                    }}
-                  >
-                    Carregando disponibilidade...
-                  </Typography>
+                  <Styled.LoadingBox>
+                    <CircularProgress size={32} />
+                  </Styled.LoadingBox>
                 )}
 
                 {availabilityError && (
@@ -513,7 +495,6 @@ export const PatientBooking = () => {
                   }
                   onClick={confirmAppointment}
                   disabled={isSubmittingAppointment}
-                  
                 />
               )}
             </Styled.FooterActions>
