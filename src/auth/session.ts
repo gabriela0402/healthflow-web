@@ -53,3 +53,7 @@ export function getSession(): Session | null {
 export function clearSession() {
   Object.values(KEYS).forEach((key) => localStorage.removeItem(key));
 }
+
+export function updateSessionName(name: string) {
+  localStorage.setItem(KEYS.userName, name);
+}

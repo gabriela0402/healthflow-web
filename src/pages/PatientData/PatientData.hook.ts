@@ -1,42 +1,96 @@
-import { useState } from "react";
-import type { PatientDataForm } from "./PatientData.types";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-const initialData: PatientDataForm = {
-  fullName: "Gabriela Silva",
-  email: "gabriela.silva@email.com.br",
-  phone: "(11) 98765-4321",
-  birthDate: "15/04/1990",
-  gender: "Feminino",
-  cpf: "123.456.789-00",
-  address: "Rua das Flores, 123 - Jardim Paulista, São Paulo - SP",
-  emergencyContactName: "Maria Silva",
-  emergencyContactPhone: "(11) 91234-5678",
-};
+import { updateSessionName } from "../../auth/session";
+import { getApiErrorMessage } from "../../services/apiError";
+import { getMyProfile, updateMyProfile } from "../../services/patientService";
+import type { PatientDataForm } from "./PatientData.types";
+import { emptyForm, formatCpf, toForm, toPayload } from "./PatientData.utils";
 
 export function usePatientData() {
-  const [form, setForm] =
-    useState<PatientDataForm>(initialData);
+  const [form, setForm] = useState<PatientDataForm>(emptyForm);
+  const [savedForm, setSavedForm] = useState<PatientDataForm>(emptyForm);
 
-  function handleChange(
-    field: keyof PatientDataForm,
-    value: string,
-  ) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function load() {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const data = toForm(await getMyProfile(controller.signal));
+
+        setForm(data);
+        setSavedForm(data);
+      } catch (err) {
+        if (axios.isCancel(err)) return;
+
+        setError(getApiErrorMessage(err, "Não foi possível carregar seus dados."));
+      } finally {
+        if (!controller.signal.aborted) setIsLoading(false);
+      }
+    }
+
+    load();
+
+    return () => controller.abort();
+  }, [reloadKey]);
+
+  const isDirty = useMemo(
+    () => JSON.stringify(form) !== JSON.stringify(savedForm),
+    [form, savedForm],
+  );
+
+  function handleChange(field: keyof PatientDataForm, value: string) {
     setForm((previous) => ({
       ...previous,
-      [field]: value,
+      [field]: field === "cpf" ? formatCpf(value) : value,
     }));
   }
 
-  function handleSave() {
-    console.log("Dados do paciente:", form);
+  async function handleSave() {
+    if (form.fullName.trim().length < 3) {
+      toast.error("Informe o nome completo.");
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+
+      const data = toForm(await updateMyProfile(toPayload(form)));
+
+      setForm(data);
+      setSavedForm(data);
+      updateSessionName(data.fullName);
+
+      toast.success("Dados atualizados com sucesso!");
+    } catch (err) {
+      console.error("Erro ao salvar dados do paciente:", err);
+
+      toast.error(getApiErrorMessage(err, "Não foi possível salvar os dados."));
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   function handleCancel() {
-    setForm(initialData);
+    setForm(savedForm);
   }
 
   return {
     form,
+    isLoading,
+    isSaving,
+    isDirty,
+    error,
+    reload: () => setReloadKey((key) => key + 1),
     handleChange,
     handleSave,
     handleCancel,
