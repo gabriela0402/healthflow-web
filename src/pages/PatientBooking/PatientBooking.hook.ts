@@ -418,7 +418,7 @@ export function usePatientBooking() {
 
       toast.success("Consulta agendada com sucesso!");
 
-      navigate("/my-appointments");
+      navigate("/my-appoiments-patient");
     } catch (error: any) {
       console.error("Erro ao confirmar consulta:", error);
 

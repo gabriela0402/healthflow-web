@@ -1,42 +1,126 @@
-import { useMemo, useState } from "react";
-import type { AppointmentView } from "./PatientAppointments.types";
-import { appointments } from "./PatientAppoiments.utils";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { getMyAppointments } from "../../services/appointmentService";
+import type {
+  AppointmentView,
+  PatientAppointment,
+} from "./PatientAppointments.types";
+import {
+  addDays,
+  formatShortDate,
+  getWeekStart,
+  isSameDay,
+  mapAppointment,
+} from "./PatientAppoiments.utils";
+
+function getErrorMessage(error: unknown) {
+  if (axios.isAxiosError(error)) {
+    if (!error.response) {
+      return "Não foi possível conectar ao servidor.";
+    }
+
+    if (error.response.status === 401) {
+      return "Sua sessão expirou. Faça login novamente.";
+    }
+
+    const data = error.response.data;
+
+    if (typeof data === "string" && data) return data;
+    if (data?.message) return data.message;
+  }
+
+  return "Não foi possível carregar os agendamentos.";
+}
 
 export function usePatientAppointments() {
+  const [appointments, setAppointments] = useState<PatientAppointment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("status");
   const [date, setDate] = useState("date");
+  const [view, setView] = useState<AppointmentView>("list");
+  const [weekOffset, setWeekOffset] = useState(0);
 
-  const [view, setView] =
-    useState<AppointmentView>("list");
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function load() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const data = await getMyAppointments(controller.signal);
+        setAppointments(data.map(mapAppointment));
+      } catch (err) {
+        if (axios.isCancel(err)) return;
+        setError(getErrorMessage(err));
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+
+    load();
+
+    return () => controller.abort();
+  }, [reloadKey]);
+
+  const reload = () => setReloadKey((key) => key + 1);
 
   const filteredAppointments = useMemo(() => {
     const searchValue = search.toLowerCase().trim();
+    const today = new Date();
+    const weekStart = getWeekStart(today);
+    const weekEnd = addDays(weekStart, 7);
 
     return appointments.filter((appointment) => {
       const matchesSearch =
-        appointment.patient
-          .toLowerCase()
-          .includes(searchValue) ||
-        appointment.specialty
-          .toLowerCase()
-          .includes(searchValue);
+        appointment.professional.toLowerCase().includes(searchValue) ||
+        appointment.specialty.toLowerCase().includes(searchValue);
 
       const matchesStatus =
-        status === "status" ||
-        appointment.status === status;
+        status === "status" || appointment.status === status;
 
-      return matchesSearch && matchesStatus;
+      const matchesDate =
+        date === "date" ||
+        (date === "today" && isSameDay(appointment.date, today)) ||
+        (date === "week" &&
+          appointment.date >= weekStart &&
+          appointment.date < weekEnd);
+
+      return matchesSearch && matchesStatus && matchesDate;
     });
-  }, [search, status]);
+  }, [appointments, search, status, date]);
 
-  const days = ["Seg", "Ter", "Qua", "Qui", "Sex"];
+  const weekDays = useMemo(() => {
+    const start = addDays(getWeekStart(new Date()), weekOffset * 7);
+    return Array.from({ length: 5 }, (_, index) => addDays(start, index));
+  }, [weekOffset]);
 
-  function getAppointmentsByDay(day: string) {
-    return filteredAppointments.filter(
-      (appointment) => appointment.day === day,
+  const weekLabel = `${formatShortDate(weekDays[0])} – ${formatShortDate(
+    weekDays[4],
+  )}`;
+
+  function getAppointmentsByDay(day: Date) {
+    return filteredAppointments.filter((appointment) =>
+      isSameDay(appointment.date, day),
     );
   }
+
+  const summary = useMemo(() => {
+    const today = new Date();
+    const todays = appointments.filter((appointment) =>
+      isSameDay(appointment.date, today),
+    );
+
+    return {
+      total: todays.length,
+      confirmed: todays.filter((a) => a.status === "confirmed").length,
+      pending: todays.filter((a) => a.status === "scheduled").length,
+    };
+  }, [appointments]);
 
   return {
     search,
@@ -47,8 +131,16 @@ export function usePatientAppointments() {
     setDate,
     view,
     setView,
-    days,
+    loading,
+    error,
+    reload,
     filteredAppointments,
+    weekDays,
+    weekLabel,
+    goToPreviousWeek: () => setWeekOffset((offset) => offset - 1),
+    goToNextWeek: () => setWeekOffset((offset) => offset + 1),
+    goToCurrentWeek: () => setWeekOffset(0),
     getAppointmentsByDay,
+    summary,
   };
 }

@@ -1,17 +1,18 @@
 export type AppointmentView = "list" | "calendar";
 
 export type AppointmentStatus =
-  | "confirmed"
   | "scheduled"
-  | "cancelled";
+  | "confirmed"
+  | "cancelled"
+  | "completed"
+  | "noShow";
 
-export type PacientAppointment = {
+export type PatientAppointment = {
   id: number;
+  date: Date;
   time: string;
-  patient: string;
-  age: number;
-  code: string;
+  professional: string;
   specialty: string;
   status: AppointmentStatus;
-  day: string;
+  notes: string | null;
 };

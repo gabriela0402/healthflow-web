@@ -2,11 +2,16 @@ import AccessTime from "@mui/icons-material/AccessTime";
 import CalendarMonth from "@mui/icons-material/CalendarMonth";
 import CalendarToday from "@mui/icons-material/CalendarToday";
 import CheckCircle from "@mui/icons-material/CheckCircle";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import ChevronRight from "@mui/icons-material/ChevronRight";
 import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import Search from "@mui/icons-material/Search";
 import ViewList from "@mui/icons-material/ViewList";
 
 import {
+  Alert,
+  Button,
+  CircularProgress,
   IconButton,
   Stack,
   Table,
@@ -20,9 +25,24 @@ import {
 import { SideBar } from "../../components/SideBar/SideBar";
 import * as Styled from "./PatientAppointments.styled";
 import { usePatientAppointments } from "./PatientAppointments.hook";
-import { getInitials, getStatusLabel } from "./PatientAppoiments.utils";
+import {
+  formatShortDate,
+  getAppointmentCode,
+  getInitials,
+  getStatusLabel,
+  getWeekdayLabel,
+} from "./PatientAppoiments.utils";
 
-import { appointments } from "./PatientAppoiments.utils";
+const LIST_TITLES: Record<string, string> = {
+  date: "Todos os agendamentos",
+  today: "Agenda de hoje",
+  week: "Agenda da semana",
+};
+
+const CALENDAR_HOURS = [
+  "08:00", "09:00", "10:00", "11:00",
+  "12:00", "13:00", "14:00", "15:00",
+];
 
 export const PatientAppointments = () => {
   const {
@@ -30,11 +50,21 @@ export const PatientAppointments = () => {
     setSearch,
     status,
     setStatus,
+    date,
+    setDate,
     view,
     setView,
-    days,
+    loading,
+    error,
+    reload,
     filteredAppointments,
+    weekDays,
+    weekLabel,
+    goToPreviousWeek,
+    goToNextWeek,
+    goToCurrentWeek,
     getAppointmentsByDay,
+    summary,
   } = usePatientAppointments();
 
   return (
@@ -74,20 +104,32 @@ export const PatientAppointments = () => {
               }}
             />
 
-            <Styled.SearchInput placeholder="Pesquisar agendamentos" />
+            <Styled.SearchInput
+              placeholder="Pesquisar por profissional ou especialidade"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
           </Styled.SearchContainer>
 
-          <Styled.FilterSelect defaultValue="date">
+          <Styled.FilterSelect
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+          >
             <option value="date">Data</option>
             <option value="today">Hoje</option>
             <option value="week">Esta semana</option>
           </Styled.FilterSelect>
 
-          <Styled.FilterSelect defaultValue="status">
+          <Styled.FilterSelect
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+          >
             <option value="status">Status</option>
-            <option value="confirmed">Confirmado</option>
             <option value="scheduled">Agendado</option>
+            <option value="confirmed">Confirmado</option>
+            <option value="completed">Concluído</option>
             <option value="cancelled">Cancelado</option>
+            <option value="noShow">Não compareceu</option>
           </Styled.FilterSelect>
 
           <Styled.ViewButtons>
@@ -121,18 +163,54 @@ export const PatientAppointments = () => {
                   fontWeight: 700,
                 }}
               >
-                {view === "list" ? "Agenda de hoje" : "Calendário semanal"}
+                {view === "list"
+                  ? LIST_TITLES[date]
+                  : "Calendário semanal"}
               </Typography>
 
+              {view === "calendar" && (
+                <Stack direction="row" alignItems="center" gap={0.5}>
+                  <IconButton size="small" onClick={goToPreviousWeek}>
+                    <ChevronLeft fontSize="small" />
+                  </IconButton>
+
+                  <Button
+                    size="small"
+                    onClick={goToCurrentWeek}
+                    sx={{ fontSize: "0.72rem", textTransform: "none" }}
+                  >
+                    {weekLabel}
+                  </Button>
+
+                  <IconButton size="small" onClick={goToNextWeek}>
+                    <ChevronRight fontSize="small" />
+                  </IconButton>
+                </Stack>
+              )}
             </Styled.ScheduleHeader>
 
-            {view === "list" ? (
+            {loading ? (
+              <Stack alignItems="center" sx={{ py: 6 }}>
+                <CircularProgress size={28} />
+              </Stack>
+            ) : error ? (
+              <Alert
+                severity="error"
+                action={
+                  <Button color="inherit" size="small" onClick={reload}>
+                    Tentar de novo
+                  </Button>
+                }
+              >
+                {error}
+              </Alert>
+            ) : view === "list" ? (
               <Styled.TableWrapper>
                 <Table sx={{ minWidth: "720px" }}>
                   <TableHead>
                     <TableRow>
-                      <TableCell>Horário</TableCell>
-                      <TableCell>Paciente</TableCell>
+                      <TableCell>Data e horário</TableCell>
+                      <TableCell>Profissional</TableCell>
                       <TableCell>Especialidade</TableCell>
                       <TableCell>Status</TableCell>
                       <TableCell align="right">Ações</TableCell>
@@ -140,6 +218,20 @@ export const PatientAppointments = () => {
                   </TableHead>
 
                   <TableBody>
+                    {filteredAppointments.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={5} align="center">
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontSize: "0.75rem", py: 2 }}
+                          >
+                            Nenhum agendamento encontrado
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    )}
+
                     {filteredAppointments.map((appointment) => (
                       <Styled.StyledTableRow key={appointment.id} hover>
                         <TableCell>
@@ -150,12 +242,20 @@ export const PatientAppointments = () => {
                           >
                             {appointment.time}
                           </Typography>
+
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ fontSize: "0.62rem" }}
+                          >
+                            {formatShortDate(appointment.date)}
+                          </Typography>
                         </TableCell>
 
                         <TableCell>
                           <Styled.PatientCell>
                             <Styled.Avatar>
-                              {getInitials(appointment.patient)}
+                              {getInitials(appointment.professional)}
                             </Styled.Avatar>
 
                             <Stack>
@@ -164,7 +264,7 @@ export const PatientAppointments = () => {
                                 fontWeight={600}
                                 sx={{ fontSize: "0.75rem" }}
                               >
-                                {appointment.patient}
+                                {appointment.professional}
                               </Typography>
 
                               <Typography
@@ -172,7 +272,7 @@ export const PatientAppointments = () => {
                                 color="text.secondary"
                                 sx={{ fontSize: "0.62rem" }}
                               >
-                                {appointment.age} anos • {appointment.code}
+                                {getAppointmentCode(appointment.id)}
                               </Typography>
                             </Stack>
                           </Styled.PatientCell>
@@ -207,32 +307,25 @@ export const PatientAppointments = () => {
               <Styled.CalendarWrapper>
                 <Styled.CalendarGrid>
                   <Styled.CalendarTimeColumn>
-                    {[
-                      "08:00",
-                      "09:00",
-                      "10:00",
-                      "11:00",
-                      "12:00",
-                      "13:00",
-                      "14:00",
-                      "15:00",
-                    ].map((time) => (
+                    {CALENDAR_HOURS.map((time) => (
                       <Styled.CalendarTime key={time}>
                         {time}
                       </Styled.CalendarTime>
                     ))}
                   </Styled.CalendarTimeColumn>
 
-                  {days.map((day) => {
+                  {weekDays.map((day) => {
                     const dayAppointments = getAppointmentsByDay(day);
 
                     return (
-                      <Styled.CalendarDayColumn key={day}>
+                      <Styled.CalendarDayColumn key={day.toISOString()}>
                         <Styled.CalendarDayHeader>
-                          <Styled.CalendarDayName>{day}</Styled.CalendarDayName>
+                          <Styled.CalendarDayName>
+                            {getWeekdayLabel(day)}
+                          </Styled.CalendarDayName>
 
                           <Styled.CalendarDayDate>
-                            12 mar.
+                            {formatShortDate(day)}
                           </Styled.CalendarDayDate>
                         </Styled.CalendarDayHeader>
 
@@ -250,7 +343,7 @@ export const PatientAppointments = () => {
                               </Styled.CalendarAppointmentTime>
 
                               <Styled.CalendarAppointmentPatient>
-                                {appointment.patient}
+                                {appointment.professional}
                               </Styled.CalendarAppointmentPatient>
 
                               <Styled.CalendarAppointmentSpecialty>
@@ -273,28 +366,19 @@ export const PatientAppointments = () => {
 
           <Styled.SummaryColumn>
             <Styled.SummaryCard>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: "0.95rem",
+                  fontWeight: 700,
+                }}
               >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontSize: "0.95rem",
-                    fontWeight: 700,
-                  }}
-                >
-                  Hoje
-                </Typography>
-
-              </Stack>
+                Hoje
+              </Typography>
 
               <Styled.SummaryItem sx={{ backgroundColor: "#F1F7FF" }}>
                 <CalendarToday color="primary" />
-
-                <Styled.SummaryNumber>8</Styled.SummaryNumber>
-
+                <Styled.SummaryNumber>{summary.total}</Styled.SummaryNumber>
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -306,9 +390,9 @@ export const PatientAppointments = () => {
 
               <Styled.SummaryItem sx={{ backgroundColor: "#E9FAF1" }}>
                 <CheckCircle sx={{ color: "#219653" }} />
-
-                <Styled.SummaryNumber>5</Styled.SummaryNumber>
-
+                <Styled.SummaryNumber>
+                  {summary.confirmed}
+                </Styled.SummaryNumber>
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -320,9 +404,7 @@ export const PatientAppointments = () => {
 
               <Styled.SummaryItem sx={{ backgroundColor: "#FFF8E8" }}>
                 <AccessTime sx={{ color: "#D99400" }} />
-
-                <Styled.SummaryNumber>2</Styled.SummaryNumber>
-
+                <Styled.SummaryNumber>{summary.pending}</Styled.SummaryNumber>
                 <Typography
                   variant="body2"
                   color="text.secondary"
