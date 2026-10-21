@@ -14,7 +14,6 @@ import {
   getDayLabel,
   getFormattedDate,
   getMonthLabel,
-  patientSpecialties,
 } from "./PatientHome.utils";
 import { SpecialtiesModal } from "../../components/SpecialtiesModal/SpecialtiesModal";
 import { usePatientHome } from "./PatientHome.hook";
@@ -38,6 +37,7 @@ export const PatientHome = () => {
     scheduledCount,
     completedCount,
     firstName,
+    specialties
   } = usePatientHome();
 
   return (
@@ -259,7 +259,7 @@ export const PatientHome = () => {
       </Styled.Container>
       <SpecialtiesModal
         open={isSpecialtiesModalOpen}
-        specialties={patientSpecialties}
+        specialties={specialties}
         onClose={closeSpecialtiesModal}
         onSchedule={handleSchedule}
       />

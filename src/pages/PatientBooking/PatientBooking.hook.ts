@@ -1,7 +1,3 @@
-import { useEffect, useMemo, useState } from "react";
-
-import { api } from "../../services/api";
-
 import type {
   AvailableDate,
   BookingData,
@@ -11,8 +7,19 @@ import type {
   Specialty,
 } from "./PatientBooking.types";
 
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
+
+import { getSession } from "../../auth/session";
+import { getApiErrorMessage } from "../../services/apiError";
+import { createAppointment } from "../../services/appointmentService";
+import {
+  getProfessionalAvailability,
+  getProfessionals,
+} from "../../services/professionalService";
+import { getSpecialties } from "../../services/specialtyService";
 
 export function usePatientBooking() {
   const navigate = useNavigate();
@@ -39,6 +46,8 @@ export function usePatientBooking() {
 
   const [availabilityError, setAvailabilityError] = useState("");
 
+  const [searchParams] = useSearchParams();
+
   const [professionalAvailabilities, setProfessionalAvailabilities] = useState<
     ProfessionalAvailability[]
   >([]);
@@ -51,78 +60,132 @@ export function usePatientBooking() {
   });
 
   useEffect(() => {
-    async function loadSpecialties() {
+    const controller = new AbortController();
+
+    async function load() {
       try {
         setIsLoadingSpecialties(true);
         setSpecialtiesError("");
-
-        const response = await api.get<Specialty[]>("/specialties");
-
-        setSpecialties(response.data);
+        setSpecialties(await getSpecialties(controller.signal));
       } catch (error) {
-        console.error("Erro ao carregar especialidades:", error);
-
+        if (axios.isCancel(error)) return;
         setSpecialtiesError("Não foi possível carregar as especialidades.");
       } finally {
-        setIsLoadingSpecialties(false);
+        if (!controller.signal.aborted) setIsLoadingSpecialties(false);
       }
     }
 
-    loadSpecialties();
+    load();
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
-    async function loadProfessionals() {
+    const controller = new AbortController();
+
+    async function load() {
       try {
         setIsLoadingProfessionals(true);
         setProfessionalsError("");
-
-        const response = await api.get<Professional[]>("/professionals");
-
-        setProfessionals(response.data);
+        setProfessionals(await getProfessionals(controller.signal));
       } catch (error) {
-        console.error("Erro ao carregar profissionais:", error);
-
+        if (axios.isCancel(error)) return;
         setProfessionalsError("Não foi possível carregar os profissionais.");
       } finally {
-        setIsLoadingProfessionals(false);
+        if (!controller.signal.aborted) setIsLoadingProfessionals(false);
       }
     }
 
-    loadProfessionals();
+    load();
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {
-    async function loadAvailability() {
-      if (!booking.professional) {
-        setProfessionalAvailabilities([]);
-        return;
-      }
+    if (!booking.professional) {
+      setProfessionalAvailabilities([]);
+      return;
+    }
 
+    const controller = new AbortController();
+    const professionalId = booking.professional.id;
+
+    async function load() {
       try {
         setIsLoadingAvailability(true);
         setAvailabilityError("");
-
-        const response = await api.get<ProfessionalAvailability[]>(
-          `/professionals/${booking.professional.id}/availability`,
+        setProfessionalAvailabilities(
+          await getProfessionalAvailability(professionalId, controller.signal),
         );
-
-        setProfessionalAvailabilities(response.data);
       } catch (error) {
-        console.error("Erro ao carregar disponibilidade:", error);
-
+        if (axios.isCancel(error)) return;
         setProfessionalAvailabilities([]);
-
         setAvailabilityError(
           "Não foi possível carregar a disponibilidade deste profissional.",
         );
       } finally {
-        setIsLoadingAvailability(false);
+        if (!controller.signal.aborted) setIsLoadingAvailability(false);
       }
     }
 
-    loadAvailability();
+    load();
+    return () => controller.abort();
   }, [booking.professional]);
+
+  useEffect(() => {
+    const specialtyId = Number(searchParams.get("specialtyId"));
+
+    if (!specialtyId || specialties.length === 0) return;
+
+    const preselected = specialties.find((item) => item.id === specialtyId);
+
+    if (!preselected) return;
+
+    setBooking((previous) =>
+      previous.specialty ? previous : { ...previous, specialty: preselected },
+    );
+    setStep((previous) => (previous === 1 ? 2 : previous));
+  }, [specialties, searchParams]);
+
+  async function confirmAppointment() {
+    const patientId = getSession()?.patientId;
+
+    if (!patientId) {
+      toast.error("Não foi possível identificar o paciente.");
+      return;
+    }
+
+    if (!booking.professional) {
+      toast.error("Selecione um profissional.");
+      return;
+    }
+
+    if (!booking.date || !booking.time) {
+      toast.error("Selecione uma data e um horário.");
+      return;
+    }
+
+    try {
+      setIsSubmittingAppointment(true);
+
+      await createAppointment({
+        patientId,
+        professionalId: booking.professional.id,
+        scheduledAt: `${booking.date}T${booking.time}:00`,
+        notes: null,
+      });
+
+      toast.success("Consulta agendada com sucesso!");
+
+      navigate("/my-appointments");
+    } catch (error) {
+      console.error("Erro ao confirmar consulta:", error);
+
+      toast.error(
+        getApiErrorMessage(error, "Não foi possível confirmar a consulta."),
+      );
+    } finally {
+      setIsSubmittingAppointment(false);
+    }
+  }
 
   const filteredSpecialties = useMemo(() => {
     const searchValue = search.toLowerCase().trim();

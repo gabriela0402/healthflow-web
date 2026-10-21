@@ -5,19 +5,42 @@ import { getMyAppointments } from "../../services/appointmentService";
 import { mapAppointment } from "../PatientAppointments/PatientAppoiments.utils";
 import { getSession } from "../../auth/session";
 import type { PatientAppointment } from "../PatientAppointments/PatientAppointments.types";
+import { getSpecialties } from "../../services/specialtyService";
+import type { PatientSpecialty } from "./PatientHome.types";
 
 export function usePatientHome() {
   const navigate = useNavigate();
   const firstName = getSession()?.name.split(" ")[0] ?? "";
 
-
-  const [isSpecialtiesModalOpen, setIsSpecialtiesModalOpen] =
-    useState(false);
+  const [isSpecialtiesModalOpen, setIsSpecialtiesModalOpen] = useState(false);
 
   const [appointments, setAppointments] = useState<PatientAppointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+
+  const [specialties, setSpecialties] = useState<PatientSpecialty[]>([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    getSpecialties(controller.signal)
+      .then((data) =>
+        setSpecialties(
+          data.map((item) => ({
+            id: item.id,
+            name: item.name,
+            description:
+              item.description || "Especialidade disponível para agendamento.",
+          })),
+        ),
+      )
+      .catch(() => {
+        /* o modal fica vazio */
+      });
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -91,6 +114,7 @@ export function usePatientHome() {
     upcomingAppointments: upcoming.slice(0, 3),
     scheduledCount: upcoming.length,
     completedCount,
-    firstName
+    firstName,
+    specialties
   };
 }

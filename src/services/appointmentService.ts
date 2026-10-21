@@ -9,3 +9,15 @@ export async function getMyAppointments(signal?: AbortSignal) {
 
   return data;
 }
+
+export type CreateAppointmentPayload = {
+  patientId: number;
+  professionalId: number;
+  scheduledAt: string; // "2026-10-22T08:00:00", sem fuso
+  notes?: string | null;
+};
+
+export async function createAppointment(payload: CreateAppointmentPayload) {
+  const { data } = await api.post("/appointments", payload);
+  return data;
+}
