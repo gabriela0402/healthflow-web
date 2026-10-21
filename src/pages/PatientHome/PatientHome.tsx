@@ -1,20 +1,27 @@
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonSearchOutlinedIcon from "@mui/icons-material/PersonSearchOutlined";
 
-import { Stack, Typography } from "@mui/material";
+import { CircularProgress, Stack, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 
 import * as Styled from "./PatientHome.styled";
 import { SideBar } from "../../components/SideBar/SideBar";
 import { Card } from "../../components/Card/Card";
-import { getFormattedDate } from "./PatientHome.utils";
-
+import {
+  formatNextAppointment,
+  getDayLabel,
+  getFormattedDate,
+  getMonthLabel,
+  patientSpecialties,
+} from "./PatientHome.utils";
 import { SpecialtiesModal } from "../../components/SpecialtiesModal/SpecialtiesModal";
-import { patientSpecialties } from "./PatientHome.utils";
 import { usePatientHome } from "./PatientHome.hook";
+import {
+  getInitials,
+  getStatusLabel,
+} from "../PatientAppointments/PatientAppoiments.utils";
 
 export const PatientHome = () => {
   const dataFormatada = getFormattedDate();
@@ -23,6 +30,13 @@ export const PatientHome = () => {
     openSpecialtiesModal,
     closeSpecialtiesModal,
     handleSchedule,
+    loading,
+    error,
+    reload,
+    nextAppointment,
+    upcomingAppointments,
+    scheduledCount,
+    completedCount,
   } = usePatientHome();
 
   return (
@@ -76,21 +90,27 @@ export const PatientHome = () => {
           <Card
             icon={CalendarTodayIcon}
             title="Próxima consulta"
-            num="23 de abr, 14:30"
+            num={
+              loading
+                ? "..."
+                : nextAppointment
+                  ? formatNextAppointment(nextAppointment.date)
+                  : "Nenhuma"
+            }
             type="dashboard"
           />
 
           <Card
             icon={PeopleIcon}
             title="Consultas realizadas"
-            num="4"
+            num={loading ? "..." : String(completedCount)}
             type="dashboard"
           />
 
           <Card
             icon={CalendarTodayIcon}
             title="Consultas agendadas"
-            num="3"
+            num={loading ? "..." : String(scheduledCount)}
             type="dashboard"
           />
         </Styled.CardContainer>
@@ -114,129 +134,83 @@ export const PatientHome = () => {
                 </Typography>
               </Stack>
 
-              <Styled.SectionLink component={Link} to="/my-appointments">
+              <Styled.SectionLink component={Link} to="/my-appoiments-patient">
                 Ver todos
                 <ChevronRightIcon fontSize="small" />
               </Styled.SectionLink>
             </Styled.SectionHeader>
 
             <Styled.AppointmentList>
-              <Styled.AppointmentItem>
-                <Styled.DateBox>
-                  <Typography>23</Typography>
-                  <span>ABR</span>
-                </Styled.DateBox>
-
-                <Styled.Time>14:30</Styled.Time>
-
-                <Styled.ProfessionalAvatar>AL</Styled.ProfessionalAvatar>
-
-                <Stack flex={1} minWidth={0}>
-                  <Typography
-                    sx={{
-                      color: "#102A56",
-                      fontSize: "0.85rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Dra. Ana Lima
-                  </Typography>
-
-                  <Typography
-                    color="text.secondary"
-                    sx={{ fontSize: "0.75rem" }}
-                  >
-                    Cardiologista
-                  </Typography>
-
-                  <Styled.Location>
-                    <LocationOnOutlinedIcon fontSize="small" />
-                    Clínica Central
-                  </Styled.Location>
+              {loading && (
+                <Stack alignItems="center" sx={{ py: 4 }}>
+                  <CircularProgress size={26} />
                 </Stack>
+              )}
 
-                <Styled.Status status="confirmed">Confirmada</Styled.Status>
+              {!loading && error && (
+                <Alert
+                  severity="error"
+                  sx={{ mt: 2 }}
+                  action={
+                    <Button color="inherit" size="small" onClick={reload}>
+                      Tentar de novo
+                    </Button>
+                  }
+                >
+                  {error}
+                </Alert>
+              )}
 
-                <ChevronRightIcon sx={{ color: "text.secondary" }} />
-              </Styled.AppointmentItem>
+              {!loading && !error && upcomingAppointments.length === 0 && (
+                <Typography
+                  color="text.secondary"
+                  sx={{ fontSize: "0.8rem", py: 3, textAlign: "center" }}
+                >
+                  Você não tem atendimentos futuros.
+                </Typography>
+              )}
 
-              <Styled.AppointmentItem>
-                <Styled.DateBox>
-                  <Typography>28</Typography>
-                  <span>ABR</span>
-                </Styled.DateBox>
+              {!loading &&
+                !error &&
+                upcomingAppointments.map((appointment) => (
+                  <Styled.AppointmentItem key={appointment.id}>
+                    <Styled.DateBox>
+                      <Typography>{getDayLabel(appointment.date)}</Typography>
+                      <span>{getMonthLabel(appointment.date)}</span>
+                    </Styled.DateBox>
 
-                <Styled.Time>10:00</Styled.Time>
+                    <Styled.Time>{appointment.time}</Styled.Time>
 
-                <Styled.ProfessionalAvatar>RP</Styled.ProfessionalAvatar>
+                    <Styled.ProfessionalAvatar>
+                      {getInitials(appointment.professional)}
+                    </Styled.ProfessionalAvatar>
 
-                <Stack flex={1} minWidth={0}>
-                  <Typography
-                    sx={{
-                      color: "#102A56",
-                      fontSize: "0.85rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Dr. Rafael Pereira
-                  </Typography>
+                    <Stack flex={1} minWidth={0}>
+                      <Typography
+                        sx={{
+                          color: "#102A56",
+                          fontSize: "0.85rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {appointment.professional}
+                      </Typography>
 
-                  <Typography
-                    color="text.secondary"
-                    sx={{ fontSize: "0.75rem" }}
-                  >
-                    Clínico geral
-                  </Typography>
+                      <Typography
+                        color="text.secondary"
+                        sx={{ fontSize: "0.75rem" }}
+                      >
+                        {appointment.specialty}
+                      </Typography>
+                    </Stack>
 
-                  <Styled.Location>
-                    <LocationOnOutlinedIcon fontSize="small" />
-                    Unidade Zona Sul
-                  </Styled.Location>
-                </Stack>
+                    <Styled.Status status={appointment.status}>
+                      {getStatusLabel(appointment.status)}
+                    </Styled.Status>
 
-                <Styled.Status status="confirmed">Confirmada</Styled.Status>
-
-                <ChevronRightIcon sx={{ color: "text.secondary" }} />
-              </Styled.AppointmentItem>
-
-              <Styled.AppointmentItem>
-                <Styled.DateBox>
-                  <Typography>05</Typography>
-                  <span>MAI</span>
-                </Styled.DateBox>
-
-                <Styled.Time>09:30</Styled.Time>
-
-                <Styled.ProfessionalAvatar>CS</Styled.ProfessionalAvatar>
-
-                <Stack flex={1} minWidth={0}>
-                  <Typography
-                    sx={{
-                      color: "#102A56",
-                      fontSize: "0.85rem",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Dra. Camila Santos
-                  </Typography>
-
-                  <Typography
-                    color="text.secondary"
-                    sx={{ fontSize: "0.75rem" }}
-                  >
-                    Dermatologista
-                  </Typography>
-
-                  <Styled.Location>
-                    <LocationOnOutlinedIcon fontSize="small" />
-                    Clínica Central
-                  </Styled.Location>
-                </Stack>
-
-                <Styled.Status status="pending">Pendente</Styled.Status>
-
-                <ChevronRightIcon sx={{ color: "text.secondary" }} />
-              </Styled.AppointmentItem>
+                    <ChevronRightIcon sx={{ color: "text.secondary" }} />
+                  </Styled.AppointmentItem>
+                ))}
             </Styled.AppointmentList>
           </Styled.AppointmentsCard>
 

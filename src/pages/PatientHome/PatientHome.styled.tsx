@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Box, Button, Stack } from "@mui/material";
+import type { AppointmentStatus } from "../PatientAppointments/PatientAppointments.types";
 
 export const Container = styled(Stack)(({ theme }) => ({
   flexDirection: "column",
@@ -179,21 +180,33 @@ export const Location = styled(Stack)({
 });
 
 export const Status = styled(Box)<{
-  status: "confirmed" | "pending";
-}>(({ status }) => ({
-  padding: "0.35rem 0.65rem",
-  borderRadius: "1rem",
-  backgroundColor:
-    status === "confirmed" ? "#E7F7EF" : "#FFF5DD",
-  color: status === "confirmed" ? "#219653" : "#D99400",
-  fontSize: "0.68rem",
-  fontWeight: 600,
-  whiteSpace: "nowrap",
+  status: AppointmentStatus;
+}>(({ status }) => {
+  const colors: Record<
+    AppointmentStatus,
+    { background: string; color: string }
+  > = {
+    scheduled: { background: "#EAF3FF", color: "#1976D2" },
+    confirmed: { background: "#E7F7EF", color: "#219653" },
+    cancelled: { background: "#FDECEC", color: "#D64545" },
+    completed: { background: "#F1F1F5", color: "#5F6B7A" },
+    noShow: { background: "#FFF4E5", color: "#C77700" },
+  };
 
-  "@media (max-width: 600px)": {
-    marginLeft: "4.1rem",
-  },
-}));
+  return {
+    padding: "0.35rem 0.65rem",
+    borderRadius: "1rem",
+    backgroundColor: colors[status].background,
+    color: colors[status].color,
+    fontSize: "0.68rem",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+
+    "@media (max-width: 600px)": {
+      marginLeft: "4.1rem",
+    },
+  };
+});
 
 export const HelpCard = styled(Stack)(({ theme }) => ({
   alignItems: "center",
