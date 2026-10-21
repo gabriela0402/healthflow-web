@@ -373,7 +373,7 @@ export const PatientAppointments = () => {
                   fontWeight: 700,
                 }}
               >
-                Hoje
+                Resumo
               </Typography>
 
               <Styled.SummaryItem sx={{ backgroundColor: "#F1F7FF" }}>

@@ -110,15 +110,17 @@ export function usePatientAppointments() {
   }
 
   const summary = useMemo(() => {
-    const today = new Date();
-    const todays = appointments.filter((appointment) =>
-      isSameDay(appointment.date, today),
-    );
+    const now = new Date();
 
     return {
-      total: todays.length,
-      confirmed: todays.filter((a) => a.status === "confirmed").length,
-      pending: todays.filter((a) => a.status === "scheduled").length,
+      total: appointments.length,
+      upcoming: appointments.filter(
+        (a) =>
+          a.date >= now &&
+          (a.status === "scheduled" || a.status === "confirmed"),
+      ).length,
+      confirmed: appointments.filter((a) => a.status === "confirmed").length,
+      pending: appointments.filter((a) => a.status === "scheduled").length,
     };
   }, [appointments]);
 
