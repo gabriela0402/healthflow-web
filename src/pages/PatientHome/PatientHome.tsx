@@ -37,6 +37,7 @@ export const PatientHome = () => {
     upcomingAppointments,
     scheduledCount,
     completedCount,
+    firstName,
   } = usePatientHome();
 
   return (
@@ -54,7 +55,7 @@ export const PatientHome = () => {
                 fontWeight: 700,
               }}
             >
-              Olá, Gabriela
+              Olá{firstName ? `, ${firstName}` : ""}
             </Typography>
 
             <Typography

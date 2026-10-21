@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-import { api } from "../../services/api";
 import type { RegisterForm } from "./Register.types";
+import { getApiErrorMessage } from "../../services/apiError";
+import * as authService from "../../services/authService";
 
 const initialForm: RegisterForm = {
   name: "",
@@ -15,16 +16,11 @@ const initialForm: RegisterForm = {
 export function useRegister() {
   const navigate = useNavigate();
 
-  const [form, setForm] =
-    useState<RegisterForm>(initialForm);
+  const [form, setForm] = useState<RegisterForm>(initialForm);
 
-  const [isLoading, setIsLoading] =
-    useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleChange(
-    field: keyof RegisterForm,
-    value: string,
-  ) {
+  function handleChange(field: keyof RegisterForm, value: string) {
     setForm((previous) => ({
       ...previous,
       [field]: value,
@@ -32,12 +28,7 @@ export function useRegister() {
   }
 
   async function handleSubmit() {
-    if (
-      !form.name ||
-      !form.email ||
-      !form.password ||
-      !form.confirmPassword
-    ) {
+    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
       toast.error("Preencha todos os campos.");
       return;
     }
@@ -50,7 +41,7 @@ export function useRegister() {
     try {
       setIsLoading(true);
 
-      await api.post("/auth/register", {
+      await authService.register({
         name: form.name,
         email: form.email,
         password: form.password,
@@ -63,17 +54,12 @@ export function useRegister() {
       setTimeout(() => {
         navigate("/login", { replace: true });
       }, 1000);
-    } catch (error: any) {
-      console.error(
-        "Erro ao realizar cadastro:",
-        error,
+    } catch (error) {
+      console.error("Erro ao realizar cadastro:", error);
+
+      toast.error(
+        getApiErrorMessage(error, "Não foi possível realizar o cadastro."),
       );
-
-      const message =
-        error.response?.data?.message ??
-        "Não foi possível realizar o cadastro.";
-
-      toast.error(message);
     } finally {
       setIsLoading(false);
     }

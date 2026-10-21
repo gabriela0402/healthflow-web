@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { getMyAppointments } from "../../services/appointmentService";
 import { mapAppointment } from "../PatientAppointments/PatientAppoiments.utils";
+import { getSession } from "../../auth/session";
 import type { PatientAppointment } from "../PatientAppointments/PatientAppointments.types";
 
 export function usePatientHome() {
   const navigate = useNavigate();
+  const firstName = getSession()?.name.split(" ")[0] ?? "";
+
 
   const [isSpecialtiesModalOpen, setIsSpecialtiesModalOpen] =
     useState(false);
@@ -88,5 +91,6 @@ export function usePatientHome() {
     upcomingAppointments: upcoming.slice(0, 3),
     scheduledCount: upcoming.length,
     completedCount,
+    firstName
   };
 }
