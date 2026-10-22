@@ -33,7 +33,7 @@ export const TitleContainer = styled(Stack)(({ theme }) => ({
 
 export const FiltersContainer = styled(Stack)(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "2fr 1fr 1fr 1fr auto",
+  gridTemplateColumns: "2fr 1fr 1fr 1fr",
   alignItems: "center",
   width: "100%",
   gap: "0.75rem",
@@ -265,3 +265,12 @@ export const AdvancedFiltersContainer = styled(Box)(
   }),
 );
 
+export const filterSx = {
+  width: "100%",
+  "& .MuiInputBase-root": {
+    height: "44px",
+    borderRadius: "0.6rem",
+    backgroundColor: "background.paper",
+    fontSize: "0.85rem",
+  },
+};

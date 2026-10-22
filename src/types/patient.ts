@@ -21,3 +21,16 @@ export type UpdatePatientProfilePayload = {
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
 };
+
+export type PatientListItemResponse = {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  dateOfBirth: string | null;
+  gender: string | null;
+  createdAt: string;
+  nextAppointmentAt: string | null;
+  upcomingCount: number;
+  status: "active" | "inactive" | "pending";
+};
