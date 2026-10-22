@@ -34,3 +34,14 @@ export type PatientListItemResponse = {
   upcomingCount: number;
   status: "active" | "inactive" | "pending";
 };
+
+export type CreatePatientPayload = {
+  fullName: string;
+  email: string;
+  password: string;
+  phone: string | null;
+  dateOfBirth: string | null;
+  gender: string | null;
+  cpf: string | null;
+  address: string | null;
+};

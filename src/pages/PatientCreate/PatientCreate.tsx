@@ -1,5 +1,11 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { SideBar } from "../../components/SideBar/SideBar";
@@ -10,7 +16,8 @@ import { usePatientCreate } from "./PatientCreate.hook";
 export const PatientCreate = () => {
   const navigate = useNavigate();
 
-  const { form, handleChange, handleSubmit, handleCancel } = usePatientCreate();
+  const { form, isLoading, handleChange, handleSubmit, handleCancel } =
+    usePatientCreate();
 
   return (
     <Stack direction="row">
@@ -19,7 +26,7 @@ export const PatientCreate = () => {
       <Styled.Container>
         <Button
           startIcon={<ArrowBack />}
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/patients")}
           sx={{
             alignSelf: "flex-start",
             color: "text.secondary",
@@ -32,11 +39,7 @@ export const PatientCreate = () => {
         <Styled.Header>
           <Typography
             variant="h4"
-            sx={{
-              color: "#102A56",
-              fontSize: "1.6rem",
-              fontWeight: 700,
-            }}
+            sx={{ color: "#102A56", fontSize: "1.6rem", fontWeight: 700 }}
           >
             Adicionar paciente
           </Typography>
@@ -79,6 +82,23 @@ export const PatientCreate = () => {
 
             <Styled.Field>
               <Typography variant="body2" fontWeight={600}>
+                Senha inicial
+              </Typography>
+
+              <TextField
+                size="small"
+                type="password"
+                value={form.password}
+                onChange={(event) =>
+                  handleChange("password", event.target.value)
+                }
+                placeholder="Mínimo de 6 caracteres"
+                helperText="O paciente usará essa senha no primeiro acesso."
+              />
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
                 Telefone
               </Typography>
 
@@ -102,7 +122,7 @@ export const PatientCreate = () => {
                 onChange={(event) =>
                   handleChange("birthDate", event.target.value)
                 }
-                InputLabelProps={{ shrink: true }}
+                inputProps={{ max: new Date().toISOString().slice(0, 10) }}
               />
             </Styled.Field>
 
@@ -113,15 +133,17 @@ export const PatientCreate = () => {
 
               <TextField
                 select
-                native
                 size="small"
                 value={form.gender}
                 onChange={(event) => handleChange("gender", event.target.value)}
               >
-                <option value="">Selecione</option>
-                <option value="female">Feminino</option>
-                <option value="male">Masculino</option>
-                <option value="other">Outro</option>
+                <MenuItem value="none">Não informado</MenuItem>
+                <MenuItem value="Feminino">Feminino</MenuItem>
+                <MenuItem value="Masculino">Masculino</MenuItem>
+                <MenuItem value="Outro">Outro</MenuItem>
+                <MenuItem value="Prefiro não informar">
+                  Prefiro não informar
+                </MenuItem>
               </TextField>
             </Styled.Field>
 
@@ -158,12 +180,17 @@ export const PatientCreate = () => {
             <Button
               variant="outlined"
               onClick={handleCancel}
+              disabled={isLoading}
               sx={{ textTransform: "none" }}
             >
               Limpar
             </Button>
 
-            <ButtonBlue text="Cadastrar paciente" onClick={handleSubmit} />
+            <ButtonBlue
+              text={isLoading ? "Cadastrando..." : "Cadastrar paciente"}
+              onClick={handleSubmit}
+              disabled={isLoading}
+            />
           </Styled.Actions>
         </Styled.FormCard>
       </Styled.Container>
