@@ -5,7 +5,6 @@ import { Login } from "../pages/Login/Login";
 import { Patients } from "../pages/Patients/Patients";
 import { Professionals } from "../pages/Professionals/Professionals";
 import { Specialties } from "../pages/Specialties/Specialties";
-import { ProtectedRoute } from "./ProtectedRoute";
 import { Register } from "../pages/Register/Register";
 import { Settings } from "../pages/Settings/Settings";
 import { ProfessionalDashboard } from "../pages/ProfessionalDashboard/ProfessionalDashboard";
@@ -22,13 +21,19 @@ import { ProfessionalCreate } from "../pages/ProfessionalCreate/ProfessionalCrea
 import { SpecialtyCreate } from "../pages/SpecialtyCreate/SpecialtyCreate";
 import { AppointmentCreate } from "../pages/AppointmentCreate/AppointmentCreate";
 import { PatientAppointments } from "../pages/PatientAppointments/PatientAppointments";
+import { PrivateRoute } from "./PrivateRoute";
+import { getHomeRoute } from "../auth/getHomeRoute";
+import { getSession } from "../auth/session";
 
 export function AppRoutes() {
+  const homeRoute = getHomeRoute(getSession()?.role);
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-      <Route element={<ProtectedRoute />}>
+      <Route element={<PrivateRoute allowedRoles={["Admin"]} />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/patients/new" element={<PatientCreate />} />
@@ -38,26 +43,27 @@ export function AppRoutes() {
         <Route path="/specialties/new" element={<SpecialtyCreate />} />
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/appointments/new" element={<AppointmentCreate />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/settings" element={<Settings />} />
+      </Route>
 
+      <Route element={<PrivateRoute allowedRoles={["Professional"]} />}>
         <Route path="/dashboard-professional" element={<ProfessionalDashboard />} />
         <Route path="/my-schedule" element={<ProfessionalSchedule />} />
         <Route path="/my-patients" element={<ProfessionalPatients />} />
         <Route path="/my-appointments" element={<ProfessioanlAppointments />} />
         <Route path="/profile" element={<ProfessionalProfile />} />
+      </Route>
 
+      <Route element={<PrivateRoute allowedRoles={["Patient"]} />}>
         <Route path="/home" element={<PatientHome />} />
         <Route path="/book-appointment" element={<PatientBooking />} />
         <Route path="/my-data" element={<PatientData />} />
         <Route path="/notifications" element={<PatientNotifications />} />
         <Route path="/my-appoiments-patient" element={<PatientAppointments />} />
-
       </Route>
 
-      <Route path="/" element={<Navigate to="/login" replace />} />
-
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<Navigate to={homeRoute} replace />} />
+      <Route path="*" element={<Navigate to={homeRoute} replace />} />
     </Routes>
   );
 }

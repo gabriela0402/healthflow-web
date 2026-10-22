@@ -1,13 +1,14 @@
 export function getHomeRoute(role?: string | null) {
-  const normalizedRole = role?.toLowerCase();
-
-  if (normalizedRole === "patient" || normalizedRole === "paciente") {
-    return "/home";
+  switch (role?.toLowerCase()) {
+    case "patient":
+    case "paciente":
+      return "/home";
+    case "professional":
+    case "profissional":
+      return "/dashboard-professional";
+    case "admin":
+      return "/dashboard";
+    default:
+      return "/login";
   }
-
-  if (normalizedRole === "professional" || normalizedRole === "profissional") {
-    return "/professional-dashboard";
-  }
-
-  return "/dashboard";
 }

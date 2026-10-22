@@ -5,10 +5,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import { NavLink, useNavigate } from "react-router-dom";
 
 import LogoImage from "../../assets/img/HealthFlow-Logo.png";
-import { mockUser } from "../../auth/mockUser";
 import { getSidebarItems } from "./SideBar.utils";
 import * as Styled from "./SideBar.styled";
 import { LogoutModal } from "../LogoutModal/LogoutModal";
+
+import { getSession } from "../../auth/session";
+import { logout } from "../../services/authService";
 
 export const SideBar = () => {
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ export const SideBar = () => {
 
   const bottomItemLabels = ["Configurações", "Sair"];
 
-  const sidebarItems = getSidebarItems(mockUser.role);
+  const sidebarItems = getSidebarItems(getSession()?.role);
 
   const mainItems = sidebarItems.filter(
     (item) => !bottomItemLabels.includes(item.label),
@@ -42,14 +44,9 @@ export const SideBar = () => {
   }
 
   function handleLogoutConfirm() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("patientId");
-    localStorage.removeItem("userName");
-
+    logout();
     setIsLogoutModalOpen(false);
-    navigate("/login");
+    navigate("/login", { replace: true });
   }
 
   function renderNavigationItem(item: (typeof sidebarItems)[number]) {

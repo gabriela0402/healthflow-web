@@ -118,14 +118,17 @@ export const itemsPatient: SideBarItem[] = [
   },
 ];
 
-export function getSidebarItems(role: UserRole) {
-  if (role === "professional") {
-    return itemsProfessional;
+export function getSidebarItems(role?: string | null): SideBarItem[] {
+  switch (role?.toLowerCase()) {
+    case "admin":
+      return itemsAdmin;
+    case "professional":
+    case "profissional":
+      return itemsProfessional;
+    case "patient":
+    case "paciente":
+      return itemsPatient;
+    default:
+      return [];
   }
-
-  if (role === "patient") {
-    return itemsPatient;
-  }
-
-  return itemsAdmin;
 }
