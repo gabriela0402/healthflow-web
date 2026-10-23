@@ -1,15 +1,12 @@
-export type ProfessionalStatus =
-  | "active"
-  | "inactive"
-  | "pending";
+import type {
+  Professional,
+  ProfessionalAvailability,
+} from "../PatientBooking/PatientBooking.types";
 
-export type Professional = {
-  id: number;
-  fullName: string;
-  email: string;
-  phone: string;
-  age: number;
-  gender: string;
-  nextAppointment: string;
-  status: ProfessionalStatus;
+export type ProfessionalListItem = Professional & {
+  availabilities: ProfessionalAvailability[];
+  nextAvailability: string | null;
+  isAvailable: boolean;
 };
+
+export type StatusFilter = "" | "available" | "unavailable";

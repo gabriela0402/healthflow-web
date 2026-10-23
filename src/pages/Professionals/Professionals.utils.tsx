@@ -1,53 +1,60 @@
-import type { Professional } from "./Professionals.types";
+import type { ProfessionalAvailability } from "../PatientBooking/PatientBooking.types";
 
-export const mockProfessionals: Professional[] = [
-  {
-    id: 1,
-    fullName: "João da Silva",
-    email: "joao@email.com",
-    phone: "(11) 99999-1111",
-    age: 45,
-    gender: "Masculino",
-    nextAppointment: "12/04/2025 às 10:00",
-    status: "active",
-  },
-  {
-    id: 2,
-    fullName: "Maria Oliveira",
-    email: "maria@email.com",
-    phone: "(11) 98888-2222",
-    age: 34,
-    gender: "Feminino",
-    nextAppointment: "14/04/2025 às 14:30",
-    status: "active",
-  },
-  {
-    id: 3,
-    fullName: "Carlos Santos",
-    email: "carlos@email.com",
-    phone: "(11) 97777-3333",
-    age: 52,
-    gender: "Masculino",
-    nextAppointment: "Nenhum agendamento",
-    status: "inactive",
-  },
-  {
-    id: 4,
-    fullName: "Ana Pereira",
-    email: "ana@email.com",
-    phone: "(11) 96666-4444",
-    age: 28,
-    gender: "Feminino",
-    nextAppointment: "18/04/2025 às 09:00",
-    status: "pending",
-  },
+const WEEKDAY_SHORT = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+const WEEKDAY_EN = [
+  "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday",
 ];
 
-export function getInitials(fullName: string) {
-  return fullName
-    .split(" ")
-    .map((name) => name[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+function toDayIndex(day: number | string): number {
+  if (typeof day === "number") return day;
+  const byName = WEEKDAY_EN.indexOf(day.toLowerCase());
+  return byName >= 0 ? byName : Number(day);
+}
+
+function toMinutes(time: string): number {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+}
+
+function formatTime(totalMinutes: number): string {
+  const h = String(Math.floor(totalMinutes / 60)).padStart(2, "0");
+  const m = String(totalMinutes % 60).padStart(2, "0");
+  return `${h}:${m}`;
+}
+
+export function getNextAvailability(
+  availabilities: ProfessionalAvailability[],
+  now: Date = new Date(),
+): string | null {
+  if (availabilities.length === 0) return null;
+
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+  for (let offset = 0; offset <= 7; offset++) {
+    const date = new Date(now);
+    date.setDate(now.getDate() + offset);
+
+    const candidates: number[] = [];
+
+    for (const availability of availabilities) {
+      if (toDayIndex(availability.dayOfWeek) !== date.getDay()) continue;
+
+      const start = toMinutes(availability.startTime);
+      const end = toMinutes(availability.endTime);
+      const step = availability.slotDurationInMinutes;
+      if (step <= 0) continue;
+
+      for (let time = start; time + step <= end; time += step) {
+        if (offset > 0 || time > nowMinutes) candidates.push(time);
+      }
+    }
+
+    if (candidates.length > 0) {
+      const label =
+        offset === 0 ? "Hoje" : offset === 1 ? "Amanhã" : WEEKDAY_SHORT[date.getDay()];
+      return `${label}, ${formatTime(Math.min(...candidates))}`;
+    }
+  }
+
+  return null;
 }

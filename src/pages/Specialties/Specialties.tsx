@@ -277,7 +277,7 @@ export const Specialties = () => {
         )}
 
         {specialties.map((specialty) => (
-          <Box key={specialty.id} sx={{ position: "relative" }} >
+          <Box key={specialty.id} sx={{ position: "relative", mt: 3}} >
             <SpecialtyCard
               name={specialty.name}
               description={specialty.description}
