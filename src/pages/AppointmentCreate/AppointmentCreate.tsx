@@ -1,6 +1,5 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import CalendarTodayOutlined from "@mui/icons-material/CalendarTodayOutlined";
-import { Button, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { SideBar } from "../../components/SideBar/SideBar";
@@ -8,11 +7,33 @@ import { ButtonBlue } from "../../components/Buttons/Buttons";
 import * as Styled from "./AppointmentCreate.styled";
 import { useAppointmentCreate } from "./AppointmentCreate.hook";
 
+import {
+  Alert,
+  Button,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+
 export const AppointmentCreate = () => {
   const navigate = useNavigate();
 
-  const { form, handleChange, handleSubmit, handleCancel } =
-    useAppointmentCreate();
+  const {
+    form,
+    patients,
+    specialties,
+    filteredProfessionals,
+    availableDays,
+    timeSlots,
+    isLoading,
+    loadError,
+    isLoadingAvailability,
+    isSubmitting,
+    handleChange,
+    handleSubmit,
+    handleCancel,
+  } = useAppointmentCreate();
 
   return (
     <Stack direction="row">
@@ -48,57 +69,30 @@ export const AppointmentCreate = () => {
           </Typography>
         </Styled.Header>
 
+        {loadError && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {loadError}
+          </Alert>
+        )}
         <Styled.FormCard>
           <Styled.FormGrid>
             <Styled.Field>
               <Typography variant="body2" fontWeight={600}>
                 Paciente
               </Typography>
-
               <TextField
                 select
-                native
                 size="small"
-                value={form.patientId}
-                onChange={(event) =>
-                  handleChange("patientId", event.target.value)
-                }
+                value={form.patientId || "none"}
+                onChange={(e) => handleChange("patientId", e.target.value)}
+                disabled={isLoading}
               >
-                <option value="">Selecione o paciente</option>
-
-                <option value="1">Olivia Souza</option>
-
-                <option value="2">Liam Wilson</option>
-
-                <option value="3">Emma Davis</option>
-
-                <option value="4">Noah Martinez</option>
-              </TextField>
-            </Styled.Field>
-
-            <Styled.Field>
-              <Typography variant="body2" fontWeight={600}>
-                Profissional
-              </Typography>
-
-              <TextField
-                select
-                native
-                size="small"
-                value={form.professionalId}
-                onChange={(event) =>
-                  handleChange("professionalId", event.target.value)
-                }
-              >
-                <option value="">Selecione o profissional</option>
-
-                <option value="1">Dra. Sarah Miller</option>
-
-                <option value="2">Dr. Michael Chen</option>
-
-                <option value="3">Dra. Emily Watson</option>
-
-                <option value="4">Dr. Robert Khan</option>
+                <MenuItem value="none">Selecione o paciente</MenuItem>
+                {patients.map((p) => (
+                  <MenuItem key={p.id} value={String(p.id)}>
+                    {p.fullName}
+                  </MenuItem>
+                ))}
               </TextField>
             </Styled.Field>
 
@@ -106,29 +100,44 @@ export const AppointmentCreate = () => {
               <Typography variant="body2" fontWeight={600}>
                 Especialidade
               </Typography>
-
               <TextField
                 select
-                native
                 size="small"
-                value={form.specialtyId}
-                onChange={(event) =>
-                  handleChange("specialtyId", event.target.value)
+                value={form.specialtyId || "none"}
+                onChange={(e) => handleChange("specialtyId", e.target.value)}
+                disabled={isLoading}
+              >
+                <MenuItem value="none">Selecione a especialidade</MenuItem>
+                {specialties.map((s) => (
+                  <MenuItem key={s.id} value={String(s.id)}>
+                    {s.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>
+                Profissional
+              </Typography>
+              <TextField
+                select
+                size="small"
+                value={form.professionalId || "none"}
+                onChange={(e) => handleChange("professionalId", e.target.value)}
+                disabled={!form.specialtyId}
+                helperText={
+                  !form.specialtyId
+                    ? "Escolha a especialidade primeiro."
+                    : undefined
                 }
               >
-                <option value="">Selecione a especialidade</option>
-
-                <option value="1">Clínica Geral</option>
-
-                <option value="2">Cardiologia</option>
-
-                <option value="3">Dermatologia</option>
-
-                <option value="4">Neurologia</option>
-
-                <option value="5">Pediatria</option>
-
-                <option value="6">Ortopedia</option>
+                <MenuItem value="none">Selecione o profissional</MenuItem>
+                {filteredProfessionals.map((p) => (
+                  <MenuItem key={p.id} value={String(p.id)}>
+                    {p.fullName}
+                  </MenuItem>
+                ))}
               </TextField>
             </Styled.Field>
 
@@ -138,25 +147,26 @@ export const AppointmentCreate = () => {
               </Typography>
 
               <TextField
-                type="date"
+                select
                 size="small"
-                value={form.date}
-                onChange={(event) => handleChange("date", event.target.value)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <CalendarTodayOutlined
-                      sx={{
-                        mr: 1,
-                        color: "text.secondary",
-                        fontSize: "1.1rem",
-                      }}
-                    />
-                  ),
-                }}
-              />
+                value={form.date || "none"}
+                onChange={(e) => handleChange("date", e.target.value)}
+                disabled={!form.professionalId || isLoadingAvailability}
+                helperText={
+                  form.professionalId &&
+                  !isLoadingAvailability &&
+                  availableDays.length === 0
+                    ? "Este profissional não tem horários cadastrados."
+                    : undefined
+                }
+              >
+                <MenuItem value="none">Selecione a data</MenuItem>
+                {availableDays.map((day) => (
+                  <MenuItem key={day.value} value={day.value}>
+                    {day.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Styled.Field>
 
             <Styled.Field>
@@ -165,14 +175,24 @@ export const AppointmentCreate = () => {
               </Typography>
 
               <TextField
-                type="time"
+                select
                 size="small"
-                value={form.time}
-                onChange={(event) => handleChange("time", event.target.value)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-              />
+                value={form.time || "none"}
+                onChange={(e) => handleChange("time", e.target.value)}
+                disabled={!form.date || isLoadingAvailability}
+                helperText={
+                  form.date && !isLoadingAvailability && timeSlots.length === 0
+                    ? "Sem horários disponíveis nesta data."
+                    : undefined
+                }
+              >
+                <MenuItem value="none">Selecione o horário</MenuItem>
+                {timeSlots.map((time) => (
+                  <MenuItem key={time} value={time}>
+                    {time}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Styled.Field>
 
             <Styled.FullWidthField>
@@ -194,15 +214,17 @@ export const AppointmentCreate = () => {
             <Button
               variant="outlined"
               onClick={handleCancel}
-              sx={{
-                minWidth: "120px",
-                textTransform: "none",
-              }}
+              disabled={isSubmitting}
+              sx={{ minWidth: "120px", textTransform: "none" }}
             >
               Limpar
             </Button>
 
-            <ButtonBlue text="Cadastrar agendamento" onClick={handleSubmit} />
+            <ButtonBlue
+              text={isSubmitting ? "Cadastrando..." : "Cadastrar agendamento"}
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            />
           </Styled.Actions>
         </Styled.FormCard>
       </Styled.Container>

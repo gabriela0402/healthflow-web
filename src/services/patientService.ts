@@ -3,7 +3,8 @@ import type {
   PatientProfileResponse,
   UpdatePatientProfilePayload,
   PatientListItemResponse,
-  CreatePatientPayload 
+  CreatePatientPayload ,
+  PatientSummary
 } from "../types/patient";
 
 
@@ -33,5 +34,10 @@ export async function getPatientsOverview(signal?: AbortSignal) {
 
 export async function createPatient(payload: CreatePatientPayload) {
   const { data } = await api.post("/patients", payload);
+  return data;
+}
+
+export async function getPatients(signal?: AbortSignal) {
+  const { data } = await api.get<PatientSummary[]>("/patients", { signal });
   return data;
 }

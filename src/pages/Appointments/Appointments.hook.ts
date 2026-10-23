@@ -102,18 +102,24 @@ export function useAppointments() {
 
       const matchesStatus = status === "all" || a.status === status;
 
-      return matchesSearch && matchesDate && matchesProfessional && matchesStatus;
+      return (
+        matchesSearch && matchesDate && matchesProfessional && matchesStatus
+      );
     });
   }, [appointments, search, date, professional, status]);
 
   const summary = useMemo(() => {
-    const today = new Date();
-    const todays = appointments.filter((a) => isSameDay(a.date, today));
+    const now = new Date();
+    const week = getWeekRange(now);
+    const active = appointments.filter((a) => a.status !== "cancelled");
 
     return {
-      total: todays.length,
-      confirmed: todays.filter((a) => a.status === "confirmed").length,
-      scheduled: todays.filter((a) => a.status === "scheduled").length,
+      today: active.filter((a) => isSameDay(a.date, now)).length,
+      week: active.filter((a) => a.date >= week.start && a.date < week.end)
+        .length,
+      pending: appointments.filter(
+        (a) => a.status === "scheduled" && a.date >= now,
+      ).length,
     };
   }, [appointments]);
 

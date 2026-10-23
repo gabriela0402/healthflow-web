@@ -45,3 +45,9 @@ export type CreatePatientPayload = {
   cpf: string | null;
   address: string | null;
 };
+
+export type PatientSummary = {
+  id: number;
+  fullName: string;
+  email: string;
+};

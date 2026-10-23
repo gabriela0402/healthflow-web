@@ -308,7 +308,7 @@ export const Appointments = () => {
 
                 <Stack>
                   <Typography variant="h5" sx={{ fontSize: "1.3rem" }} fontWeight={700}>
-                    {loading ? "..." : summary.total}
+                    {loading ? "..." : summary.today}
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
@@ -322,7 +322,7 @@ export const Appointments = () => {
 
                 <Stack>
                   <Typography variant="h5" sx={{ fontSize: "1.3rem" }} fontWeight={700}>
-                    {loading ? "..." : summary.confirmed}
+                    {loading ? "..." : summary.week}
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
@@ -336,7 +336,7 @@ export const Appointments = () => {
 
                 <Stack>
                   <Typography variant="h5" sx={{ fontSize: "1.3rem" }} fontWeight={700}>
-                    {loading ? "..." : summary.scheduled}
+                    {loading ? "..." : summary.pending}
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
