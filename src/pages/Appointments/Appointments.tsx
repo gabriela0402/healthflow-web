@@ -1,63 +1,86 @@
+import AccessTime from "@mui/icons-material/AccessTime";
 import CalendarToday from "@mui/icons-material/CalendarToday";
 import CheckCircle from "@mui/icons-material/CheckCircle";
-import AccessTime from "@mui/icons-material/AccessTime";
 import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import {
+  Alert,
+  Button,
+  CircularProgress,
   IconButton,
+  Menu,
+  MenuItem,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import { SideBar } from "../../components/SideBar/SideBar";
 import { ButtonBlue } from "../../components/Buttons/Buttons";
 import * as Styled from "./Appointments.styled";
+import { useAppointments } from "./Appointments.hook";
+import type { AppointmentStatus } from "./Appointments.types";
+import {
+  formatLongDate,
+  formatShortDate,
+  getInitials,
+  getStatusLabel,
+  STATUS_COLORS,
+} from "./Appoiments.utils";
 
-import { appointments, getInitials, getStatusLabel } from "./Appoiments.utils";
+const LIST_TITLES: Record<string, string> = {
+  all: "Todos os agendamentos",
+  today: "Agenda de hoje",
+  week: "Agenda da semana",
+};
 
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+const LEGEND: { status: AppointmentStatus; label: string }[] = [
+  { status: "confirmed", label: "Confirmados" },
+  { status: "scheduled", label: "Agendados" },
+  { status: "completed", label: "Concluídos" },
+  { status: "cancelled", label: "Cancelados" },
+  { status: "noShow", label: "Não compareceu" },
+];
 
 export const Appointments = () => {
   const navigate = useNavigate();
-  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
 
-  const upcomingAppointments = [
-    {
-      id: 1,
-      name: "Charlotte Lewis",
-      specialty: "Cardiologia",
-      time: "14:00",
-    },
-    {
-      id: 2,
-      name: "Daniel Walker",
-      specialty: "Neurologia",
-      time: "14:30",
-    },
-    {
-      id: 3,
-      name: "Mia Hall",
-      specialty: "Dermatologia",
-      time: "15:00",
-    },
-    {
-      id: 4,
-      name: "Lucas Brown",
-      specialty: "Pediatria",
-      time: "15:30",
-    },
-    {
-      id: 5,
-      name: "Emma Wilson",
-      specialty: "Ortopedia",
-      time: "16:00",
-    },
-  ];
+  const {
+    search,
+    setSearch,
+    date,
+    setDate,
+    professional,
+    setProfessional,
+    status,
+    setStatus,
+    professionals,
+    filteredAppointments,
+    summary,
+    statusCounts,
+    totalCount,
+    donutGradient,
+    upcoming,
+    showAllUpcoming,
+    toggleShowAllUpcoming,
+    loading,
+    error,
+    reload,
+    menuAnchor,
+    menuAppointment,
+    openMenu,
+    closeMenu,
+    runAction,
+    isActing,
+  } = useAppointments();
+
+  const menuStatus = menuAppointment?.status;
+  const isFinished = menuStatus === "cancelled" || menuStatus === "completed";
 
   return (
     <Stack>
@@ -91,37 +114,62 @@ export const Appointments = () => {
 
             <Styled.SearchInput
               type="text"
-              placeholder="Pesquisar agendamentos..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Buscar por paciente, profissional ou especialidade"
             />
           </Styled.SearchWrapper>
 
-          <Styled.FilterSelect defaultValue="date">
-            <option value="date">Data</option>
-            <option value="today">Hoje</option>
-            <option value="week">Esta semana</option>
-          </Styled.FilterSelect>
+          <TextField
+            select
+            size="small"
+            value={date}
+            onChange={(event) => setDate(event.target.value)}
+            sx={Styled.filterSx}
+          >
+            <MenuItem value="all">Todas as datas</MenuItem>
+            <MenuItem value="today">Hoje</MenuItem>
+            <MenuItem value="week">Esta semana</MenuItem>
+          </TextField>
 
-          <Styled.FilterSelect defaultValue="professional">
-            <option value="professional">Profissional</option>
-            <option value="sarah">Dra. Sarah Miller</option>
-            <option value="michael">Dr. Michael Chen</option>
-          </Styled.FilterSelect>
+          <TextField
+            select
+            size="small"
+            value={professional}
+            onChange={(event) => setProfessional(event.target.value)}
+            sx={Styled.filterSx}
+          >
+            <MenuItem value="all">Todos os profissionais</MenuItem>
+            {professionals.map((item) => (
+              <MenuItem key={item.id} value={String(item.id)}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </TextField>
 
-          <Styled.FilterSelect defaultValue="status">
-            <option value="status">Status</option>
-            <option value="confirmed">Confirmado</option>
-            <option value="pending">Pendente</option>
-            <option value="cancelled">Cancelado</option>
-          </Styled.FilterSelect>
+          <TextField
+            select
+            size="small"
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+            sx={Styled.filterSx}
+          >
+            <MenuItem value="all">Todos os status</MenuItem>
+            <MenuItem value="scheduled">Agendado</MenuItem>
+            <MenuItem value="confirmed">Confirmado</MenuItem>
+            <MenuItem value="completed">Concluído</MenuItem>
+            <MenuItem value="cancelled">Cancelado</MenuItem>
+            <MenuItem value="noShow">Não compareceu</MenuItem>
+          </TextField>
         </Styled.FiltersContainer>
 
         <Styled.ContentContainer>
           <Styled.ScheduleContainer>
             <Styled.ScheduleHeader>
-              <Typography variant="h6">Agenda de hoje</Typography>
+              <Typography variant="h6">{LIST_TITLES[date]}</Typography>
 
               <Typography variant="body2" color="text.secondary">
-                Terça-feira, 12 de março de 2024
+                {formatLongDate(new Date())}
               </Typography>
             </Styled.ScheduleHeader>
 
@@ -129,7 +177,7 @@ export const Appointments = () => {
               <Table sx={{ minWidth: "850px" }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Horário</TableCell>
+                    <TableCell>Data e horário</TableCell>
                     <TableCell>Paciente</TableCell>
                     <TableCell>Profissional</TableCell>
                     <TableCell>Especialidade</TableCell>
@@ -139,60 +187,111 @@ export const Appointments = () => {
                 </TableHead>
 
                 <TableBody>
-                  {appointments.map((appointment) => (
-                    <Styled.StyledTableRow key={appointment.id} hover>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight={600}>
-                          {appointment.time}
+                  {loading && (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        <CircularProgress size={26} sx={{ my: 3 }} />
+                      </TableCell>
+                    </TableRow>
+                  )}
+
+                  {!loading && error && (
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <Alert
+                          severity="error"
+                          action={
+                            <Button color="inherit" size="small" onClick={reload}>
+                              Tentar de novo
+                            </Button>
+                          }
+                        >
+                          {error}
+                        </Alert>
+                      </TableCell>
+                    </TableRow>
+                  )}
+
+                  {!loading && !error && filteredAppointments.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ py: 2 }}
+                        >
+                          Nenhum agendamento encontrado
                         </Typography>
                       </TableCell>
+                    </TableRow>
+                  )}
 
-                      <TableCell>
-                        <Styled.PatientCell>
-                          <Styled.Avatar>
-                            {getInitials(appointment.patient)}
-                          </Styled.Avatar>
+                  {!loading &&
+                    !error &&
+                    filteredAppointments.map((appointment) => (
+                      <Styled.StyledTableRow key={appointment.id} hover>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>
+                            {appointment.time}
+                          </Typography>
 
-                          <Stack>
-                            <Typography variant="body2" fontWeight={600}>
-                              {appointment.patient}
-                            </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {formatShortDate(appointment.date)}
+                          </Typography>
+                        </TableCell>
 
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                            >
-                              {appointment.patientInfo}
-                            </Typography>
-                          </Stack>
-                        </Styled.PatientCell>
-                      </TableCell>
+                        <TableCell>
+                          <Styled.PatientCell>
+                            <Styled.Avatar>
+                              {getInitials(appointment.patient)}
+                            </Styled.Avatar>
 
-                      <TableCell>
-                        <Typography variant="body2">
-                          {appointment.professional}
-                        </Typography>
-                      </TableCell>
+                            <Stack>
+                              <Typography variant="body2" fontWeight={600}>
+                                {appointment.patient}
+                              </Typography>
 
-                      <TableCell>
-                        <Typography variant="body2">
-                          {appointment.specialty}
-                        </Typography>
-                      </TableCell>
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
+                                {appointment.patientInfo}
+                              </Typography>
+                            </Stack>
+                          </Styled.PatientCell>
+                        </TableCell>
 
-                      <TableCell>
-                        <Styled.Status status={appointment.status}>
-                          {getStatusLabel(appointment.status)}
-                        </Styled.Status>
-                      </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {appointment.professional}
+                          </Typography>
+                        </TableCell>
 
-                      <TableCell align="right">
-                        <IconButton size="small">
-                          <MoreHoriz fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                    </Styled.StyledTableRow>
-                  ))}
+                        <TableCell>
+                          <Typography variant="body2">
+                            {appointment.specialty}
+                          </Typography>
+                        </TableCell>
+
+                        <TableCell>
+                          <Styled.Status status={appointment.status}>
+                            {getStatusLabel(appointment.status)}
+                          </Styled.Status>
+                        </TableCell>
+
+                        <TableCell align="right">
+                          <IconButton
+                            size="small"
+                            disabled={isActing}
+                            onClick={(event) =>
+                              openMenu(event.currentTarget, appointment)
+                            }
+                          >
+                            <MoreHoriz fontSize="small" />
+                          </IconButton>
+                        </TableCell>
+                      </Styled.StyledTableRow>
+                    ))}
                 </TableBody>
               </Table>
             </Styled.TableWrapper>
@@ -208,16 +307,12 @@ export const Appointments = () => {
                 <CalendarToday color="primary" />
 
                 <Stack>
-                  <Typography
-                    variant="h5"
-                    sx={{ fontSize: "1.3rem" }}
-                    fontWeight={700}
-                  >
-                    42
+                  <Typography variant="h5" sx={{ fontSize: "1.3rem" }} fontWeight={700}>
+                    {loading ? "..." : summary.total}
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
-                    agendamentos
+                    agendamentos hoje
                   </Typography>
                 </Stack>
               </Styled.SummaryItem>
@@ -226,12 +321,8 @@ export const Appointments = () => {
                 <CheckCircle sx={{ color: "#219653" }} />
 
                 <Stack>
-                  <Typography
-                    variant="h5"
-                    sx={{ fontSize: "1.3rem" }}
-                    fontWeight={700}
-                  >
-                    28
+                  <Typography variant="h5" sx={{ fontSize: "1.3rem" }} fontWeight={700}>
+                    {loading ? "..." : summary.confirmed}
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
@@ -244,16 +335,12 @@ export const Appointments = () => {
                 <AccessTime sx={{ color: "#D99400" }} />
 
                 <Stack>
-                  <Typography
-                    variant="h5"
-                    sx={{ fontSize: "1.3rem" }}
-                    fontWeight={700}
-                  >
-                    4
+                  <Typography variant="h5" sx={{ fontSize: "1.3rem" }} fontWeight={700}>
+                    {loading ? "..." : summary.scheduled}
                   </Typography>
 
                   <Typography variant="body2" color="text.secondary">
-                    pendentes
+                    aguardando confirmação
                   </Typography>
                 </Stack>
               </Styled.SummaryItem>
@@ -262,10 +349,10 @@ export const Appointments = () => {
             <Styled.SummaryCard>
               <Typography variant="h6">Status dos agendamentos</Typography>
 
-              <Styled.Donut>
+              <Styled.Donut style={{ background: donutGradient }}>
                 <Styled.DonutValue>
                   <Typography variant="h5" fontWeight={700}>
-                    42
+                    {totalCount}
                   </Typography>
 
                   <Typography variant="caption" color="text.secondary">
@@ -274,29 +361,15 @@ export const Appointments = () => {
                 </Styled.DonutValue>
               </Styled.Donut>
 
-              <Styled.LegendItem>
-                <Styled.LegendColor color="#4CAF91" />
-                <Typography variant="body2">Confirmados</Typography>
-                <Typography variant="body2">28</Typography>
-              </Styled.LegendItem>
-
-              <Styled.LegendItem>
-                <Styled.LegendColor color="#42A5F5" />
-                <Typography variant="body2">Agendados</Typography>
-                <Typography variant="body2">8</Typography>
-              </Styled.LegendItem>
-
-              <Styled.LegendItem>
-                <Styled.LegendColor color="#F4C95D" />
-                <Typography variant="body2">Pendentes</Typography>
-                <Typography variant="body2">4</Typography>
-              </Styled.LegendItem>
-
-              <Styled.LegendItem>
-                <Styled.LegendColor color="#E57373" />
-                <Typography variant="body2">Cancelados</Typography>
-                <Typography variant="body2">2</Typography>
-              </Styled.LegendItem>
+              {LEGEND.map((item) => (
+                <Styled.LegendItem key={item.status}>
+                  <Styled.LegendColor color={STATUS_COLORS[item.status]} />
+                  <Typography variant="body2">{item.label}</Typography>
+                  <Typography variant="body2">
+                    {statusCounts[item.status]}
+                  </Typography>
+                </Styled.LegendItem>
+              ))}
             </Styled.SummaryCard>
 
             <Styled.SummaryCard>
@@ -306,41 +379,65 @@ export const Appointments = () => {
                 <Typography
                   variant="body2"
                   color="primary"
-                  onClick={() => setShowAllUpcoming((previous) => !previous)}
+                  onClick={toggleShowAllUpcoming}
                   sx={{
                     cursor: "pointer",
-                    "&:hover": {
-                      textDecoration: "underline",
-                    },
+                    "&:hover": { textDecoration: "underline" },
                   }}
                 >
-                  {showAllUpcoming ? "Ver menos" : "Ver todos"}
+                  {showAllUpcoming ? "Ver menos" : "Ver mais"}
                 </Typography>
               </Styled.SummaryCardHeader>
 
-              {upcomingAppointments
-                .slice(showAllUpcoming ? 0 : 3)
-                .map((appointment) => (
-                  <Styled.UpcomingItem key={appointment.id}>
-                    <Stack>
-                      <Typography variant="body2">
-                        {appointment.name}
-                      </Typography>
+              {!loading && upcoming.length === 0 && (
+                <Typography variant="body2" color="text.secondary">
+                  Nenhum agendamento futuro.
+                </Typography>
+              )}
 
-                      <Typography variant="caption" color="text.secondary">
-                        {appointment.specialty}
-                      </Typography>
-                    </Stack>
+              {upcoming.map((appointment) => (
+                <Styled.UpcomingItem key={appointment.id}>
+                  <Stack>
+                    <Typography variant="body2">{appointment.patient}</Typography>
 
-                    <Typography variant="caption" color="primary">
-                      {appointment.time}
+                    <Typography variant="caption" color="text.secondary">
+                      {appointment.specialty}
                     </Typography>
-                  </Styled.UpcomingItem>
-                ))}
+                  </Stack>
+
+                  <Typography variant="caption" color="primary">
+                    {formatShortDate(appointment.date)} • {appointment.time}
+                  </Typography>
+                </Styled.UpcomingItem>
+              ))}
             </Styled.SummaryCard>
           </Styled.SideSummaryContainer>
         </Styled.ContentContainer>
       </Styled.Container>
+
+      <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={closeMenu}>
+        <MenuItem
+          disabled={menuStatus !== "scheduled"}
+          onClick={() => runAction("confirm")}
+        >
+          Confirmar
+        </MenuItem>
+
+        <MenuItem
+          disabled={isFinished}
+          onClick={() => runAction("complete")}
+        >
+          Marcar como concluído
+        </MenuItem>
+
+        <MenuItem
+          disabled={isFinished}
+          onClick={() => runAction("cancel")}
+          sx={{ color: "error.main" }}
+        >
+          Cancelar agendamento
+        </MenuItem>
+      </Menu>
     </Stack>
   );
 };

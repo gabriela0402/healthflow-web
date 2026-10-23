@@ -94,26 +94,6 @@ export const SearchInput = styled("input")(({ theme }) => ({
   },
 }));
 
-export const FilterSelect = styled("select")(
-  ({ theme }) => ({
-    width: "100%",
-    height: "44px",
-    padding: "0 0.75rem",
-    boxSizing: "border-box",
-    border: `1px solid ${theme.palette.divider}`,
-    borderRadius: "0.6rem",
-    outline: "none",
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.primary,
-    fontFamily: "inherit",
-    fontSize: "0.85rem",
-    cursor: "pointer",
-
-    "&:focus": {
-      borderColor: theme.palette.primary.main,
-    },
-  }),
-);
 
 export const ContentContainer = styled(Stack)(
   ({ theme }) => ({
@@ -182,53 +162,32 @@ export const Avatar = styled(Box)(({ theme }) => ({
   fontWeight: 600,
 }));
 
-type StatusProps = {
-  status:
-    | "scheduled"
-    | "confirmed"
-    | "pending"
-    | "cancelled"
-    | "completed";
-};
 
-export const Status = styled(Box)<StatusProps>(
-  ({ status }) => {
-    const statusColors = {
-      scheduled: {
-        background: "#EAF3FF",
-        color: "#1976D2",
-      },
-      confirmed: {
-        background: "#E7F7EF",
-        color: "#219653",
-      },
-      pending: {
-        background: "#FFF5DD",
-        color: "#D99400",
-      },
-      cancelled: {
-        background: "#FDECEC",
-        color: "#D64545",
-      },
-      completed: {
-        background: "#EEF0F3",
-        color: "#667085",
-      },
-    };
 
-    return {
-      display: "inline-flex",
-      width: "fit-content",
-      padding: "0.3rem 0.6rem",
-      borderRadius: "1rem",
-      backgroundColor: statusColors[status].background,
-      color: statusColors[status].color,
-      fontSize: "0.7rem",
-      fontWeight: 600,
-      whiteSpace: "nowrap",
-    };
-  },
-);
+export const Status = styled(Box)<{ status: AppointmentStatus }>(({ status }) => {
+  const statusColors: Record<
+    AppointmentStatus,
+    { background: string; color: string }
+  > = {
+    scheduled: { background: "#EAF3FF", color: "#1976D2" },
+    confirmed: { background: "#E7F7EF", color: "#219653" },
+    cancelled: { background: "#FDECEC", color: "#D64545" },
+    completed: { background: "#EEF0F3", color: "#667085" },
+    noShow: { background: "#FFF4E5", color: "#C77700" },
+  };
+
+  return {
+    display: "inline-flex",
+    width: "fit-content",
+    padding: "0.3rem 0.6rem",
+    borderRadius: "1rem",
+    backgroundColor: statusColors[status].background,
+    color: statusColors[status].color,
+    fontSize: "0.7rem",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+  };
+});
 
 export const SideSummaryContainer = styled(Stack)(
   ({ theme }) => ({
@@ -338,3 +297,13 @@ export const UpcomingItem = styled(Stack)(({ theme }) => ({
     borderBottom: "none",
   },
 }));
+
+export const filterSx = {
+  width: "100%",
+  "& .MuiInputBase-root": {
+    height: "44px",
+    borderRadius: "0.6rem",
+    backgroundColor: "background.paper",
+    fontSize: "0.85rem",
+  },
+};

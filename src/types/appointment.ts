@@ -14,3 +14,16 @@ export type AppointmentResponse = {
   professionalName: string;
   specialty: string;
 };
+
+export type AppointmentAdminResponse = {
+  id: number;
+  scheduledAt: string;
+  status: AppointmentApiStatus;
+  notes: string | null;
+  patientId: number;
+  patientName: string;
+  patientDateOfBirth: string | null;
+  professionalId: number;
+  professionalName: string;
+  specialty: string;
+};
