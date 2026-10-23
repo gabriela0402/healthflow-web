@@ -1,3 +1,5 @@
+import type { AdminAppointment } from "../Appointments/Appointments.types";
+
 export const getFormattedDate = (): string => {
   return new Date().toLocaleDateString("pt-BR", {
     weekday: "short",
@@ -7,12 +9,34 @@ export const getFormattedDate = (): string => {
   });
 };
 
-export const appointmentData = [
-  { month: "Jan", appointments: 320 },
-  { month: "Fev", appointments: 410 },
-  { month: "Mar", appointments: 380 },
-  { month: "Abr", appointments: 520 },
-  { month: "Mai", appointments: 460 },
-  { month: "Jun", appointments: 610 },
-  { month: "Jul", appointments: 540 },
-];
+export function getMonthlyFlow(appointments: AdminAppointment[], months = 7) {
+  const now = new Date();
+
+  return Array.from({ length: months }, (_, index) => {
+    const date = new Date(now.getFullYear(), now.getMonth() - (months - 1 - index), 1);
+
+    const label = date
+      .toLocaleDateString("pt-BR", { month: "short" })
+      .replace(".", "");
+
+    return {
+      month: label.charAt(0).toUpperCase() + label.slice(1),
+      appointments: appointments.filter(
+        (a) =>
+          a.status !== "cancelled" &&
+          a.date.getMonth() === date.getMonth() &&
+          a.date.getFullYear() === date.getFullYear(),
+      ).length,
+    };
+  });
+}
+
+export function getHealthPercentage(appointments: AdminAppointment[]) {
+  if (appointments.length === 0) return null;
+
+  const lost = appointments.filter(
+    (a) => a.status === "cancelled" || a.status === "noShow",
+  ).length;
+
+  return Math.round(((appointments.length - lost) / appointments.length) * 100);
+}

@@ -1,5 +1,5 @@
 import { SideBar } from "../../components/SideBar/SideBar";
-import { Box, Stack, Typography } from "@mui/material";
+import { Alert, Button, Stack, Typography } from "@mui/material";
 import * as Styled from "./Dashboard.styled";
 import { Card } from "../../components/Card/Card";
 
@@ -20,32 +20,48 @@ import {
 } from "recharts";
 
 import { getFormattedDate } from "./Dashboard.utils";
-import { appointmentData } from "./Dashboard.utils";
+import { useDashboard } from "./Dashboard.hook";
 import { Activity } from "../../components/Activity/Activity";
 import { UpcomingAppoiment } from "../../components/UpcomingAppoiment/UpcomingAppoiment";
+import { formatShortDate } from "../Appointments/Appoiments.utils";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
   const dataFormatada = getFormattedDate();
 
-  return ( 
-    <Stack direction={"row"}>
+  const {
+    firstName,
+    loading,
+    error,
+    reload,
+    patientsCount,
+    professionalsCount,
+    specialtiesCount,
+    stats,
+    monthlyFlow,
+    health,
+    recent,
+    upcoming,
+  } = useDashboard();
+
+  const show = (value: number) => (loading ? "..." : String(value));
+
+  return (
+    <Stack direction="row">
       <SideBar />
+
       <Styled.Container>
         <Styled.TitleContainer>
           <Stack spacing={0.4}>
             <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
-              Bem vindo(a), Gabriela
+              Bem vindo(a){firstName ? `, ${firstName}` : ""}
             </Typography>
             <Typography variant="body1" sx={{ fontSize: "0.9rem" }}>
               Aqui é o que ocorre na sua clínica atualmente
             </Typography>
           </Stack>
 
-          <Stack
-            spacing={0.5}
-            sx={{ flexDirection: "row", alignItems: "center" }}
-          >
+          <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
             <Typography
               sx={{ color: "#4a5568", fontWeight: 500, fontSize: "0.8rem" }}
             >
@@ -54,32 +70,47 @@ export const Dashboard = () => {
           </Stack>
         </Styled.TitleContainer>
 
+        {error && (
+          <Alert
+            severity="error"
+            sx={{ mt: 2 }}
+            action={
+              <Button color="inherit" size="small" onClick={reload}>
+                Tentar de novo
+              </Button>
+            }
+          >
+            {error}
+          </Alert>
+        )}
+
         <Styled.CardContainer>
           <Card
             icon={PeopleIcon}
             title="Pacientes"
-            num={"234"}
+            num={show(patientsCount)}
             type="dashboard"
           />
           <Card
             icon={CalendarTodayIcon}
             title="Agendamentos"
-            num={"234"}
+            num={show(stats.appointments)}
             type="dashboard"
           />
           <Card
             icon={PeopleIcon}
             title="Profissionais"
-            num={"34"}
+            num={show(professionalsCount)}
             type="dashboard"
           />
           <Card
             icon={AccessTimeIcon}
             title="Pendentes"
-            num={"4"}
+            num={show(stats.pending)}
             type="dashboard"
           />
         </Styled.CardContainer>
+
         <Styled.OverviewDepartmentContainer>
           <Styled.OverviewContainer>
             <Styled.OverviewHeader>
@@ -104,24 +135,18 @@ export const Dashboard = () => {
 
             <Styled.ChartContainer>
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={appointmentData}>
+                <LineChart data={monthlyFlow}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E5EAF0" />
-
                   <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-
-                  <YAxis tick={{ fontSize: 12 }} />
-
+                  <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
                   <Tooltip />
-
                   <Line
                     type="monotone"
                     dataKey="appointments"
+                    name="Agendamentos"
                     stroke="#1976D2"
                     strokeWidth={3}
-                    dot={{
-                      r: 4,
-                      fill: "#1976D2",
-                    }}
+                    dot={{ r: 4, fill: "#1976D2" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -130,7 +155,7 @@ export const Dashboard = () => {
 
           <Styled.DepartmentContainer>
             <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
-              Saúde do departamento
+              Desempenho da clínica
             </Typography>
 
             <Typography
@@ -138,17 +163,24 @@ export const Dashboard = () => {
               sx={{ fontSize: "0.8rem" }}
               color="text.secondary"
             >
-              Desempenho geral da clínica
+              Agendamentos sem cancelamento ou falta
             </Typography>
 
-            <Styled.HealthPercentage>
+            <Styled.HealthPercentage
+              style={{
+                background:
+                  health === null
+                    ? "#37699728"
+                    : `conic-gradient(#1976D2 0% ${health}%, #37699728 ${health}% 100%)`,
+              }}
+            >
               <Styled.PercentageText>
                 <Typography
                   variant="h4"
                   fontWeight={700}
                   sx={{ fontSize: "1.5rem" }}
                 >
-                  92%
+                  {loading || health === null ? "—" : `${health}%`}
                 </Typography>
 
                 <Typography
@@ -156,7 +188,7 @@ export const Dashboard = () => {
                   color="text.secondary"
                   sx={{ fontSize: "0.8rem" }}
                 >
-                  saudável
+                  aproveitados
                 </Typography>
               </Styled.PercentageText>
             </Styled.HealthPercentage>
@@ -164,9 +196,8 @@ export const Dashboard = () => {
             <Styled.DepartmentStats>
               <Styled.DepartmentStat>
                 <Typography variant="h5" sx={{ fontSize: "1rem" }}>
-                  58
+                  {show(professionalsCount)}
                 </Typography>
-
                 <Typography variant="body2" color="text.secondary">
                   Profissionais
                 </Typography>
@@ -176,9 +207,8 @@ export const Dashboard = () => {
 
               <Styled.DepartmentStat>
                 <Typography variant="h5" sx={{ fontSize: "1rem" }}>
-                  12
+                  {show(specialtiesCount)}
                 </Typography>
-
                 <Typography variant="body2" color="text.secondary">
                   Especialidades
                 </Typography>
@@ -188,23 +218,21 @@ export const Dashboard = () => {
 
               <Styled.DepartmentStat>
                 <Typography variant="h5" sx={{ fontSize: "1rem" }}>
-                  4.8
+                  {show(stats.cancelled)}
                 </Typography>
-
                 <Typography variant="body2" color="text.secondary">
-                  Avaliação
+                  Cancelados
                 </Typography>
               </Styled.DepartmentStat>
             </Styled.DepartmentStats>
           </Styled.DepartmentContainer>
         </Styled.OverviewDepartmentContainer>
+
         <Styled.OverviewDepartmentContainer>
           <Styled.ActivityContainer>
-            <Stack
-              sx={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+            <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
-                Atividade Recente
+                Atividade recente
               </Typography>
               <Styled.SeeAllButton
                 type="button"
@@ -213,33 +241,30 @@ export const Dashboard = () => {
                 Ver tudo
               </Styled.SeeAllButton>
             </Stack>
+
             <Stack sx={{ mt: 2 }}>
-              <Activity
-                icon={PeopleIcon}
-                title="New appoiment"
-                description="oioioioioio"
-                time="123hrs ago"
-              />
-              <Activity
-                icon={PeopleIcon}
-                title="New appoiment"
-                description="oioioioioio"
-                time="123hrs ago"
-              />
-              <Activity
-                icon={PeopleIcon}
-                title="New appoiment"
-                description="oioioioioio"
-                time="123hrs ago"
-              />
+              {!loading && recent.length === 0 && (
+                <Typography variant="body2" color="text.secondary">
+                  Nenhuma atividade ainda.
+                </Typography>
+              )}
+
+              {recent.map((appointment) => (
+                <Activity
+                  key={appointment.id}
+                  icon={CalendarTodayIcon}
+                  title="Novo agendamento"
+                  description={`${appointment.patient} com ${appointment.professional}`}
+                  time={`${formatShortDate(appointment.date)} • ${appointment.time}`}
+                />
+              ))}
             </Stack>
           </Styled.ActivityContainer>
+
           <Styled.UpcomingContainer>
-            <Stack
-              sx={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+            <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
-                Agendamentos
+                Próximos agendamentos
               </Typography>
               <Styled.SeeAllButton
                 type="button"
@@ -248,31 +273,25 @@ export const Dashboard = () => {
                 Ver tudo
               </Styled.SeeAllButton>
             </Stack>
+
             <Stack>
-              <UpcomingAppoiment
-                time="13:30"
-                name="Taylor Swift"
-                job="Cardiologista"
-                status="Confirmado"
-              />
-              <UpcomingAppoiment
-                time="10:10"
-                name="Justin Bieber"
-                job="Psiquiatra"
-                status="Pendente"
-              />
-              <UpcomingAppoiment
-                time="20:10"
-                name="Beyonce"
-                job="Fisioterapeuta"
-                status="Pendente"
-              />
-              <UpcomingAppoiment
-                time="20:10"
-                name="Shakira"
-                job="Cirugião Plástico"
-                status="Confirmado"
-              />
+              {!loading && upcoming.length === 0 && (
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                  Nenhum agendamento futuro.
+                </Typography>
+              )}
+
+              {upcoming.map((appointment) => (
+                <UpcomingAppoiment
+                  key={appointment.id}
+                  time={`${formatShortDate(appointment.date)} • ${appointment.time}`}
+                  name={appointment.patient}
+                  job={appointment.specialty}
+                  status={
+                    appointment.status === "confirmed" ? "Confirmado" : "Pendente"
+                  }
+                />
+              ))}
             </Stack>
           </Styled.UpcomingContainer>
         </Styled.OverviewDepartmentContainer>
