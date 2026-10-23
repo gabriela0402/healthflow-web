@@ -41,6 +41,7 @@ export function AppRoutes() {
         <Route path="/professionals/new" element={<ProfessionalCreate />} />
         <Route path="/specialties" element={<Specialties />} />
         <Route path="/specialties/new" element={<SpecialtyCreate />} />
+        <Route path="/specialties/:id/edit" element={<SpecialtyCreate />} />
         <Route path="/appointments" element={<Appointments />} />
         <Route path="/appointments/new" element={<AppointmentCreate />} />
         <Route path="/settings" element={<Settings />} />

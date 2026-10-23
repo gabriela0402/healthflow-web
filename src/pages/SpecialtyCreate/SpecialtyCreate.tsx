@@ -1,10 +1,5 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import {
-  Button,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { SideBar } from "../../components/SideBar/SideBar";
@@ -17,6 +12,9 @@ export const SpecialtyCreate = () => {
 
   const {
     form,
+    isEditing,
+    isLoading,
+    isSubmitting,
     handleChange,
     handleSubmit,
     handleCancel,
@@ -48,14 +46,13 @@ export const SpecialtyCreate = () => {
               fontWeight: 700,
             }}
           >
-            Adicionar especialidade
+            {isEditing ? "Editar especialidade" : "Adicionar especialidade"}
           </Typography>
 
-          <Typography
-            color="text.secondary"
-            sx={{ fontSize: "0.85rem" }}
-          >
-            Cadastre uma nova especialidade na clínica.
+          <Typography color="text.secondary" sx={{ fontSize: "0.85rem" }}>
+            {isEditing
+              ? "Altere os dados da especialidade."
+              : "Cadastre uma nova especialidade na clínica."}
           </Typography>
         </Styled.Header>
 
@@ -67,11 +64,10 @@ export const SpecialtyCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isLoading}
                 size="small"
                 value={form.name}
-                onChange={(event) =>
-                  handleChange("name", event.target.value)
-                }
+                onChange={(event) => handleChange("name", event.target.value)}
                 placeholder="Ex.: Cardiologia"
               />
             </Styled.Field>
@@ -82,14 +78,12 @@ export const SpecialtyCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isLoading}
                 multiline
                 minRows={4}
                 value={form.description}
                 onChange={(event) =>
-                  handleChange(
-                    "description",
-                    event.target.value,
-                  )
+                  handleChange("description", event.target.value)
                 }
                 placeholder="Descreva brevemente essa especialidade"
               />
@@ -100,14 +94,22 @@ export const SpecialtyCreate = () => {
             <Button
               variant="outlined"
               onClick={handleCancel}
+              disabled={isSubmitting}
               sx={{ textTransform: "none" }}
             >
-              Limpar
+              {isEditing ? "Desfazer" : "Limpar"}
             </Button>
 
             <ButtonBlue
-              text="Cadastrar especialidade"
+              text={
+                isSubmitting
+                  ? "Salvando..."
+                  : isEditing
+                    ? "Salvar alterações"
+                    : "Cadastrar especialidade"
+              }
               onClick={handleSubmit}
+              disabled={isSubmitting || isLoading}
             />
           </Styled.Actions>
         </Styled.FormCard>
