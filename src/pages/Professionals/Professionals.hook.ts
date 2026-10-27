@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+import { getApiErrorMessage } from "../../services/apiError";
 import {
-  getProfessionals,
+  deleteProfessional,
   getProfessionalAvailability,
+  getProfessionalsOverview,
 } from "../../services/professionalService";
 import { getSpecialties } from "../../services/specialtyService";
 import type { Specialty } from "../PatientBooking/PatientBooking.types";
@@ -10,13 +15,20 @@ import { getNextAvailability } from "./Professionals.utils";
 
 export function useProfessionals() {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
-  const [specialtyFilter, setSpecialtyFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [specialtyFilter, setSpecialtyFilter] = useState("all");
 
   const [items, setItems] = useState<ProfessionalListItem[]>([]);
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const [menuProfessional, setMenuProfessional] =
+    useState<ProfessionalListItem | null>(null);
+  const [toDelete, setToDelete] = useState<ProfessionalListItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -28,7 +40,7 @@ export function useProfessionals() {
         setError(null);
 
         const [professionals, specialtiesData] = await Promise.all([
-          getProfessionals(signal),
+          getProfessionalsOverview(signal),
           getSpecialties(signal),
         ]);
 
@@ -51,9 +63,11 @@ export function useProfessionals() {
         if (signal.aborted) return;
         setItems(withAvailability);
         setSpecialties(specialtiesData);
-      } catch {
-        if (signal.aborted) return;
-        setError("Não foi possível carregar os profissionais.");
+      } catch (err) {
+        if (axios.isCancel(err) || signal.aborted) return;
+        setError(
+          getApiErrorMessage(err, "Não foi possível carregar os profissionais."),
+        );
       } finally {
         if (!signal.aborted) setLoading(false);
       }
@@ -61,7 +75,7 @@ export function useProfessionals() {
 
     load();
     return () => controller.abort();
-  }, []);
+  }, [reloadKey]);
 
   const professionals = useMemo(() => {
     const searchValue = search.trim().toLowerCase();
@@ -74,11 +88,11 @@ export function useProfessionals() {
         p.specialtyName.toLowerCase().includes(searchValue);
 
       const matchesStatus =
-        statusFilter === "" ||
+        statusFilter === "all" ||
         (statusFilter === "available" ? p.isAvailable : !p.isAvailable);
 
       const matchesSpecialty =
-        specialtyFilter === "" || p.specialtyId === Number(specialtyFilter);
+        specialtyFilter === "all" || p.specialtyId === Number(specialtyFilter);
 
       return matchesSearch && matchesStatus && matchesSpecialty;
     });
@@ -94,6 +108,38 @@ export function useProfessionals() {
     [items],
   );
 
+  function openMenu(element: HTMLElement, professional: ProfessionalListItem) {
+    setMenuAnchor(element);
+    setMenuProfessional(professional);
+  }
+
+  function closeMenu() {
+    setMenuAnchor(null);
+  }
+
+  function askDelete() {
+    setToDelete(menuProfessional);
+    closeMenu();
+  }
+
+  async function confirmDelete() {
+    if (!toDelete) return;
+
+    try {
+      setIsDeleting(true);
+      await deleteProfessional(toDelete.id);
+      toast.success("Profissional excluído.");
+      setToDelete(null);
+      setReloadKey((key) => key + 1);
+    } catch (err) {
+      toast.error(
+        getApiErrorMessage(err, "Não foi possível excluir o profissional."),
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   return {
     search,
     setSearch,
@@ -106,5 +152,15 @@ export function useProfessionals() {
     summary,
     loading,
     error,
+    reload: () => setReloadKey((key) => key + 1),
+    menuAnchor,
+    menuProfessional,
+    openMenu,
+    closeMenu,
+    askDelete,
+    toDelete,
+    setToDelete,
+    confirmDelete,
+    isDeleting,
   };
 }

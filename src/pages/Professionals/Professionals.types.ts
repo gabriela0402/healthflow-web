@@ -1,12 +1,10 @@
-import type {
-  Professional,
-  ProfessionalAvailability,
-} from "../PatientBooking/PatientBooking.types";
+import type { ProfessionalAdminResponse } from "../../types/professional";
+import type { ProfessionalAvailability } from "../PatientBooking/PatientBooking.types";
 
-export type ProfessionalListItem = Professional & {
+export type ProfessionalListItem = ProfessionalAdminResponse & {
   availabilities: ProfessionalAvailability[];
   nextAvailability: string | null;
   isAvailable: boolean;
 };
 
-export type StatusFilter = "" | "available" | "unavailable";
+export type StatusFilter = "all" | "available" | "unavailable";

@@ -1,6 +1,9 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import {
+  Alert,
   Button,
+  MenuItem,
+  Snackbar,
   Stack,
   TextField,
   Typography,
@@ -17,10 +20,27 @@ export const ProfessionalCreate = () => {
 
   const {
     form,
+    specialties,
+    isEditing,
+    hasLogin,
+    loading,
+    submitting,
+    error,
     handleChange,
     handleSubmit,
     handleCancel,
+    clearError,
   } = useProfessionalCreate();
+
+  const emailLocked = isEditing && hasLogin;
+
+  const passwordLabel = !isEditing || !hasLogin ? "Senha inicial" : "Nova senha (opcional)";
+
+  const passwordHelp = !isEditing
+    ? "O profissional usará essa senha no primeiro acesso."
+    : hasLogin
+      ? "Deixe em branco para manter a senha atual."
+      : "Informe e-mail e senha para criar o acesso deste profissional.";
 
   return (
     <Stack direction="row">
@@ -30,11 +50,7 @@ export const ProfessionalCreate = () => {
         <Button
           startIcon={<ArrowBack />}
           onClick={() => navigate("/professionals")}
-          sx={{
-            alignSelf: "flex-start",
-            color: "text.secondary",
-            textTransform: "none",
-          }}
+          sx={{ alignSelf: "flex-start", color: "text.secondary", textTransform: "none" }}
         >
           Voltar para profissionais
         </Button>
@@ -42,141 +58,120 @@ export const ProfessionalCreate = () => {
         <Styled.Header>
           <Typography
             variant="h4"
-            sx={{
-              color: "#102A56",
-              fontSize: "1.6rem",
-              fontWeight: 700,
-            }}
+            sx={{ color: "#102A56", fontSize: "1.6rem", fontWeight: 700 }}
           >
-            Adicionar profissional
+            {isEditing ? "Editar profissional" : "Adicionar profissional"}
           </Typography>
 
-          <Typography
-            color="text.secondary"
-            sx={{ fontSize: "0.85rem" }}
-          >
-            Cadastre um novo profissional na clínica.
+          <Typography color="text.secondary" sx={{ fontSize: "0.85rem" }}>
+            {isEditing
+              ? "Altere os dados do profissional."
+              : "Cadastre um novo profissional na clínica."}
           </Typography>
         </Styled.Header>
 
         <Styled.FormCard>
           <Styled.FormGrid>
             <Styled.Field>
-              <Typography variant="body2" fontWeight={600}>
-                Nome completo
-              </Typography>
-
+              <Typography variant="body2" fontWeight={600}>Nome completo</Typography>
               <TextField
                 size="small"
                 value={form.fullName}
-                onChange={(event) =>
-                  handleChange(
-                    "fullName",
-                    event.target.value,
-                  )
-                }
+                onChange={(e) => handleChange("fullName", e.target.value)}
                 placeholder="Digite o nome completo"
+                disabled={loading}
               />
             </Styled.Field>
 
             <Styled.Field>
-              <Typography variant="body2" fontWeight={600}>
-                E-mail
-              </Typography>
-
-              <TextField
-                size="small"
-                type="email"
-                value={form.email}
-                onChange={(event) =>
-                  handleChange("email", event.target.value)
-                }
-                placeholder="Digite o e-mail"
-              />
-            </Styled.Field>
-
-            <Styled.Field>
-              <Typography variant="body2" fontWeight={600}>
-                Telefone
-              </Typography>
-
-              <TextField
-                size="small"
-                value={form.phone}
-                onChange={(event) =>
-                  handleChange("phone", event.target.value)
-                }
-                placeholder="(00) 00000-0000"
-              />
-            </Styled.Field>
-
-            <Styled.Field>
-              <Typography variant="body2" fontWeight={600}>
-                Especialidade
-              </Typography>
-
+              <Typography variant="body2" fontWeight={600}>Especialidade</Typography>
               <TextField
                 select
-                native
                 size="small"
-                value={form.specialty}
-                onChange={(event) =>
-                  handleChange(
-                    "specialty",
-                    event.target.value,
-                  )
+                value={form.specialtyId || "none"}
+                onChange={(e) =>
+                  handleChange("specialtyId", e.target.value === "none" ? "" : e.target.value)
                 }
+                disabled={loading}
               >
-                <option value="">Selecione</option>
-                <option value="Clínica Geral">
-                  Clínica Geral
-                </option>
-                <option value="Cardiologia">
-                  Cardiologia
-                </option>
-                <option value="Dermatologia">
-                  Dermatologia
-                </option>
-                <option value="Neurologia">
-                  Neurologia
-                </option>
-                <option value="Pediatria">
-                  Pediatria
-                </option>
+                <MenuItem value="none" disabled>Selecione</MenuItem>
+                {specialties.map((specialty) => (
+                  <MenuItem key={specialty.id} value={String(specialty.id)}>
+                    {specialty.name}
+                  </MenuItem>
+                ))}
               </TextField>
             </Styled.Field>
 
             <Styled.Field>
-              <Typography variant="body2" fontWeight={600}>
-                Registro profissional
-              </Typography>
-
+              <Typography variant="body2" fontWeight={600}>Registro profissional</Typography>
               <TextField
                 size="small"
                 value={form.registrationNumber}
-                onChange={(event) =>
-                  handleChange(
-                    "registrationNumber",
-                    event.target.value,
-                  )
-                }
+                onChange={(e) => handleChange("registrationNumber", e.target.value)}
                 placeholder="Ex.: CRM-SP 123.456"
+                disabled={loading}
+              />
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>E-mail (login)</Typography>
+              <TextField
+                size="small"
+                type="email"
+                value={form.email}
+                onChange={(e) => handleChange("email", e.target.value)}
+                placeholder="Digite o e-mail"
+                disabled={loading || emailLocked}
+                helperText={emailLocked ? "O e-mail é o login e não pode ser alterado." : undefined}
+              />
+            </Styled.Field>
+
+            <Styled.Field>
+              <Typography variant="body2" fontWeight={600}>{passwordLabel}</Typography>
+              <TextField
+                size="small"
+                type="password"
+                value={form.password}
+                onChange={(e) => handleChange("password", e.target.value)}
+                placeholder="Mínimo de 6 caracteres"
+                disabled={loading}
+                helperText={passwordHelp}
               />
             </Styled.Field>
           </Styled.FormGrid>
+
+          <Snackbar
+            open={Boolean(error)}
+            autoHideDuration={5000}
+            onClose={clearError}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            <Alert severity="error" variant="filled" onClose={clearError}>
+              {error}
+            </Alert>
+          </Snackbar>
 
           <Styled.Actions>
             <Button
               variant="outlined"
               onClick={handleCancel}
+              disabled={submitting}
               sx={{ textTransform: "none" }}
             >
-              Limpar
+              {isEditing ? "Desfazer" : "Limpar"}
             </Button>
 
             <ButtonBlue
-              text="Cadastrar profissional"
+              text={
+                submitting
+                  ? "Salvando..."
+                  : isEditing
+                    ? "Salvar alterações"
+                    : "Cadastrar profissional"
+              }
               onClick={handleSubmit}
+              disabled={submitting || loading}
             />
           </Styled.Actions>
         </Styled.FormCard>

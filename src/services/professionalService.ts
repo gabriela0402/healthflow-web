@@ -4,6 +4,11 @@ import type {
   ProfessionalAvailability,
 } from "../pages/PatientBooking/PatientBooking.types";
 
+import type {
+  ProfessionalAdminResponse,
+  UpdateProfessionalPayload,
+} from "../types/professional";
+
 export async function getProfessionals(signal?: AbortSignal) {
   const { data } = await api.get<Professional[]>("/professionals", { signal });
   return data;
@@ -18,4 +23,35 @@ export async function getProfessionalAvailability(
     { signal },
   );
   return data;
+}
+
+export type CreateProfessionalPayload = {
+  fullName: string;
+  registrationNumber: string;
+  specialtyId: number;
+};
+
+export async function getProfessionalsOverview(signal?: AbortSignal) {
+  const { data } = await api.get<ProfessionalAdminResponse[]>(
+    "/professionals/overview",
+    { signal },
+  );
+  return data;
+}
+
+export async function createProfessional(payload: CreateProfessionalPayload) {
+  const { data } = await api.post("/professionals", payload);
+  return data;
+}
+
+export async function updateProfessional(
+  id: number,
+  payload: UpdateProfessionalPayload,
+) {
+  const { data } = await api.put(`/professionals/${id}`, payload);
+  return data;
+}
+
+export async function deleteProfessional(id: number) {
+  await api.delete(`/professionals/${id}`);
 }

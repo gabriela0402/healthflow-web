@@ -83,29 +83,15 @@ export const SearchInput = styled("input")(({ theme }) => ({
   },
 }));
 
-export const FilterSelect = styled("select")(({ theme }) => ({
+export const filterSx = {
   width: "100%",
-  minWidth: 0,
-  height: "44px",
-  padding: "0 2.5rem 0 0.75rem",
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: "0.6rem",
-  backgroundColor: theme.palette.background.paper,
-  color: theme.palette.text.primary,
-  fontFamily: "inherit",
-  fontSize: "0.85rem",
-  outline: "none",
-  cursor: "pointer",
-  appearance: "none",
-  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E" )`,
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "right 0.8rem center",
-  backgroundSize: "1rem",
-
-  "&:focus": {
-    borderColor: theme.palette.primary.main,
+  "& .MuiInputBase-root": {
+    height: "44px",
+    borderRadius: "0.6rem",
+    backgroundColor: "background.paper",
+    fontSize: "0.85rem",
   },
-}));
+};
 
 export const CardContainer = styled(Stack)(({ theme }) => ({
   display: "grid",
