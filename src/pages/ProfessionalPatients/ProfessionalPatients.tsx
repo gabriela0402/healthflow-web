@@ -1,50 +1,60 @@
+import Search from "@mui/icons-material/Search";
+import PeopleIcon from "@mui/icons-material/People";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import {
-  Checkbox,
+  Alert,
+  Button,
+  CircularProgress,
+  MenuItem,
   Stack,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
-import * as Styled from "./ProfessionalPatients.styled";
-import { SideBar } from "../../components/SideBar/SideBar";
-import { ButtonBlue, ButtonWhite } from "../../components/Buttons/Buttons";
-import {
-  CalendarToday,
-  DescriptionOutlined,
-  FilterList,
-  MoreHoriz,
-  Search,
-} from "@mui/icons-material";
 
+import { SideBar } from "../../components/SideBar/SideBar";
+import { Card } from "../../components/Card/Card";
+import * as Styled from "./ProfessionalPatients.styled";
 import { usePatients } from "./ProfessionalPatients.hooks";
 import { getInitials } from "./ProfessionalPatients.utils";
 
-import { Card } from "../../components/Card/Card";
-import PeopleIcon from "@mui/icons-material/People";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-
-import { useNavigate } from "react-router-dom";
+const STATUS_LABELS = {
+  active: "Ativo",
+  pending: "Pendente",
+  inactive: "Inativo",
+};
 
 export const ProfessionalPatients = () => {
-  const { search, setSearch, patients } = usePatients();
-  const navigate = useNavigate();
+  const {
+    search,
+    setSearch,
+    status,
+    setStatus,
+    gender,
+    setGender,
+    patients,
+    summary,
+    loading,
+    error,
+    reload,
+  } = usePatients();
+
+  const show = (value: number) => (loading ? "..." : String(value));
 
   return (
-    <Stack direction={"row"}>
+    <Stack direction="row">
       <SideBar />
+
       <Styled.Container>
         <Styled.Header>
           <Stack>
             <Typography
               variant="h4"
-              sx={{
-                color: "#102A56",
-                fontSize: "1.2rem",
-                fontWeight: 700,
-              }}
+              sx={{ color: "#102A56", fontSize: "1.2rem", fontWeight: 700 }}
             >
               Meus pacientes
             </Typography>
@@ -57,78 +67,55 @@ export const ProfessionalPatients = () => {
               Consulte os pacientes sob seu acompanhamento
             </Typography>
           </Stack>
-
-          <Styled.HeaderActions>
-            <ButtonBlue
-              text="+ Adicionar paciente"
-              onClick={() => navigate("/patients/new")}
-            />
-          </Styled.HeaderActions>
         </Styled.Header>
+
         <Styled.FiltersContainer>
           <Styled.SearchContainer>
-            <Search
-              sx={{
-                fontSize: "1.2rem",
-                color: "text.secondary",
-              }}
-            />
+            <Search sx={{ fontSize: "1.2rem", color: "text.secondary" }} />
 
             <Styled.SearchInput
               value={search}
-              onChange={(event) => {
-                setSearch(event.target.value);
-              }}
+              onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar pelo nome ou e-mail"
             />
           </Styled.SearchContainer>
 
-          <Styled.FilterSelect defaultValue="">
-            <option value="" disabled>
-              Todos os status
-            </option>
-            <option value="active">Ativos</option>
-            <option value="inactive">Inativos</option>
-          </Styled.FilterSelect>
+          <TextField
+            select
+            size="small"
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+            sx={Styled.filterSx}
+          >
+            <MenuItem value="all">Todos os status</MenuItem>
+            <MenuItem value="active">Ativos</MenuItem>
+            <MenuItem value="pending">Pendentes</MenuItem>
+            <MenuItem value="inactive">Inativos</MenuItem>
+          </TextField>
 
-          <Styled.FilterSelect defaultValue="">
-            <option value="" disabled>
-              Todas especialidades
-            </option>
-            <option value="geral">Clínica Geral</option>
-            <option value="cardiologia">Cardiologia</option>
-            <option value="Dermatologia">Dermatologia</option>
-            <option value="Endocrinologia">Endocrinologia</option>
-            <option value="Ginecologia">Ginecologia</option>
-            <option value="Neurologia">Neurologia</option>
-            <option value="Nutrição">Nutrição</option>
-            <option value="Ortopedia">Ortopedia</option>
-            <option value="Pediatria">Pediatria</option>
-            <option value="Psicologia">Psicologia</option>
-          </Styled.FilterSelect>
-
-        
+          <TextField
+            select
+            size="small"
+            value={gender}
+            onChange={(event) => setGender(event.target.value)}
+            sx={Styled.filterSx}
+          >
+            <MenuItem value="all">Todos os gêneros</MenuItem>
+            <MenuItem value="female">Feminino</MenuItem>
+            <MenuItem value="male">Masculino</MenuItem>
+            <MenuItem value="other">Outro</MenuItem>
+          </TextField>
         </Styled.FiltersContainer>
+
         <Styled.CardContainer>
-          <Card
-            icon={PeopleIcon}
-            title="Total de Pacientes"
-            num={"234"}
-            type="patient"
-          />
-          <Card
-            icon={PeopleIcon}
-            title="Novos neste mês"
-            num={"234"}
-            type="patient"
-          />
-          <Card
-            icon={CalendarTodayIcon}
-            title="Consultas agendadas"
-            num={"126"}
-            type="patient"
-          />
+          <Card icon={PeopleIcon} title="Total de Pacientes"
+            num={show(summary.total)} type="patient" />
+          <Card icon={PeopleIcon} title="Novos neste mês"
+            num={show(summary.newThisMonth)} type="patient" />
+          <Card icon={CalendarTodayIcon} title="Consultas agendadas"
+            num={show(summary.scheduled)} type="patient" />
         </Styled.CardContainer>
+
         <Styled.TableContainer>
           <Stack sx={{ padding: "1.4rem" }}>
             <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
@@ -139,104 +126,95 @@ export const ProfessionalPatients = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox />
-                </TableCell>
-
                 <TableCell>Paciente</TableCell>
                 <TableCell>E-mail</TableCell>
                 <TableCell>Telefone</TableCell>
                 <TableCell>Próximo agendamento</TableCell>
                 <TableCell>Status</TableCell>
-                <TableCell align="right">Ações</TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {patients.map((patient) => (
-                <TableRow key={patient.id} hover>
-                  <TableCell padding="checkbox">
-                    <Checkbox />
-                  </TableCell>
-
-                  <TableCell>
-                    <Styled.PatientInfo>
-                      <Styled.PatientAvatar>
-                        {getInitials(patient.fullName)}
-                      </Styled.PatientAvatar>
-
-                      <Stack>
-                        <Typography variant="body2" fontWeight={600}>
-                          {patient.fullName}
-                        </Typography>
-
-                        <Typography variant="caption" color="text.secondary">
-                          ID: P{patient.id} • {patient.age} anos •{" "}
-                          {patient.gender}
-                        </Typography>
-                      </Stack>
-                    </Styled.PatientInfo>
-                  </TableCell>
-
-                  <TableCell>
-                    <Typography variant="body2">{patient.email}</Typography>
-                  </TableCell>
-
-                  <TableCell>
-                    <Typography variant="body2">{patient.phone}</Typography>
-                  </TableCell>
-
-                  <TableCell>
-                    <Typography variant="body2">
-                      {patient.nextAppointment}
-                    </Typography>
-                  </TableCell>
-
-                  <TableCell>
-                    <Styled.Status status={patient.status}>
-                      {patient.status === "active"
-                        ? "Ativo"
-                        : patient.status === "pending"
-                          ? "Pendente"
-                          : "Inativo"}
-                    </Styled.Status>
-                  </TableCell>
-
-                  <TableCell align="right">
-                    <Stack direction="row" justifyContent="flex-end" gap={0.5}>
-                      <Styled.ActionButton
-                        type="button"
-                        title="Agendar consulta"
-                        onClick={() => {
-                          console.log("Agendar para:", patient.id);
-                        }}
-                      >
-                        <CalendarToday fontSize="small" />
-                      </Styled.ActionButton>
-
-                      <Styled.ActionButton
-                        type="button"
-                        title="Ver detalhes"
-                        onClick={() => {
-                          console.log("Ver paciente:", patient.id);
-                        }}
-                      >
-                        <DescriptionOutlined fontSize="small" />
-                      </Styled.ActionButton>
-
-                      <Styled.ActionButton
-                        type="button"
-                        title="Mais opções"
-                        onClick={() => {
-                          console.log("Mais opções:", patient.id);
-                        }}
-                      >
-                        <MoreHoriz fontSize="small" />
-                      </Styled.ActionButton>
-                    </Stack>
+              {loading && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    <CircularProgress size={26} sx={{ my: 3 }} />
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
+
+              {!loading && error && (
+                <TableRow>
+                  <TableCell colSpan={5}>
+                    <Alert
+                      severity="error"
+                      action={
+                        <Button color="inherit" size="small" onClick={reload}>
+                          Tentar de novo
+                        </Button>
+                      }
+                    >
+                      {error}
+                    </Alert>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {!loading && !error && patients.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+                      Nenhum paciente encontrado
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {!loading &&
+                !error &&
+                patients.map((patient) => (
+                  <TableRow key={patient.id} hover>
+                    <TableCell>
+                      <Styled.PatientInfo>
+                        <Styled.PatientAvatar>
+                          {getInitials(patient.fullName)}
+                        </Styled.PatientAvatar>
+
+                        <Stack>
+                          <Typography variant="body2" fontWeight={600}>
+                            {patient.fullName}
+                          </Typography>
+
+                          <Typography variant="caption" color="text.secondary">
+                            ID: P{patient.id} •{" "}
+                            {patient.age !== null
+                              ? `${patient.age} anos`
+                              : "Idade não informada"}{" "}
+                            • {patient.gender}
+                          </Typography>
+                        </Stack>
+                      </Styled.PatientInfo>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2">{patient.email}</Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2">{patient.phone}</Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2">{patient.nextAppointment}</Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Styled.Status status={patient.status}>
+                        {STATUS_LABELS[patient.status]}
+                      </Styled.Status>
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </Styled.TableContainer>

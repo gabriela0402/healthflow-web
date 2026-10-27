@@ -13,7 +13,7 @@ export function getInitials(fullName: string) {
   );
 }
 
-function getAge(dateOfBirth: string | null) {
+export function getAge(dateOfBirth: string | null) {
   if (!dateOfBirth) return null;
 
   const birth = new Date(dateOfBirth);
@@ -30,7 +30,7 @@ function getAge(dateOfBirth: string | null) {
   return age >= 0 ? age : null;
 }
 
-function formatNextAppointment(date: Date | null) {
+export function formatNextAppointment(date: Date | null) {
   if (!date) return "Nenhum agendamento";
 
   const day = date.toLocaleDateString("pt-BR");

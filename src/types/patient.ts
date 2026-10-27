@@ -51,3 +51,16 @@ export type PatientSummary = {
   fullName: string;
   email: string;
 };
+
+export type ProfessionalPatientResponse = {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string | null;
+  dateOfBirth: string | null;
+  gender: string | null;
+  firstAppointmentAt: string;
+  nextAppointmentAt: string | null;
+  upcomingCount: number;
+  status: "active" | "inactive" | "pending";
+};

@@ -43,3 +43,13 @@ export async function completeAppointment(id: number) {
 export async function cancelAppointment(id: number) {
   await api.put(`/appointments/${id}/cancel`);
 }
+
+import type { ProfessionalPatientResponse } from "../types/patient";
+
+export async function getMyPatients(signal?: AbortSignal) {
+  const { data } = await api.get<ProfessionalPatientResponse[]>(
+    "/appointments/my-patients",
+    { signal },
+  );
+  return data;
+}

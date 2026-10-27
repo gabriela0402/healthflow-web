@@ -29,21 +29,11 @@ export const Header = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export const HeaderActions = styled(Stack)(({ theme }) => ({
-  flexDirection: "row",
-  alignItems: "center",
-  gap: "0.75rem",
 
-  [theme.breakpoints.down("sm")]: {
-    width: "100%",
-    flexDirection: "column",
-    alignItems: "stretch",
-  },
-}));
 
 export const FiltersContainer = styled(Stack)(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "2fr 1fr 1fr 1fr auto",
+  gridTemplateColumns: "2fr 1fr 1fr",
   alignItems: "center",
   width: "100%",
   gap: "0.75rem",
@@ -59,6 +49,16 @@ export const FiltersContainer = styled(Stack)(({ theme }) => ({
     marginTop: "1.5rem",
   },
 }));
+
+export const filterSx = {
+  width: "100%",
+  "& .MuiInputBase-root": {
+    height: "44px",
+    borderRadius: "0.6rem",
+    backgroundColor: "background.paper",
+    fontSize: "0.85rem",
+  },
+};
 
 export const SearchContainer = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -93,29 +93,7 @@ export const SearchInput = styled("input")(({ theme }) => ({
   },
 }));
 
-export const FilterSelect = styled("select")(({ theme }) => ({
-  width: "100%",
-  minWidth: 0,
-  height: "44px",
-  padding: "0 2.5rem 0 0.75rem",
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: "0.6rem",
-  backgroundColor: theme.palette.background.paper,
-  color: theme.palette.text.primary,
-  fontFamily: "inherit",
-  fontSize: "0.85rem",
-  outline: "none",
-  cursor: "pointer",
-  appearance: "none",
-  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E" )`,
-  backgroundRepeat: "no-repeat",
-  backgroundPosition: "right 0.8rem center",
-  backgroundSize: "1rem",
 
-  "&:focus": {
-    borderColor: theme.palette.primary.main,
-  },
-}));
 
 export const MoreFiltersButton = styled("button")(
   ({ theme }) => ({
@@ -233,21 +211,4 @@ export const Status = styled(Box)<{
   },
 }));
 
-export const ActionButton = styled("button")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "2rem",
-  height: "2rem",
-  padding: 0,
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: "0.45rem",
-  backgroundColor: theme.palette.background.paper,
-  color: theme.palette.text.secondary,
-  cursor: "pointer",
 
-  "&:hover": {
-    backgroundColor: "#F1F6FC",
-    color: theme.palette.primary.main,
-  },
-}));
