@@ -69,3 +69,24 @@ export async function createMyAvailability(payload: CreateAvailabilityPayload) {
   const { data } = await api.post("/professionals/me/availability", payload);
   return data;
 }
+
+import type {
+  ProfessionalProfileResponse,
+  UpdateProfessionalProfilePayload,
+} from "../types/professional";
+
+export async function getMyProfile(signal?: AbortSignal) {
+  const { data } = await api.get<ProfessionalProfileResponse>(
+    "/professionals/me",
+    { signal },
+  );
+  return data;
+}
+
+export async function updateMyProfile(payload: UpdateProfessionalProfilePayload) {
+  const { data } = await api.put<ProfessionalProfileResponse>(
+    "/professionals/me",
+    payload,
+  );
+  return data;
+}

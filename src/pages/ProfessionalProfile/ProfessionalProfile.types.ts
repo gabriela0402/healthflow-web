@@ -7,7 +7,7 @@ export type ProfessionalProfileData = {
 };
 
 export type WeekdayAvailability = {
-  id: string;
+  id: number;
   label: string;
   enabled: boolean;
 };

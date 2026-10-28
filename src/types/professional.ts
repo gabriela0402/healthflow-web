@@ -29,3 +29,17 @@ export type CreateAvailabilityPayload = {
   endTime: string;
   slotDurationInMinutes: number;
 };
+
+export type ProfessionalProfileResponse = {
+  id: number;
+  fullName: string;
+  email: string | null;
+  phone: string | null;
+  registrationNumber: string;
+  specialtyName: string;
+};
+
+export type UpdateProfessionalProfilePayload = {
+  fullName: string;
+  phone: string | null;
+};

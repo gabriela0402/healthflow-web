@@ -59,26 +59,6 @@ export const ProfileInfo = styled(Stack)({
   gap: "0.2rem",
 });
 
-export const ActiveStatus = styled(Box)({
-  display: "inline-flex",
-  alignItems: "center",
-  alignSelf: "flex-start",
-  gap: "0.3rem",
-  padding: "0.25rem 0.6rem",
-  borderRadius: "1rem",
-  backgroundColor: "#E7F7EF",
-  color: "#219653",
-  fontSize: "0.7rem",
-  fontWeight: 600,
-
-  "&::before": {
-    content: '""',
-    width: "0.4rem",
-    height: "0.4rem",
-    borderRadius: "50%",
-    backgroundColor: "#219653",
-  },
-});
 
 export const FormGrid = styled(Box)(({ theme }) => ({
   display: "grid",
@@ -155,28 +135,3 @@ export const DayIcon = styled(Box)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-export const Switch = styled("button")<{
-  enabled: boolean;
-}>(({ enabled }) => ({
-  position: "relative",
-  width: "2.1rem",
-  height: "1.2rem",
-  padding: 0,
-  border: "none",
-  borderRadius: "1rem",
-  backgroundColor: enabled ? "#168BEA" : "#CBD5E1",
-  cursor: "pointer",
-  transition: "background-color 0.2s ease",
-
-  "&::after": {
-    content: '""',
-    position: "absolute",
-    top: "0.15rem",
-    left: enabled ? "1rem" : "0.15rem",
-    width: "0.9rem",
-    height: "0.9rem",
-    borderRadius: "50%",
-    backgroundColor: "#FFFFFF",
-    transition: "left 0.2s ease",
-  },
-}));
