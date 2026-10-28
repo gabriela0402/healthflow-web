@@ -1,15 +1,14 @@
-export type AppointmentStatus =
-  | "confirmed"
-  | "pending"
-  | "completed";
+import type { AppointmentStatus } from "../Appointments/Appointments.types";
+
+export type { AppointmentStatus };
 
 export type ScheduleAppointment = {
   id: number;
-  day: string;
-  date: string;
+  date: Date;
+  dateKey: string;
   time: string;
   patient: string;
-  specialty: string;
+  code: string;
   status: AppointmentStatus;
 };
 

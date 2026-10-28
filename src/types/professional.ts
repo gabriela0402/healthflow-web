@@ -22,3 +22,10 @@ export type UpdateProfessionalPayload = {
   email: string | null;
   newPassword: string | null;
 };
+
+export type CreateAvailabilityPayload = {
+  dayOfWeek: number;
+  startTime: string; // "08:00:00"
+  endTime: string;
+  slotDurationInMinutes: number;
+};

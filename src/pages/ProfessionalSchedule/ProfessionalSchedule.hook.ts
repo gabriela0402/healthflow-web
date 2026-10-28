@@ -1,210 +1,165 @@
-import type {
-  AppointmentStatus,
-  ScheduleAppointment,
-  ScheduleDay,
-} from "./ProfessionalSchedule.types";
+import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-import { useState } from "react";
+import { getApiErrorMessage } from "../../services/apiError";
+import { getMySchedule } from "../../services/appointmentService";
+import {
+  createMyAvailability,
+  getMyAvailability,
+} from "../../services/professionalService";
 import type { AvailabilityForm } from "../../components/AvailabilityModal/AvailabilityModal.types";
+import type { ProfessionalAvailability } from "../PatientBooking/PatientBooking.types";
+import {
+  addDays,
+  formatShortDate,
+  getWeekdayLabel,
+  getWeekStart,
+} from "../ProfessioanlAppointments/ProfessionalAppointments.utils";
 
-const weekDays: ScheduleDay[] = [
-  {
-    shortName: "Seg",
-    date: "18 de mar",
-    fullDate: "2024-03-18",
-  },
-  {
-    shortName: "Ter",
-    date: "19 de mar",
-    fullDate: "2024-03-19",
-  },
-  {
-    shortName: "Qua",
-    date: "20 de mar",
-    fullDate: "2024-03-20",
-  },
-  {
-    shortName: "Qui",
-    date: "21 de mar",
-    fullDate: "2024-03-21",
-  },
-  {
-    shortName: "Sex",
-    date: "22 de mar",
-    fullDate: "2024-03-22",
-  },
-];
 
-const initialAppointments: ScheduleAppointment[] = [
-  {
-    id: 1,
-    day: "Seg",
-    date: "2024-03-18",
-    time: "08:00",
-    patient: "Mariana Silva",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 2,
-    day: "Seg",
-    date: "2024-03-18",
-    time: "10:00",
-    patient: "Carlos Mendes",
-    specialty: "Cardiologia",
-    status: "completed",
-  },
-  {
-    id: 3,
-    day: "Seg",
-    date: "2024-03-18",
-    time: "14:00",
-    patient: "Larissa Rocha",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 4,
-    day: "Ter",
-    date: "2024-03-19",
-    time: "08:00",
-    patient: "Lucas Almeida",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 5,
-    day: "Ter",
-    date: "2024-03-19",
-    time: "09:30",
-    patient: "Fernanda Costa",
-    specialty: "Cardiologia",
-    status: "pending",
-  },
-  {
-    id: 6,
-    day: "Ter",
-    date: "2024-03-19",
-    time: "11:00",
-    patient: "Ricardo Santos",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 7,
-    day: "Ter",
-    date: "2024-03-19",
-    time: "14:00",
-    patient: "Patrícia Lima",
-    specialty: "Cardiologia",
-    status: "pending",
-  },
-  {
-    id: 8,
-    day: "Ter",
-    date: "2024-03-19",
-    time: "16:00",
-    patient: "Bruno Oliveira",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 9,
-    day: "Qua",
-    date: "2024-03-20",
-    time: "08:30",
-    patient: "Juliana Martins",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 10,
-    day: "Qua",
-    date: "2024-03-20",
-    time: "10:30",
-    patient: "Felipe Nascimento",
-    specialty: "Cardiologia",
-    status: "pending",
-  },
-  {
-    id: 11,
-    day: "Qua",
-    date: "2024-03-20",
-    time: "15:00",
-    patient: "Camila Ferreira",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 12,
-    day: "Qui",
-    date: "2024-03-21",
-    time: "09:00",
-    patient: "Eduardo Pinto",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 13,
-    day: "Qui",
-    date: "2024-03-21",
-    time: "11:30",
-    patient: "Renata Alves",
-    specialty: "Cardiologia",
-    status: "completed",
-  },
-  {
-    id: 14,
-    day: "Qui",
-    date: "2024-03-21",
-    time: "15:30",
-    patient: "Gabriel Souza",
-    specialty: "Cardiologia",
-    status: "pending",
-  },
-  {
-    id: 15,
-    day: "Sex",
-    date: "2024-03-22",
-    time: "08:00",
-    patient: "Aline Barbosa",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 16,
-    day: "Sex",
-    date: "2024-03-22",
-    time: "10:00",
-    patient: "Diego Carvalho",
-    specialty: "Cardiologia",
-    status: "confirmed",
-  },
-  {
-    id: 17,
-    day: "Sex",
-    date: "2024-03-22",
-    time: "13:30",
-    patient: "Beatriz Lima",
-    specialty: "Cardiologia",
-    status: "completed",
-  },
-];
+import type { ScheduleAppointment, ScheduleDay } from "./ProfessionalSchedule.types";
+import {
+  DEFAULT_SLOT_MINUTES,
+  formatAvailability,
+  formatHour,
+  getAppointmentTop,
+  mapScheduleAppointment,
+  toDateKey,
+  toDayIndex,
+  toMinutes,
+} from "./ProfessionalSchedule.utils";
+
+export { getInitials, getStatusLabel } from "../ProfessioanlAppointments/ProfessionalAppointments.utils";
+
+const emptyForm: AvailabilityForm = { day: "", startTime: "", endTime: "" };
 
 export function useProfessionalSchedule() {
-  const [selectedDate, setSelectedDate] = useState("2024-03-19");
+  const [appointments, setAppointments] = useState<ScheduleAppointment[]>([]);
+  const [availabilities, setAvailabilities] = useState<ProfessionalAvailability[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const [appointments] = useState<ScheduleAppointment[]>(initialAppointments);
-
-  const selectedDay = weekDays.find((day) => day.fullDate === selectedDate);
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(toDateKey(new Date()));
 
   const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+  const [availabilityForm, setAvailabilityForm] = useState<AvailabilityForm>(emptyForm);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const [availabilityForm, setAvailabilityForm] = useState<AvailabilityForm>({
-    day: "",
-    startTime: "",
-    endTime: "",
-  });
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function load() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const [schedule, availability] = await Promise.all([
+          getMySchedule(controller.signal),
+          getMyAvailability(controller.signal),
+        ]);
+
+        setAppointments(schedule.map(mapScheduleAppointment));
+        setAvailabilities(availability);
+      } catch (err) {
+        if (axios.isCancel(err)) return;
+        setError(getApiErrorMessage(err, "Não foi possível carregar a agenda."));
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    }
+
+    load();
+
+    return () => controller.abort();
+  }, [reloadKey]);
+
+  const weekDays = useMemo<ScheduleDay[]>(() => {
+    const start = addDays(getWeekStart(new Date()), weekOffset * 7);
+
+    return Array.from({ length: 5 }, (_, index) => {
+      const date = addDays(start, index);
+      return {
+        shortName: getWeekdayLabel(date),
+        date: formatShortDate(date),
+        fullDate: toDateKey(date),
+      };
+    });
+  }, [weekOffset]);
+
+  const weekLabel = `${weekDays[0].date} – ${weekDays[4].date}`;
+
+  const visible = useMemo(() => {
+    const keys = new Set(weekDays.map((day) => day.fullDate));
+    return appointments.filter(
+      (a) => a.status !== "cancelled" && keys.has(a.dateKey),
+    );
+  }, [appointments, weekDays]);
+
+  const { startHour, hours } = useMemo(() => {
+    const used = visible.map((a) => a.date.getHours());
+    const start = Math.min(8, ...used);
+    const end = Math.max(17, ...used.map((h) => h + 1));
+
+    return {
+      startHour: start,
+      hours: Array.from({ length: end - start }, (_, i) => formatHour(start + i)),
+    };
+  }, [visible]);
+
+  function changeWeek(offset: number) {
+    setWeekOffset(offset);
+
+    const start = addDays(getWeekStart(new Date()), offset * 7);
+    const today = toDateKey(new Date());
+    const keys = Array.from({ length: 5 }, (_, i) => toDateKey(addDays(start, i)));
+
+    setSelectedDate(keys.includes(today) ? today : keys[0]);
+  }
+
+  function getAppointmentsByDay(dateKey: string) {
+    return visible.filter((a) => a.dateKey === dateKey);
+  }
+
+  function getTop(date: Date) {
+    return getAppointmentTop(date, startHour);
+  }
+
+  const daySummary = useMemo(() => {
+    const day = appointments.filter(
+      (a) => a.dateKey === selectedDate && a.status !== "cancelled",
+    );
+
+    return {
+      total: day.length,
+      confirmed: day.filter((a) => a.status === "confirmed").length,
+      pending: day.filter((a) => a.status === "scheduled").length,
+      completed: day.filter((a) => a.status === "completed").length,
+    };
+  }, [appointments, selectedDate]);
+
+  const upcoming = useMemo(() => {
+    const now = new Date();
+
+    return appointments
+      .filter(
+        (a) =>
+          a.date >= now &&
+          (a.status === "scheduled" || a.status === "confirmed"),
+      )
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
+      .slice(0, 4);
+  }, [appointments]);
+
+  const availabilityList = useMemo(
+    () =>
+      availabilities
+        .map(formatAvailability)
+        .sort((a, b) => a.index - b.index),
+    [availabilities],
+  );
 
   function openAvailabilityModal() {
     setIsAvailabilityModalOpen(true);
@@ -212,93 +167,77 @@ export function useProfessionalSchedule() {
 
   function closeAvailabilityModal() {
     setIsAvailabilityModalOpen(false);
-
-    setAvailabilityForm({
-      day: "",
-      startTime: "",
-      endTime: "",
-    });
+    setAvailabilityForm(emptyForm);
   }
 
-  function handleAvailabilityChange(
-    field: keyof AvailabilityForm,
-    value: string,
-  ) {
-    setAvailabilityForm((previous) => ({
-      ...previous,
-      [field]: value,
-    }));
+  function handleAvailabilityChange(field: keyof AvailabilityForm, value: string) {
+    setAvailabilityForm((previous) => ({ ...previous, [field]: value }));
   }
 
-  function saveAvailability() {
-    console.log("Nova disponibilidade:", availabilityForm);
+  async function saveAvailability() {
+    const dayOfWeek = toDayIndex(availabilityForm.day);
+    const { startTime, endTime } = availabilityForm;
 
-    closeAvailabilityModal();
-  }
+    if (dayOfWeek === null || !startTime || !endTime) {
+      toast.error("Informe o dia, o horário inicial e o final.");
+      return;
+    }
 
-  function getAppointmentsByDay(day: string) {
-    return appointments.filter((appointment) => appointment.day === day);
-  }
+    const total = toMinutes(endTime) - toMinutes(startTime);
 
-  function getStatusLabel(status: AppointmentStatus) {
-    const labels = {
-      confirmed: "Confirmado",
-      pending: "Pendente",
-      completed: "Concluído",
-    };
+    if (total <= 0) {
+      toast.error("O horário final deve ser depois do inicial.");
+      return;
+    }
 
-    return labels[status];
-  }
+    if (total % DEFAULT_SLOT_MINUTES !== 0) {
+      toast.error(`O intervalo deve ser múltiplo de ${DEFAULT_SLOT_MINUTES} minutos.`);
+      return;
+    }
 
-  function getInitials(name: string) {
-    return name
-      .split(" ")
-      .map((part) => part[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-  }
+    try {
+      setIsSaving(true);
 
-  function handlePreviousWeek() {
-    console.log("Semana anterior");
-  }
+      await createMyAvailability({
+        dayOfWeek,
+        startTime: `${startTime.slice(0, 5)}:00`,
+        endTime: `${endTime.slice(0, 5)}:00`,
+        slotDurationInMinutes: DEFAULT_SLOT_MINUTES,
+      });
 
-  function handleNextWeek() {
-    console.log("Próxima semana");
-  }
-
-  function handleToday() {
-    setSelectedDate("2024-03-19");
-  }
-
-  function getAppointmentTop(time: string) {
-    const [hours, minutes] = time.split(":").map(Number);
-
-    const startHour = 8;
-    const slotHeight = 92;
-
-    const minutesFromStart = (hours - startHour) * 60 + minutes;
-
-    return (minutesFromStart / 60) * slotHeight + 8;
+      toast.success("Disponibilidade cadastrada com sucesso!");
+      closeAvailabilityModal();
+      setReloadKey((key) => key + 1);
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Não foi possível salvar a disponibilidade."));
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return {
     weekDays,
+    weekLabel,
+    hours,
     selectedDate,
     setSelectedDate,
+    loading,
+    error,
+    reload: () => setReloadKey((key) => key + 1),
     getAppointmentsByDay,
-    getStatusLabel,
-    getInitials,
-    getAppointmentTop,
-    handlePreviousWeek,
-    handleNextWeek,
-    handleToday,
-
+    getAppointmentTop: getTop,
+    handlePreviousWeek: () => changeWeek(weekOffset - 1),
+    handleNextWeek: () => changeWeek(weekOffset + 1),
+    handleToday: () => changeWeek(0),
+    daySummary,
+    upcoming,
+    availabilityList,
     isAvailabilityModalOpen,
     availabilityForm,
     openAvailabilityModal,
     closeAvailabilityModal,
     handleAvailabilityChange,
     saveAvailability,
+    isSaving,
   };
 }

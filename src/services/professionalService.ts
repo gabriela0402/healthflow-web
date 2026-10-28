@@ -7,6 +7,7 @@ import type {
 import type {
   ProfessionalAdminResponse,
   UpdateProfessionalPayload,
+  CreateAvailabilityPayload 
 } from "../types/professional";
 
 export async function getProfessionals(signal?: AbortSignal) {
@@ -54,4 +55,17 @@ export async function updateProfessional(
 
 export async function deleteProfessional(id: number) {
   await api.delete(`/professionals/${id}`);
+}
+
+export async function getMyAvailability(signal?: AbortSignal) {
+  const { data } = await api.get<ProfessionalAvailability[]>(
+    "/professionals/me/availability",
+    { signal },
+  );
+  return data;
+}
+
+export async function createMyAvailability(payload: CreateAvailabilityPayload) {
+  const { data } = await api.post("/professionals/me/availability", payload);
+  return data;
 }
