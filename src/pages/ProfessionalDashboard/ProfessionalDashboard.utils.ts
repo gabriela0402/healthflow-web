@@ -1,3 +1,10 @@
+import type { ProfessionalAppointment } from "../ProfessioanlAppointments/ProfessionalAppointments.types";
+import {
+  addDays,
+  getWeekStart,
+  isSameDay,
+} from "../ProfessioanlAppointments/ProfessionalAppointments.utils";
+
 export const getFormattedDate = (): string => {
   return new Date().toLocaleDateString("pt-BR", {
     weekday: "short",
@@ -7,12 +14,19 @@ export const getFormattedDate = (): string => {
   });
 };
 
-export const appointmentData = [
-  { month: "Dom", appointments: 320 },
-  { month: "Seg", appointments: 410 },
-  { month: "Ter", appointments: 380 },
-  { month: "Qua", appointments: 520 },
-  { month: "Qui", appointments: 460 },
-  { month: "Sex", appointments: 610 },
-  { month: "Sab", appointments: 540 },
-];
+const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+export function getWeekChart(appointments: ProfessionalAppointment[]) {
+  const sunday = addDays(getWeekStart(new Date()), -1);
+
+  return WEEKDAYS.map((label, index) => {
+    const day = addDays(sunday, index);
+
+    return {
+      day: label,
+      appointments: appointments.filter(
+        (a) => a.status !== "cancelled" && isSameDay(a.date, day),
+      ).length,
+    };
+  });
+}
