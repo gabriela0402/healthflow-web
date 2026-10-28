@@ -1,17 +1,14 @@
-export type AppointmentView = "list" | "calendar";
+import type { AppointmentStatus } from "../Appointments/Appointments.types";
 
-export type AppointmentStatus =
-  | "confirmed"
-  | "scheduled"
-  | "cancelled";
+export type { AppointmentStatus };
+
+export type AppointmentView = "list" | "calendar";
 
 export type ProfessionalAppointment = {
   id: number;
+  date: Date;
   time: string;
   patient: string;
-  age: number;
-  code: string;
-  specialty: string;
+  patientInfo: string;
   status: AppointmentStatus;
-  day: string;
 };

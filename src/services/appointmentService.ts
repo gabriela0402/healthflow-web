@@ -1,5 +1,6 @@
 import { api } from "./api";
-import type { AppointmentResponse } from "../types/appointment";
+import type { AppointmentResponse, AppointmentProfessionalResponse } from "../types/appointment";
+
 
 export async function getMyAppointments(signal?: AbortSignal) {
   const { data } = await api.get<AppointmentResponse[]>(
@@ -49,6 +50,14 @@ import type { ProfessionalPatientResponse } from "../types/patient";
 export async function getMyPatients(signal?: AbortSignal) {
   const { data } = await api.get<ProfessionalPatientResponse[]>(
     "/appointments/my-patients",
+    { signal },
+  );
+  return data;
+}
+
+export async function getMySchedule(signal?: AbortSignal) {
+  const { data } = await api.get<AppointmentProfessionalResponse[]>(
+    "/appointments/my-schedule",
     { signal },
   );
   return data;

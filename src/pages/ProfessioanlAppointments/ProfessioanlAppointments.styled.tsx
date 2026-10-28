@@ -1,5 +1,7 @@
 import styled from "@emotion/styled";
 import { Box, Stack, TableCell, TableRow } from "@mui/material";
+import type { AppointmentStatus } from "./ProfessionalAppointments.types";
+
 
 export const Container = styled(Stack)(({ theme }) => ({
   flexDirection: "column",
@@ -175,22 +177,13 @@ export const Avatar = styled(Box)(({ theme }) => ({
   fontWeight: 700,
 }));
 
-export const Status = styled(Box)<{
-  status: "confirmed" | "scheduled" | "cancelled";
-}>(({ status }) => {
-  const colors = {
-    confirmed: {
-      background: "#E7F7EF",
-      color: "#219653",
-    },
-    scheduled: {
-      background: "#EAF3FF",
-      color: "#1976D2",
-    },
-    cancelled: {
-      background: "#FDECEC",
-      color: "#D64545",
-    },
+export const Status = styled(Box)<{ status: AppointmentStatus }>(({ status }) => {
+  const colors: Record<AppointmentStatus, { background: string; color: string }> = {
+    scheduled: { background: "#EAF3FF", color: "#1976D2" },
+    confirmed: { background: "#E7F7EF", color: "#219653" },
+    cancelled: { background: "#FDECEC", color: "#D64545" },
+    completed: { background: "#F1F1F5", color: "#5F6B7A" },
+    noShow: { background: "#FFF4E5", color: "#C77700" },
   };
 
   return {
@@ -207,6 +200,16 @@ export const Status = styled(Box)<{
     whiteSpace: "nowrap",
   };
 });
+
+export const filterSx = {
+  width: "100%",
+  "& .MuiInputBase-root": {
+    height: "42px",
+    borderRadius: "0.55rem",
+    backgroundColor: "background.paper",
+    fontSize: "0.8rem",
+  },
+};
 
 export const SummaryColumn = styled(Stack)(({ theme }) => ({
   width: "260px",
