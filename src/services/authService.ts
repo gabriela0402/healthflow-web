@@ -19,3 +19,10 @@ export async function register(payload: RegisterRequest) {
 export function logout() {
   clearSession();
 }
+
+export async function changePassword(payload: {
+  currentPassword: string;
+  newPassword: string;
+}) {
+  await api.put("/auth/change-password", payload);
+}

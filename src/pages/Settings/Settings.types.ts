@@ -1,11 +1,6 @@
 import type { SvgIconComponent } from "@mui/icons-material";
 
-export type SettingsTab =
-  | "clinic"
-  | "users"
-  | "notifications"
-  | "appearance"
-  | "security";
+export type SettingsTab = "clinic" | "users" | "notifications" | "security";
 
 export type SettingsTabItem = {
   id: SettingsTab;
@@ -18,4 +13,10 @@ export type ClinicFormData = {
   email: string;
   phone: string;
   address: string;
+};
+
+export type PasswordForm = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 };

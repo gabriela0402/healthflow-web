@@ -54,7 +54,9 @@ export const ProfessionalDashboard = () => {
           </Stack>
 
           <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
-            <Typography sx={{ color: "#4a5568", fontWeight: 500, fontSize: "0.8rem" }}>
+            <Typography
+              sx={{ color: "#4a5568", fontWeight: 500, fontSize: "0.8rem" }}
+            >
               {dataFormatada}
             </Typography>
           </Stack>
@@ -75,14 +77,30 @@ export const ProfessionalDashboard = () => {
         )}
 
         <Styled.CardContainer>
-          <Card icon={CalendarTodayIcon} title="Consultas hoje"
-            num={show(stats.today)} type="dashboard" />
-          <Card icon={PeopleIcon} title="Pacientes"
-            num={show(patientsCount)} type="dashboard" />
-          <Card icon={AccessTimeIcon} title="Pendentes"
-            num={show(stats.pending)} type="dashboard" />
-          <Card icon={CalendarTodayIcon} title="Próximo atendimento"
-            num={show(stats.next)} type="dashboard" />
+          <Card
+            icon={CalendarTodayIcon}
+            title="Consultas hoje"
+            num={show(stats.today)}
+            type="dashboard"
+          />
+          <Card
+            icon={PeopleIcon}
+            title="Pacientes"
+            num={show(patientsCount)}
+            type="dashboard"
+          />
+          <Card
+            icon={AccessTimeIcon}
+            title="Pendentes"
+            num={show(stats.pending)}
+            type="dashboard"
+          />
+          <Card
+            icon={CalendarTodayIcon}
+            title="Próximo atendimento"
+            num={show(stats.next)}
+            type="dashboard"
+          />
         </Styled.CardContainer>
 
         <Styled.OverviewDepartmentContainer>
@@ -93,7 +111,11 @@ export const ProfessionalDashboard = () => {
                   Atendimentos da semana
                 </Typography>
 
-                <Typography variant="body2" sx={{ fontSize: "0.8rem" }} color="text.secondary">
+                <Typography
+                  variant="body2"
+                  sx={{ fontSize: "0.8rem" }}
+                  color="text.secondary"
+                >
                   Quantidade de atendimentos por dia
                 </Typography>
               </Stack>
@@ -124,7 +146,9 @@ export const ProfessionalDashboard = () => {
           </Styled.OverviewContainer>
 
           <Styled.UpcomingContainer>
-            <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Stack
+              sx={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Próximos Atendimentos
               </Typography>
@@ -135,7 +159,11 @@ export const ProfessionalDashboard = () => {
 
             <Stack>
               {!loading && upcoming.length === 0 && (
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 2 }}
+                >
                   Nenhum atendimento futuro.
                 </Typography>
               )}
@@ -146,7 +174,11 @@ export const ProfessionalDashboard = () => {
                   time={appointment.time}
                   name={appointment.patient}
                   job={formatShortDate(appointment.date)}
-                  status={appointment.status === "confirmed" ? "Confirmado" : "Pendente"}
+                  status={
+                    appointment.status === "confirmed"
+                      ? "Confirmado"
+                      : "Pendente"
+                  }
                 />
               ))}
             </Stack>
