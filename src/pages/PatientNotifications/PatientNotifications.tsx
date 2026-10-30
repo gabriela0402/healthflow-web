@@ -4,12 +4,12 @@ import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import NotificationsNoneOutlined from "@mui/icons-material/NotificationsNoneOutlined";
 
 import {
+  Alert,
   Button,
+  CircularProgress,
   Stack,
   Switch,
   Typography,
-  Alert,
-  CircularProgress,
 } from "@mui/material";
 
 import { SideBar } from "../../components/SideBar/SideBar";
@@ -57,6 +57,7 @@ export const PatientNotifications = () => {
               direction="row"
               justifyContent="space-between"
               alignItems="center"
+              flexWrap="wrap"
               gap={1}
             >
               <Typography
@@ -111,7 +112,10 @@ export const PatientNotifications = () => {
               </Typography>
             )}
 
-            <Stack spacing={1} sx={{ display: loading || error ? "none" : "flex" }}>
+            <Stack
+              spacing={1}
+              sx={{ display: loading || error ? "none" : "flex" }}
+            >
               {notifications.map((notification) => (
                 <Styled.NotificationItem
                   key={notification.id}
@@ -162,7 +166,7 @@ export const PatientNotifications = () => {
                     )}
                   </Styled.NotificationBody>
 
-                  <Stack alignItems="flex-end" sx={{ minWidth: "90px" }}>
+                  <Styled.NotificationDate>
                     <Typography
                       color="text.secondary"
                       sx={{ fontSize: "0.68rem" }}
@@ -176,7 +180,7 @@ export const PatientNotifications = () => {
                     >
                       {notification.time}
                     </Typography>
-                  </Stack>
+                  </Styled.NotificationDate>
                 </Styled.NotificationItem>
               ))}
             </Stack>
@@ -200,10 +204,10 @@ export const PatientNotifications = () => {
             </Stack>
 
             <Styled.PreferenceItem>
-              <Stack direction="row" alignItems="center" gap={1}>
+              <Styled.PreferenceInfo>
                 <EmailOutlined color="primary" />
 
-                <Stack sx={{ ml: 2 }}>
+                <Stack sx={{ minWidth: 0 }}>
                   <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
                     E-mail
                   </Typography>
@@ -215,7 +219,7 @@ export const PatientNotifications = () => {
                     Receba informações importantes por e-mail.
                   </Typography>
                 </Stack>
-              </Stack>
+              </Styled.PreferenceInfo>
 
               <Switch
                 checked={preferences.email}
@@ -224,10 +228,10 @@ export const PatientNotifications = () => {
             </Styled.PreferenceItem>
 
             <Styled.PreferenceItem>
-              <Stack direction="row" alignItems="center" gap={1}>
+              <Styled.PreferenceInfo>
                 <NotificationsNoneOutlined color="primary" />
 
-                <Stack sx={{ ml: 2 }}>
+                <Stack sx={{ minWidth: 0 }}>
                   <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
                     Lembretes
                   </Typography>
@@ -239,7 +243,7 @@ export const PatientNotifications = () => {
                     Receba lembretes das suas consultas.
                   </Typography>
                 </Stack>
-              </Stack>
+              </Styled.PreferenceInfo>
 
               <Switch
                 checked={preferences.reminders}
@@ -248,10 +252,10 @@ export const PatientNotifications = () => {
             </Styled.PreferenceItem>
 
             <Styled.PreferenceItem>
-              <Stack direction="row" alignItems="center" gap={1}>
+              <Styled.PreferenceInfo>
                 <CalendarTodayOutlined color="primary" />
 
-                <Stack sx={{ ml: 2 }}>
+                <Stack sx={{ minWidth: 0 }}>
                   <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
                     Atualizações de consulta
                   </Typography>
@@ -263,7 +267,7 @@ export const PatientNotifications = () => {
                     Saiba sobre confirmações e remarcações.
                   </Typography>
                 </Stack>
-              </Stack>
+              </Styled.PreferenceInfo>
 
               <Switch
                 checked={preferences.appointmentUpdates}
