@@ -154,9 +154,10 @@ export const PatientHome = () => {
 
             <Styled.AppointmentList>
               {loading && (
-                <Stack alignItems="center" sx={{ py: 4 }}>
-                  <CircularProgress size={26} />
-                </Stack>
+                <CircularProgress
+                  size={26}
+                  sx={{ display: "block", mx: "auto", my: 4 }}
+                />
               )}
 
               {!loading && error && (
