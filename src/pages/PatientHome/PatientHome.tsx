@@ -3,7 +3,13 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import PeopleIcon from "@mui/icons-material/People";
 import PersonSearchOutlinedIcon from "@mui/icons-material/PersonSearchOutlined";
 
-import { CircularProgress, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Link } from "react-router-dom";
 
 import * as Styled from "./PatientHome.styled";
@@ -22,6 +28,8 @@ import {
   getStatusLabel,
 } from "../PatientAppointments/PatientAppoiments.utils";
 
+import { AppointmentDetailsModal } from "../../components/AppointmentDetailsModal/AppointmentDetailsModal";
+
 export const PatientHome = () => {
   const dataFormatada = getFormattedDate();
   const {
@@ -37,7 +45,10 @@ export const PatientHome = () => {
     scheduledCount,
     completedCount,
     firstName,
-    specialties
+    specialties,
+    selectedAppointment,
+    openAppointmentDetails,
+    closeAppointmentDetails,
   } = usePatientHome();
 
   return (
@@ -209,7 +220,12 @@ export const PatientHome = () => {
                       {getStatusLabel(appointment.status)}
                     </Styled.Status>
 
-                    <ChevronRightIcon sx={{ color: "text.secondary" }} />
+                    <Styled.DetailsButton
+                      aria-label="Ver detalhes do atendimento"
+                      onClick={() => openAppointmentDetails(appointment)}
+                    >
+                      <ChevronRightIcon sx={{ color: "text.secondary" }} />
+                    </Styled.DetailsButton>
                   </Styled.AppointmentItem>
                 ))}
             </Styled.AppointmentList>
@@ -262,6 +278,11 @@ export const PatientHome = () => {
         specialties={specialties}
         onClose={closeSpecialtiesModal}
         onSchedule={handleSchedule}
+      />
+      <AppointmentDetailsModal
+        open={Boolean(selectedAppointment)}
+        appointment={selectedAppointment}
+        onClose={closeAppointmentDetails}
       />
     </Stack>
   );

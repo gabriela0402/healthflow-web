@@ -145,48 +145,6 @@ export function usePatientBooking() {
     setStep((previous) => (previous === 1 ? 2 : previous));
   }, [specialties, searchParams]);
 
-  async function confirmAppointment() {
-    const patientId = getSession()?.patientId;
-
-    if (!patientId) {
-      toast.error("Não foi possível identificar o paciente.");
-      return;
-    }
-
-    if (!booking.professional) {
-      toast.error("Selecione um profissional.");
-      return;
-    }
-
-    if (!booking.date || !booking.time) {
-      toast.error("Selecione uma data e um horário.");
-      return;
-    }
-
-    try {
-      setIsSubmittingAppointment(true);
-
-      await createAppointment({
-        patientId,
-        professionalId: booking.professional.id,
-        scheduledAt: `${booking.date}T${booking.time}:00`,
-        notes: null,
-      });
-
-      toast.success("Consulta agendada com sucesso!");
-
-      navigate("/my-appointments");
-    } catch (error) {
-      console.error("Erro ao confirmar consulta:", error);
-
-      toast.error(
-        getApiErrorMessage(error, "Não foi possível confirmar a consulta."),
-      );
-    } finally {
-      setIsSubmittingAppointment(false);
-    }
-  }
-
   const filteredSpecialties = useMemo(() => {
     const searchValue = search.toLowerCase().trim();
 
@@ -472,7 +430,7 @@ export function usePatientBooking() {
 
       const scheduledAt = `${booking.date}T${booking.time}:00`;
 
-      await api.post("/appointments", {
+      await createAppointment({
         patientId,
         professionalId: booking.professional.id,
         scheduledAt,
@@ -480,14 +438,13 @@ export function usePatientBooking() {
       });
 
       toast.success("Consulta agendada com sucesso!");
-
       navigate("/my-appoiments-patient");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Erro ao confirmar consulta:", error);
 
-      const message = error.response?.data?.message;
-
-      toast.error(message || "Não foi possível confirmar a consulta.");
+      toast.error(
+        getApiErrorMessage(error) || "Não foi possível confirmar a consulta.",
+      );
     } finally {
       setIsSubmittingAppointment(false);
     }

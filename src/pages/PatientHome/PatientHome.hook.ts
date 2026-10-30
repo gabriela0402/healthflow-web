@@ -20,6 +20,15 @@ export function usePatientHome() {
   const [reloadKey, setReloadKey] = useState(0);
 
   const [specialties, setSpecialties] = useState<PatientSpecialty[]>([]);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<PatientAppointment | null>(null);
+  function openAppointmentDetails(appointment: PatientAppointment) {
+    setSelectedAppointment(appointment);
+  }
+
+  function closeAppointmentDetails() {
+    setSelectedAppointment(null);
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -115,6 +124,9 @@ export function usePatientHome() {
     scheduledCount: upcoming.length,
     completedCount,
     firstName,
-    specialties
+    specialties,
+    selectedAppointment,
+    openAppointmentDetails,
+    closeAppointmentDetails,
   };
 }

@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Button, Stack } from "@mui/material";
+import { Box, Button, Stack, IconButton } from "@mui/material";
 import type { AppointmentStatus } from "../PatientAppointments/PatientAppointments.types";
 
 export const Container = styled(Stack)(({ theme }) => ({
@@ -66,6 +66,11 @@ export const ContentGrid = styled(Box)({
   "@media (max-width: 1000px)": {
     gridTemplateColumns: "1fr",
   },
+});
+
+export const DetailsButton = styled(IconButton)({
+  marginLeft: "auto",
+  flexShrink: 0,
 });
 
 export const AppointmentsCard = styled(Stack)(({ theme }) => ({

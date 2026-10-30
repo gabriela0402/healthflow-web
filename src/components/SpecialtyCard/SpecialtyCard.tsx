@@ -76,13 +76,13 @@ export const SpecialtyCard = ({
         </Styled.Statistic>
       </Styled.Statistics>
 
-      <Styled.DetailsButton
+      {/* <Styled.DetailsButton
         variant="outlined"
         onClick={onDetailsClick}
         endIcon={<ArrowForward />}
       >
         Ver detalhes
-      </Styled.DetailsButton>
+      </Styled.DetailsButton> */}
     </Styled.Container>
   );
 };
