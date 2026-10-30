@@ -38,13 +38,26 @@ const ROLE_LABELS: Record<string, string> = {
 
 export const Settings = () => {
   const {
-    activeTab, setActiveTab,
-    clinicData, handleClinicChange, handleCancelClinic, handleSave, saving,
-    loading, error, reload,
-    appointmentReminders, setAppointmentReminders,
-    automaticConfirmation, setAutomaticConfirmation,
-    users, usersLoading,
-    passwordForm, handlePasswordChange, handleChangePassword, changingPassword,
+    activeTab,
+    setActiveTab,
+    clinicData,
+    handleClinicChange,
+    handleCancelClinic,
+    handleSave,
+    saving,
+    loading,
+    error,
+    reload,
+    appointmentReminders,
+    setAppointmentReminders,
+    automaticConfirmation,
+    setAutomaticConfirmation,
+    users,
+    usersLoading,
+    passwordForm,
+    handlePasswordChange,
+    handleChangePassword,
+    changingPassword,
   } = useSettings();
 
   return (
@@ -53,7 +66,9 @@ export const Settings = () => {
 
       <Styled.Container>
         <Styled.Header>
-          <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>Configurações</Typography>
+          <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
+            Configurações
+          </Typography>
           <Typography variant="body1" sx={{ fontSize: "0.9rem" }}>
             Gerencie as preferências da sua clínica.
           </Typography>
@@ -83,15 +98,22 @@ export const Settings = () => {
           </Stack>
         )}
 
-        {!loading && error && activeTab !== "security" && activeTab !== "users" && (
-          <Alert
-            severity="error"
-            sx={{ mt: 2 }}
-            action={<Button color="inherit" size="small" onClick={reload}>Tentar de novo</Button>}
-          >
-            {error}
-          </Alert>
-        )}
+        {!loading &&
+          error &&
+          activeTab !== "security" &&
+          activeTab !== "users" && (
+            <Alert
+              severity="error"
+              sx={{ mt: 2 }}
+              action={
+                <Button color="inherit" size="small" onClick={reload}>
+                  Tentar de novo
+                </Button>
+              }
+            >
+              {error}
+            </Alert>
+          )}
 
         {!loading && !error && activeTab === "clinic" && (
           <Styled.ContentCard>
@@ -104,34 +126,66 @@ export const Settings = () => {
 
             <Styled.FormGrid>
               <Styled.FieldContainer>
-                <Typography variant="body2" fontWeight={600}>Nome da clínica</Typography>
-                <TextField size="small" value={clinicData.clinicName}
-                  onChange={(e) => handleClinicChange("clinicName", e.target.value)} />
+                <Typography variant="body2" fontWeight={600}>
+                  Nome da clínica
+                </Typography>
+                <TextField
+                  size="small"
+                  value={clinicData.clinicName}
+                  onChange={(e) =>
+                    handleClinicChange("clinicName", e.target.value)
+                  }
+                />
               </Styled.FieldContainer>
 
               <Styled.FieldContainer>
-                <Typography variant="body2" fontWeight={600}>E-mail</Typography>
-                <TextField size="small" type="email" value={clinicData.email}
-                  onChange={(e) => handleClinicChange("email", e.target.value)} />
+                <Typography variant="body2" fontWeight={600}>
+                  E-mail
+                </Typography>
+                <TextField
+                  size="small"
+                  type="email"
+                  value={clinicData.email}
+                  onChange={(e) => handleClinicChange("email", e.target.value)}
+                />
               </Styled.FieldContainer>
 
               <Styled.FieldContainer>
-                <Typography variant="body2" fontWeight={600}>Telefone</Typography>
-                <TextField size="small" value={clinicData.phone}
-                  onChange={(e) => handleClinicChange("phone", e.target.value)} />
+                <Typography variant="body2" fontWeight={600}>
+                  Telefone
+                </Typography>
+                <TextField
+                  size="small"
+                  value={clinicData.phone}
+                  onChange={(e) => handleClinicChange("phone", e.target.value)}
+                />
               </Styled.FieldContainer>
 
               <Styled.FieldContainer>
-                <Typography variant="body2" fontWeight={600}>Endereço</Typography>
-                <TextField size="small" value={clinicData.address}
-                  onChange={(e) => handleClinicChange("address", e.target.value)} />
+                <Typography variant="body2" fontWeight={600}>
+                  Endereço
+                </Typography>
+                <TextField
+                  size="small"
+                  value={clinicData.address}
+                  onChange={(e) =>
+                    handleClinicChange("address", e.target.value)
+                  }
+                />
               </Styled.FieldContainer>
             </Styled.FormGrid>
 
             <Styled.Actions>
-              <ButtonWhite text="Cancelar" onClick={handleCancelClinic} disabled={saving} />
-              <ButtonBlue text={saving ? "Salvando..." : "Salvar alterações"}
-                onClick={handleSave} disabled={saving} />
+              <ButtonWhite
+                text="Cancelar"
+                onClick={handleCancelClinic}
+                disabled={saving}
+              />
+              <ButtonBlue
+                text={saving ? "Salvando..." : "Salvar alterações"}
+                onClick={handleSave}
+                disabled={saving}
+              />
             </Styled.Actions>
           </Styled.ContentCard>
         )}
@@ -141,8 +195,8 @@ export const Settings = () => {
             <Stack>
               <Typography variant="h5">Usuários e permissões</Typography>
               <Typography variant="body2" color="text.secondary">
-                Usuários com acesso ao sistema. Profissionais são criados em Profissionais e
-                pacientes em Pacientes.
+                Usuários com acesso ao sistema. Profissionais são criados em
+                Profissionais e pacientes em Pacientes.
               </Typography>
             </Stack>
 
@@ -151,26 +205,29 @@ export const Settings = () => {
                 <CircularProgress size={26} />
               </Stack>
             ) : (
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Nome</TableCell>
-                    <TableCell>E-mail</TableCell>
-                    <TableCell>Perfil</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id} hover>
-                      <TableCell>{user.name}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        {ROLE_LABELS[(user.role ?? "").toLowerCase()] ?? "Sem perfil"}
-                      </TableCell>
+              <Styled.TableWrapper>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Nome</TableCell>
+                      <TableCell>E-mail</TableCell>
+                      <TableCell>Perfil</TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHead>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow key={user.id} hover>
+                        <TableCell>{user.name}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          {ROLE_LABELS[(user.role ?? "").toLowerCase()] ??
+                            "Sem perfil"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Styled.TableWrapper>
             )}
           </Styled.ContentCard>
         )}
@@ -186,8 +243,10 @@ export const Settings = () => {
                   Preferência salva. O envio dos lembretes ainda não está ativo.
                 </Typography>
               </Styled.PreferenceText>
-              <Switch checked={appointmentReminders}
-                onChange={(e) => setAppointmentReminders(e.target.checked)} />
+              <Switch
+                checked={appointmentReminders}
+                onChange={(e) => setAppointmentReminders(e.target.checked)}
+              />
             </Styled.PreferenceItem>
 
             <Styled.PreferenceItem>
@@ -197,13 +256,18 @@ export const Settings = () => {
                   Novos agendamentos já são criados como confirmados.
                 </Typography>
               </Styled.PreferenceText>
-              <Switch checked={automaticConfirmation}
-                onChange={(e) => setAutomaticConfirmation(e.target.checked)} />
+              <Switch
+                checked={automaticConfirmation}
+                onChange={(e) => setAutomaticConfirmation(e.target.checked)}
+              />
             </Styled.PreferenceItem>
 
             <Styled.Actions>
-              <ButtonBlue text={saving ? "Salvando..." : "Salvar alterações"}
-                onClick={handleSave} disabled={saving} />
+              <ButtonBlue
+                text={saving ? "Salvando..." : "Salvar alterações"}
+                onClick={handleSave}
+                disabled={saving}
+              />
             </Styled.Actions>
           </Styled.ContentCard>
         )}
@@ -217,20 +281,40 @@ export const Settings = () => {
               </Typography>
             </Stack>
 
-            <TextField label="Senha atual" type="password" value={passwordForm.currentPassword}
-              onChange={(e) => handlePasswordChange("currentPassword", e.target.value)} />
+            <TextField
+              label="Senha atual"
+              type="password"
+              value={passwordForm.currentPassword}
+              onChange={(e) =>
+                handlePasswordChange("currentPassword", e.target.value)
+              }
+            />
 
-            <TextField label="Nova senha" type="password" value={passwordForm.newPassword}
-              onChange={(e) => handlePasswordChange("newPassword", e.target.value)}
-              helperText="Mínimo de 6 caracteres." />
+            <TextField
+              label="Nova senha"
+              type="password"
+              value={passwordForm.newPassword}
+              onChange={(e) =>
+                handlePasswordChange("newPassword", e.target.value)
+              }
+              helperText="Mínimo de 6 caracteres."
+            />
 
-            <TextField label="Confirmar nova senha" type="password"
+            <TextField
+              label="Confirmar nova senha"
+              type="password"
               value={passwordForm.confirmPassword}
-              onChange={(e) => handlePasswordChange("confirmPassword", e.target.value)} />
+              onChange={(e) =>
+                handlePasswordChange("confirmPassword", e.target.value)
+              }
+            />
 
             <Styled.Actions>
-              <ButtonBlue text={changingPassword ? "Atualizando..." : "Atualizar senha"}
-                onClick={handleChangePassword} disabled={changingPassword} />
+              <ButtonBlue
+                text={changingPassword ? "Atualizando..." : "Atualizar senha"}
+                onClick={handleChangePassword}
+                disabled={changingPassword}
+              />
             </Styled.Actions>
           </Styled.ContentCard>
         )}

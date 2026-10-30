@@ -73,6 +73,7 @@ export const TabButton = styled("button")<{
 
 export const ContentCard = styled(Stack)(({ theme }) => ({
   width: "100%",
+  minWidth: 0,
   marginTop: "1rem",
   padding: "1.5rem",
   boxSizing: "border-box",
@@ -127,3 +128,27 @@ export const PreferenceItem = styled(Stack)(({ theme }) => ({
 export const PreferenceText = styled(Stack)({
   gap: "0.25rem",
 });
+
+export const TableWrapper = styled(Box)(({ theme }) => ({
+  width: "100%",
+  overflowX: "auto",
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: "0.5rem",
+
+  "& table": {
+    minWidth: "32rem",
+  },
+
+  "& th, & td": {
+    whiteSpace: "nowrap",
+  },
+
+  "&::-webkit-scrollbar": {
+    height: "4px",
+  },
+
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "#CBD5E1",
+    borderRadius: "1rem",
+  },
+}));
