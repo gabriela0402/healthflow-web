@@ -230,7 +230,14 @@ export const Dashboard = () => {
 
         <Styled.OverviewDepartmentContainer>
           <Styled.ActivityContainer>
-            <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Stack
+              sx={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Atividade recente
               </Typography>
@@ -262,7 +269,14 @@ export const Dashboard = () => {
           </Styled.ActivityContainer>
 
           <Styled.UpcomingContainer>
-            <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <Stack
+              sx={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Próximos agendamentos
               </Typography>
@@ -276,7 +290,11 @@ export const Dashboard = () => {
 
             <Stack>
               {!loading && upcoming.length === 0 && (
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 2 }}
+                >
                   Nenhum agendamento futuro.
                 </Typography>
               )}
@@ -288,7 +306,9 @@ export const Dashboard = () => {
                   name={appointment.patient}
                   job={appointment.specialty}
                   status={
-                    appointment.status === "confirmed" ? "Confirmado" : "Pendente"
+                    appointment.status === "confirmed"
+                      ? "Confirmado"
+                      : "Pendente"
                   }
                 />
               ))}

@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Button } from "@mui/material";
+
 
 export const Container = styled(Stack)(({ theme }) => ({
   flexDirection: "column",
@@ -35,50 +36,10 @@ export const CardContainer = styled(Box)({
   width: "100%",
 });
 
-export const OverviewDepartmentContainer = styled(Stack)(
-  ({ theme }) => ({
-    flexDirection: "row",
-    width: "100%",
-    gap: "1rem",
-
-    [theme.breakpoints.down("md")]: {
-      flexDirection: "column",
-    },
-  }),
-);
-
-export const OverviewContainer = styled(Stack)(({ theme }) => ({
-  marginTop: "1rem",
-  backgroundColor: theme.palette.background.paper,
-  width: "60%",
-  minHeight: "20rem",
-  borderRadius: "0.7rem",
-  border: "0.1rem solid #00000011",
-  padding: "1.5rem",
-  boxSizing: "border-box",
-
-  [theme.breakpoints.down("md")]: {
-    width: "100%",
-  },
-}));
-
-export const DepartmentContainer = styled(Stack)(({ theme }) => ({
-  marginTop: "1rem",
-  backgroundColor: theme.palette.background.paper,
-  width: "40%",
-  minHeight: "20rem",
-  borderRadius: "0.7rem",
-  border: "0.1rem solid #00000011",
-  padding: "1.5rem",
-  boxSizing: "border-box",
-
-  [theme.breakpoints.down("md")]: {
-    width: "100%",
-  },
-}));
 
 export const ChartContainer = styled(Box)({
   width: "100%",
+  minWidth: 0,
   height: "15rem",
   marginTop: "1rem",
 });
@@ -123,8 +84,9 @@ export const DepartmentStats = styled(Stack)(({ theme }) => ({
   width: "100%",
   marginTop: "1rem",
 
-  [theme.breakpoints.down("lg")]: {
-    flexDirection:"column",
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    gap: "0.75rem",
   },
 }));
 
@@ -138,39 +100,45 @@ export const DepartmentStat = styled(Stack)({
 export const StatDivider = styled(Box)(({ theme }) => ({
   width: "1px",
   backgroundColor: theme.palette.divider,
-}));
 
-export const ActivityContainer = styled(Stack)(({ theme }) => ({
-  marginTop: "1rem",
-  backgroundColor: theme.palette.background.paper,
-  width: "60%",
-  minHeight: "20rem",
-  borderRadius: "0.7rem",
-  border: "0.1rem solid #00000011",
-  padding: "1.5rem",
-  boxSizing: "border-box",
-
-  [theme.breakpoints.down("md")]: {
+  [theme.breakpoints.down("sm")]: {
     width: "100%",
+    height: "1px",
   },
 }));
 
-export const UpcomingContainer = styled(Stack)(({ theme }) => ({
+export const OverviewDepartmentContainer = styled(Box)(({ theme }) => ({
+  display: "grid",
+  gridTemplateColumns: "minmax(0, 3fr) minmax(0, 2fr)",
+  gap: "1rem",
+  width: "100%",
   marginTop: "1rem",
-  backgroundColor: theme.palette.background.paper,
-  width: "40%",
-  minHeight: "20rem",
-  borderRadius: "0.7rem",
-  border: "0.1rem solid #00000011",
-  padding: "1.5rem",
-  boxSizing: "border-box",
 
-  [theme.breakpoints.down("md")]: {
-    width: "100%",
+  [theme.breakpoints.down("lg")]: {
+    gridTemplateColumns: "minmax(0, 1fr)",
   },
 }));
 
-import { Button } from "@mui/material";
+const panelStyles = (theme: Theme) => ({
+  minWidth: 0,
+  minHeight: "20rem",
+  padding: "1.5rem",
+  borderRadius: "0.7rem",
+  border: "0.1rem solid #00000011",
+  backgroundColor: theme.palette.background.paper,
+  boxSizing: "border-box" as const,
+
+  [theme.breakpoints.down("sm")]: {
+    padding: "1rem",
+  },
+});
+
+export const Panel = styled(Stack)(({ theme }) => panelStyles(theme));
+
+export const OverviewContainer = Panel;
+export const DepartmentContainer = Panel;
+export const ActivityContainer = Panel;
+export const UpcomingContainer = Panel;
 
 export const SeeAllButton = styled(Button)(({ theme }) => ({
   color: "#4b6cb3",

@@ -1,5 +1,4 @@
 import { Stack, Typography } from "@mui/material";
-import React from "react";
 import * as Styled from "./UpcomingAppoiment.styled";
 import type { UpcomingAppoimentProps } from "./UpcomingAppoiment.types";
 
@@ -7,22 +6,27 @@ export const UpcomingAppoiment = ({
   time,
   name,
   job,
-  status
+  status,
 }: UpcomingAppoimentProps) => {
   return (
     <Styled.Container>
-      <Stack sx={{ flexDirection: "row", alignItems: "center" }}>
+      <Styled.Info>
         <Styled.Time>
           <Typography>{time}</Typography>
         </Styled.Time>
 
-        <Stack>
-          <Typography sx={{ fontWeight: "600" }}>{name}</Typography>
-          <Typography sx={{ fontSize: "0.8rem" }}>{job}</Typography>
+        <Stack sx={{ minWidth: 0 }}>
+          <Typography sx={{ fontWeight: 600, overflowWrap: "anywhere" }}>
+            {name}
+          </Typography>
+          <Typography sx={{ fontSize: "0.8rem", overflowWrap: "anywhere" }}>
+            {job}
+          </Typography>
         </Stack>
-      </Stack>
+      </Styled.Info>
+
       <Styled.Status status={status}>
-        <Typography sx={{ fontWeight: "600", fontSize: "0.9rem" }}>
+        <Typography sx={{ fontWeight: 600, fontSize: "0.9rem" }}>
           {status}
         </Typography>
       </Styled.Status>
