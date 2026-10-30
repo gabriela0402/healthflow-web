@@ -8,6 +8,8 @@ import {
   Stack,
   Switch,
   Typography,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 
 import { SideBar } from "../../components/SideBar/SideBar";
@@ -19,6 +21,9 @@ export const PatientNotifications = () => {
     notifications,
     preferences,
     unreadCount,
+    loading,
+    error,
+    reload,
     markAsRead,
     markAllAsRead,
     togglePreference,
@@ -41,10 +46,7 @@ export const PatientNotifications = () => {
             Notificações
           </Typography>
 
-          <Typography
-            color="text.secondary"
-            sx={{ fontSize: "0.8rem" }}
-          >
+          <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
             Acompanhe avisos importantes sobre seus atendimentos
           </Typography>
         </Styled.Header>
@@ -64,6 +66,7 @@ export const PatientNotifications = () => {
                   fontWeight: 700,
                 }}
               >
+                Recentes{unreadCount > 0 ? ` (${unreadCount} não lidas)` : ""}
               </Typography>
 
               {unreadCount > 0 && (
@@ -80,7 +83,35 @@ export const PatientNotifications = () => {
               )}
             </Stack>
 
-            <Stack spacing={1}>
+            {loading && (
+              <Stack alignItems="center" sx={{ py: 4 }}>
+                <CircularProgress size={26} />
+              </Stack>
+            )}
+
+            {!loading && error && (
+              <Alert
+                severity="error"
+                action={
+                  <Button color="inherit" size="small" onClick={reload}>
+                    Tentar de novo
+                  </Button>
+                }
+              >
+                {error}
+              </Alert>
+            )}
+
+            {!loading && !error && notifications.length === 0 && (
+              <Typography
+                color="text.secondary"
+                sx={{ fontSize: "0.8rem", py: 2 }}
+              >
+                Você não tem notificações.
+              </Typography>
+            )}
+
+            <Stack spacing={1} sx={{ display: loading || error ? "none" : "flex" }}>
               {notifications.map((notification) => (
                 <Styled.NotificationItem
                   key={notification.id}
@@ -88,9 +119,7 @@ export const PatientNotifications = () => {
                 >
                   {!notification.read && <Styled.UnreadDot />}
 
-                  <Styled.NotificationIcon
-                    type={notification.type}
-                  >
+                  <Styled.NotificationIcon type={notification.type}>
                     {notification.type === "appointment" && (
                       <CalendarTodayOutlined />
                     )}
@@ -99,9 +128,7 @@ export const PatientNotifications = () => {
                       <NotificationsNoneOutlined />
                     )}
 
-                    {notification.type === "system" && (
-                      <CheckCircle />
-                    )}
+                    {notification.type === "system" && <CheckCircle />}
                   </Styled.NotificationIcon>
 
                   <Styled.NotificationBody>
@@ -128,19 +155,14 @@ export const PatientNotifications = () => {
                     {!notification.read && (
                       <Styled.MarkReadButton
                         type="button"
-                        onClick={() =>
-                          markAsRead(notification.id)
-                        }
+                        onClick={() => markAsRead(notification.id)}
                       >
                         Marcar como lida
                       </Styled.MarkReadButton>
                     )}
                   </Styled.NotificationBody>
 
-                  <Stack
-                    alignItems="flex-end"
-                    sx={{ minWidth: "90px" }}
-                  >
+                  <Stack alignItems="flex-end" sx={{ minWidth: "90px" }}>
                     <Typography
                       color="text.secondary"
                       sx={{ fontSize: "0.68rem" }}
@@ -172,26 +194,17 @@ export const PatientNotifications = () => {
                 Preferências de notificação
               </Typography>
 
-              <Typography
-                color="text.secondary"
-                sx={{ fontSize: "0.8rem" }}
-              >
+              <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
                 Escolha como deseja receber nossas notificações.
               </Typography>
             </Stack>
 
             <Styled.PreferenceItem>
-              <Stack
-                direction="row"
-                alignItems="center"
-                gap={1}
-              >
+              <Stack direction="row" alignItems="center" gap={1}>
                 <EmailOutlined color="primary" />
 
-                <Stack sx={{ml: 2}}>
-                  <Typography
-                    sx={{ fontSize: "0.82rem", fontWeight: 600 }}
-                  >
+                <Stack sx={{ ml: 2 }}>
+                  <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
                     E-mail
                   </Typography>
 
@@ -211,17 +224,11 @@ export const PatientNotifications = () => {
             </Styled.PreferenceItem>
 
             <Styled.PreferenceItem>
-              <Stack
-                direction="row"
-                alignItems="center"
-                gap={1}
-              >
+              <Stack direction="row" alignItems="center" gap={1}>
                 <NotificationsNoneOutlined color="primary" />
 
-                <Stack sx={{ml: 2}}>
-                  <Typography
-                    sx={{ fontSize: "0.82rem", fontWeight: 600 }}
-                  >
+                <Stack sx={{ ml: 2 }}>
+                  <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
                     Lembretes
                   </Typography>
 
@@ -236,24 +243,16 @@ export const PatientNotifications = () => {
 
               <Switch
                 checked={preferences.reminders}
-                onChange={() =>
-                  togglePreference("reminders")
-                }
+                onChange={() => togglePreference("reminders")}
               />
             </Styled.PreferenceItem>
 
             <Styled.PreferenceItem>
-              <Stack
-                direction="row"
-                alignItems="center"
-                gap={1}
-              >
+              <Stack direction="row" alignItems="center" gap={1}>
                 <CalendarTodayOutlined color="primary" />
 
-                <Stack sx={{ml: 2}}>
-                  <Typography
-                    sx={{ fontSize: "0.82rem", fontWeight: 600 }}
-                  >
+                <Stack sx={{ ml: 2 }}>
+                  <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
                     Atualizações de consulta
                   </Typography>
 
@@ -268,9 +267,7 @@ export const PatientNotifications = () => {
 
               <Switch
                 checked={preferences.appointmentUpdates}
-                onChange={() =>
-                  togglePreference("appointmentUpdates")
-                }
+                onChange={() => togglePreference("appointmentUpdates")}
               />
             </Styled.PreferenceItem>
           </Styled.PreferencesCard>
