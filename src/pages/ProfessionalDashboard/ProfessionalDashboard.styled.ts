@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { Box, Stack } from "@mui/material";
+import type { AppointmentStatus } from "../ProfessioanlAppointments/ProfessionalAppointments.types";
 
 export const Container = styled(Stack)(({ theme }) => ({
   flexDirection: "column",
@@ -121,3 +122,110 @@ export const SeeAllButton = styled(Button)(({ theme }) => ({
     opacity: 0.8,
   },
 }));
+
+export const SectionHeader = styled(Stack)({
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: "1rem",
+  paddingBottom: "1rem",
+  borderBottom: "1px solid #E8EDF3",
+});
+
+export const AppointmentList = styled(Stack)({
+  width: "100%",
+});
+
+export const AppointmentItem = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "0.8rem",
+  minWidth: 0,
+  padding: "0.9rem 0",
+  borderBottom: `1px solid ${theme.palette.divider}`,
+
+  "&:last-child": {
+    borderBottom: "none",
+  },
+
+  [theme.breakpoints.down("sm")]: {
+    flexWrap: "wrap",
+  },
+}));
+
+export const DateBox = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "3.2rem",
+  minWidth: "3.2rem",
+  height: "3.2rem",
+  borderRadius: "0.55rem",
+  backgroundColor: "#F1F7FF",
+  color: "#102A56",
+
+  "& p": {
+    margin: 0,
+    fontSize: "1.1rem",
+    fontWeight: 700,
+    lineHeight: 1,
+  },
+
+  "& span": {
+    marginTop: "0.25rem",
+    color: "#6B7A90",
+    fontSize: "0.62rem",
+    fontWeight: 600,
+  },
+});
+
+export const Time = styled("span")({
+  minWidth: "2.5rem",
+  color: "#102A56",
+  fontSize: "0.78rem",
+  fontWeight: 600,
+});
+
+export const PatientAvatar = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "2.3rem",
+  height: "2.3rem",
+  flexShrink: 0,
+  borderRadius: "50%",
+  backgroundColor: "#EAF3FF",
+  color: theme.palette.primary.main,
+  fontSize: "0.65rem",
+  fontWeight: 700,
+}));
+
+export const Status = styled(Box)<{
+  status: AppointmentStatus;
+}>(({ status }) => {
+  const colors: Record<
+    AppointmentStatus,
+    { background: string; color: string }
+  > = {
+    scheduled: { background: "#EAF3FF", color: "#1976D2" },
+    confirmed: { background: "#E7F7EF", color: "#219653" },
+    cancelled: { background: "#FDECEC", color: "#D64545" },
+    completed: { background: "#F1F1F5", color: "#5F6B7A" },
+    noShow: { background: "#FFF4E5", color: "#C77700" },
+  };
+
+  return {
+    padding: "0.35rem 0.65rem",
+    borderRadius: "1rem",
+    backgroundColor: colors[status].background,
+    color: colors[status].color,
+    fontSize: "0.68rem",
+    fontWeight: 600,
+    whiteSpace: "nowrap",
+
+    "@media (max-width: 600px)": {
+      marginLeft: "4.1rem",
+    },
+  };
+});

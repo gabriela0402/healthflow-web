@@ -16,10 +16,15 @@ import {
 import * as Styled from "./ProfessionalDashboard.styled";
 import { SideBar } from "../../components/SideBar/SideBar";
 import { Card } from "../../components/Card/Card";
-import { UpcomingAppoiment } from "../../components/UpcomingAppoiment/UpcomingAppoiment";
+import { formatShortDate } from "../ProfessioanlAppointments/ProfessionalAppointments.utils";
+
 import { getFormattedDate } from "./ProfessionalDashboard.utils";
 import { useProfessionalDashboard } from "./ProfessionalDashboard.hook";
-import { formatShortDate } from "../ProfessioanlAppointments/ProfessionalAppointments.utils";
+import { getDayLabel, getMonthLabel } from "../PatientHome/PatientHome.utils";
+import {
+  getInitials,
+  getStatusLabel,
+} from "../ProfessioanlAppointments/ProfessionalAppointments.utils";
 
 export const ProfessionalDashboard = () => {
   const navigate = useNavigate();
@@ -146,42 +151,67 @@ export const ProfessionalDashboard = () => {
           </Styled.OverviewContainer>
 
           <Styled.UpcomingContainer>
-            <Stack
-              sx={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+            <Styled.SectionHeader>
               <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
                 Próximos Atendimentos
               </Typography>
+
               <Styled.SeeAllButton onClick={() => navigate("/my-appointments")}>
                 Ver Tudo
               </Styled.SeeAllButton>
-            </Stack>
+            </Styled.SectionHeader>
 
-            <Stack>
+            <Styled.AppointmentList>
               {!loading && upcoming.length === 0 && (
                 <Typography
                   variant="body2"
                   color="text.secondary"
-                  sx={{ mt: 2 }}
+                  sx={{ fontSize: "0.8rem", py: 3, textAlign: "center" }}
                 >
                   Nenhum atendimento futuro.
                 </Typography>
               )}
 
               {upcoming.map((appointment) => (
-                <UpcomingAppoiment
-                  key={appointment.id}
-                  time={appointment.time}
-                  name={appointment.patient}
-                  job={formatShortDate(appointment.date)}
-                  status={
-                    appointment.status === "confirmed"
-                      ? "Confirmado"
-                      : "Pendente"
-                  }
-                />
+                <Styled.AppointmentItem key={appointment.id}>
+                  <Styled.DateBox>
+                    <Typography>{getDayLabel(appointment.date)}</Typography>
+                    <span>{getMonthLabel(appointment.date)}</span>
+                  </Styled.DateBox>
+
+                  <Styled.Time>{appointment.time}</Styled.Time>
+
+                  <Styled.PatientAvatar>
+                    {getInitials(appointment.patient)}
+                  </Styled.PatientAvatar>
+
+                  <Stack flex={1} minWidth={0}>
+                    <Typography
+                      noWrap
+                      sx={{
+                        color: "#102A56",
+                        fontSize: "0.85rem",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {appointment.patient}
+                    </Typography>
+
+                    <Typography
+                      noWrap
+                      color="text.secondary"
+                      sx={{ fontSize: "0.75rem" }}
+                    >
+                      {appointment.patientInfo}
+                    </Typography>
+                  </Stack>
+
+                  <Styled.Status status={appointment.status}>
+                    {getStatusLabel(appointment.status)}
+                  </Styled.Status>
+                </Styled.AppointmentItem>
               ))}
-            </Stack>
+            </Styled.AppointmentList>
           </Styled.UpcomingContainer>
         </Styled.OverviewDepartmentContainer>
       </Styled.Container>
