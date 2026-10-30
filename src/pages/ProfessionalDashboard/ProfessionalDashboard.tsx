@@ -185,7 +185,7 @@ export const ProfessionalDashboard = () => {
                     {getInitials(appointment.patient)}
                   </Styled.PatientAvatar>
 
-                  <Stack flex={1} minWidth={0}>
+                  <Styled.AppointmentInfo>
                     <Typography
                       noWrap
                       sx={{
@@ -204,7 +204,7 @@ export const ProfessionalDashboard = () => {
                     >
                       {appointment.patientInfo}
                     </Typography>
-                  </Stack>
+                  </Styled.AppointmentInfo>
 
                   <Styled.Status status={appointment.status}>
                     {getStatusLabel(appointment.status)}

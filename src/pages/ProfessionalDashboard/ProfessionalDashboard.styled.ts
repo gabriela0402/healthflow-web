@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Button } from "@mui/material";
 import type { AppointmentStatus } from "../ProfessioanlAppointments/ProfessionalAppointments.types";
 
 export const Container = styled(Stack)(({ theme }) => ({
@@ -36,22 +36,21 @@ export const CardContainer = styled(Box)({
   width: "100%",
 });
 
-export const OverviewDepartmentContainer = styled(Stack)(
-  ({ theme }) => ({
-    flexDirection: "row",
-    width: "100%",
-    gap: "1rem",
+export const OverviewDepartmentContainer = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  width: "100%",
+  gap: "1rem",
 
-    [theme.breakpoints.down("md")]: {
-      flexDirection: "column",
-    },
-  }),
-);
+  [theme.breakpoints.down("md")]: {
+    flexDirection: "column",
+  },
+}));
 
 export const OverviewContainer = styled(Stack)(({ theme }) => ({
   marginTop: "1rem",
   backgroundColor: theme.palette.background.paper,
   width: "60%",
+  minWidth: 0,
   minHeight: "20rem",
   borderRadius: "0.7rem",
   border: "0.1rem solid #00000011",
@@ -95,6 +94,8 @@ export const UpcomingContainer = styled(Stack)(({ theme }) => ({
   marginTop: "1rem",
   backgroundColor: theme.palette.background.paper,
   width: "40%",
+  minWidth: 0,
+  containerType: "inline-size",
   minHeight: "20rem",
   borderRadius: "0.7rem",
   border: "0.1rem solid #00000011",
@@ -106,8 +107,6 @@ export const UpcomingContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-import { Button } from "@mui/material";
-
 export const SeeAllButton = styled(Button)(({ theme }) => ({
   color: "#4b6cb3",
   fontSize: "0.8rem",
@@ -118,7 +117,7 @@ export const SeeAllButton = styled(Button)(({ theme }) => ({
   background: "none",
   "&:hover": {
     backgroundColor: "transparent",
-    textDecoration: "underline", 
+    textDecoration: "underline",
     opacity: 0.8,
   },
 }));
@@ -126,6 +125,7 @@ export const SeeAllButton = styled(Button)(({ theme }) => ({
 export const SectionHeader = styled(Stack)({
   flexDirection: "row",
   alignItems: "center",
+  flexWrap: "wrap",
   justifyContent: "space-between",
   gap: "1rem",
   paddingBottom: "1rem",
@@ -138,6 +138,7 @@ export const AppointmentList = styled(Stack)({
 
 export const AppointmentItem = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
+  flexWrap: "wrap",
   alignItems: "center",
   gap: "0.8rem",
   minWidth: 0,
@@ -147,11 +148,15 @@ export const AppointmentItem = styled(Stack)(({ theme }) => ({
   "&:last-child": {
     borderBottom: "none",
   },
-
-  [theme.breakpoints.down("sm")]: {
-    flexWrap: "wrap",
-  },
 }));
+export const AppointmentInfo = styled(Stack)({
+  flex: "1 1 0",
+  minWidth: 0,
+
+  "@container (max-width: 420px)": {
+    flex: "1 1 calc(100% - 7.3rem)",
+  },
+});
 
 export const DateBox = styled(Box)({
   display: "flex",
@@ -199,6 +204,10 @@ export const PatientAvatar = styled(Box)(({ theme }) => ({
   color: theme.palette.primary.main,
   fontSize: "0.65rem",
   fontWeight: 700,
+
+  "@container (max-width: 420px)": {
+    display: "none",
+  },
 }));
 
 export const Status = styled(Box)<{
@@ -224,8 +233,8 @@ export const Status = styled(Box)<{
     fontWeight: 600,
     whiteSpace: "nowrap",
 
-    "@media (max-width: 600px)": {
-      marginLeft: "4.1rem",
+    "@container (max-width: 420px)": {
+      marginLeft: "4rem",
     },
   };
 });
