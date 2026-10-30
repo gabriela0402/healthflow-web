@@ -11,6 +11,8 @@ import ViewList from "@mui/icons-material/ViewList";
 import {
   Alert,
   Button,
+  Menu,
+  MenuItem,
   CircularProgress,
   IconButton,
   Stack,
@@ -40,8 +42,14 @@ const LIST_TITLES: Record<string, string> = {
 };
 
 const CALENDAR_HOURS = [
-  "08:00", "09:00", "10:00", "11:00",
-  "12:00", "13:00", "14:00", "15:00",
+  "08:00",
+  "09:00",
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
 ];
 
 export const PatientAppointments = () => {
@@ -65,7 +73,16 @@ export const PatientAppointments = () => {
     goToCurrentWeek,
     getAppointmentsByDay,
     summary,
+    menuAnchor,
+    menuAppointment,
+    openMenu,
+    closeMenu,
+    handleCancel,
+    isActing,
   } = usePatientAppointments();
+
+  const menuStatus = menuAppointment?.status;
+  const canCancel = menuStatus === "scheduled" || menuStatus === "confirmed";
 
   return (
     <Stack direction="row">
@@ -163,9 +180,7 @@ export const PatientAppointments = () => {
                   fontWeight: 700,
                 }}
               >
-                {view === "list"
-                  ? LIST_TITLES[date]
-                  : "Calendário semanal"}
+                {view === "list" ? LIST_TITLES[date] : "Calendário semanal"}
               </Typography>
 
               {view === "calendar" && (
@@ -294,7 +309,13 @@ export const PatientAppointments = () => {
                         </TableCell>
 
                         <TableCell align="right">
-                          <IconButton size="small">
+                          <IconButton
+                            size="small"
+                            disabled={isActing}
+                            onClick={(event) =>
+                              openMenu(event.currentTarget, appointment)
+                            }
+                          >
                             <MoreHoriz fontSize="small" />
                           </IconButton>
                         </TableCell>
@@ -390,9 +411,7 @@ export const PatientAppointments = () => {
 
               <Styled.SummaryItem sx={{ backgroundColor: "#E9FAF1" }}>
                 <CheckCircle sx={{ color: "#219653" }} />
-                <Styled.SummaryNumber>
-                  {summary.confirmed}
-                </Styled.SummaryNumber>
+                <Styled.SummaryNumber>{summary.confirmed}</Styled.SummaryNumber>
                 <Typography
                   variant="body2"
                   color="text.secondary"
@@ -417,6 +436,19 @@ export const PatientAppointments = () => {
           </Styled.SummaryColumn>
         </Styled.MainContent>
       </Styled.Container>
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={closeMenu}
+      >
+        <MenuItem
+          disabled={!canCancel}
+          onClick={handleCancel}
+          sx={{ color: "error.main" }}
+        >
+          Cancelar agendamento
+        </MenuItem>
+      </Menu>
     </Stack>
   );
 };

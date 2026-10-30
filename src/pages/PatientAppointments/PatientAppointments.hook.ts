@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { getMyAppointments } from "../../services/appointmentService";
 import type {
   AppointmentView,
   PatientAppointment,
@@ -12,6 +11,14 @@ import {
   isSameDay,
   mapAppointment,
 } from "./PatientAppoiments.utils";
+
+import { toast } from "react-toastify";
+
+import { getApiErrorMessage } from "../../services/apiError";
+import {
+  cancelAppointment,
+  getMyAppointments,
+} from "../../services/appointmentService";
 
 function getErrorMessage(error: unknown) {
   if (axios.isAxiosError(error)) {
@@ -43,6 +50,10 @@ export function usePatientAppointments() {
   const [date, setDate] = useState("date");
   const [view, setView] = useState<AppointmentView>("list");
   const [weekOffset, setWeekOffset] = useState(0);
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
+  const [menuAppointment, setMenuAppointment] =
+    useState<PatientAppointment | null>(null);
+  const [isActing, setIsActing] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -124,6 +135,36 @@ export function usePatientAppointments() {
     };
   }, [appointments]);
 
+  function openMenu(element: HTMLElement, appointment: PatientAppointment) {
+    setMenuAnchor(element);
+    setMenuAppointment(appointment);
+  }
+
+  function closeMenu() {
+    setMenuAnchor(null);
+  }
+
+  async function handleCancel() {
+    if (!menuAppointment) return;
+
+    const id = menuAppointment.id;
+
+    closeMenu();
+
+    try {
+      setIsActing(true);
+      await cancelAppointment(id);
+      toast.success("Agendamento cancelado.");
+      reload();
+    } catch (err) {
+      toast.error(
+        getApiErrorMessage(err, "Não foi possível cancelar o agendamento."),
+      );
+    } finally {
+      setIsActing(false);
+    }
+  }
+
   return {
     search,
     setSearch,
@@ -144,5 +185,11 @@ export function usePatientAppointments() {
     goToCurrentWeek: () => setWeekOffset(0),
     getAppointmentsByDay,
     summary,
+    menuAnchor,
+    menuAppointment,
+    openMenu,
+    closeMenu,
+    handleCancel,
+    isActing,
   };
 }
