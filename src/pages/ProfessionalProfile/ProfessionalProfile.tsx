@@ -1,6 +1,7 @@
 import CalendarToday from "@mui/icons-material/CalendarToday";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import PhoneOutlined from "@mui/icons-material/PhoneOutlined";
+import EditCalendarOutlined from "@mui/icons-material/EditCalendarOutlined";
 import {
   Alert,
   Button,
@@ -57,7 +58,11 @@ export const ProfessionalProfile = () => {
             Meu perfil
           </Typography>
 
-          <Typography variant="body1" color="text.secondary" sx={{ fontSize: "0.8rem" }}>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{ fontSize: "0.8rem" }}
+          >
             Gerencie suas informações profissionais
           </Typography>
         </Stack>
@@ -87,12 +92,20 @@ export const ProfessionalProfile = () => {
                 <Styled.ProfileInfo>
                   <Typography
                     variant="h5"
-                    sx={{ color: "#102A56", fontSize: "1.1rem", fontWeight: 700 }}
+                    sx={{
+                      color: "#102A56",
+                      fontSize: "1.1rem",
+                      fontWeight: 700,
+                    }}
                   >
                     {profile.fullName}
                   </Typography>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.9rem" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: "0.9rem" }}
+                  >
                     {profile.specialty}
                   </Typography>
                 </Styled.ProfileInfo>
@@ -100,16 +113,22 @@ export const ProfessionalProfile = () => {
 
               <Styled.FormGrid>
                 <Styled.Field>
-                  <Typography variant="body2" fontWeight={600}>Nome completo</Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    Nome completo
+                  </Typography>
                   <TextField
                     size="small"
                     value={profile.fullName}
-                    onChange={(e) => handleProfileChange("fullName", e.target.value)}
+                    onChange={(e) =>
+                      handleProfileChange("fullName", e.target.value)
+                    }
                   />
                 </Styled.Field>
 
                 <Styled.Field>
-                  <Typography variant="body2" fontWeight={600}>E-mail</Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    E-mail
+                  </Typography>
                   <TextField
                     size="small"
                     type="email"
@@ -118,40 +137,69 @@ export const ProfessionalProfile = () => {
                     helperText="O e-mail é o seu login e só o administrador pode alterá-lo."
                     InputProps={{
                       startAdornment: (
-                        <EmailOutlined sx={{ mr: 1, color: "text.secondary", fontSize: "1.1rem" }} />
+                        <EmailOutlined
+                          sx={{
+                            mr: 1,
+                            color: "text.secondary",
+                            fontSize: "1.1rem",
+                          }}
+                        />
                       ),
                     }}
                   />
                 </Styled.Field>
 
                 <Styled.Field>
-                  <Typography variant="body2" fontWeight={600}>Telefone</Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    Telefone
+                  </Typography>
                   <TextField
                     size="small"
                     value={profile.phone}
-                    onChange={(e) => handleProfileChange("phone", e.target.value)}
+                    onChange={(e) =>
+                      handleProfileChange("phone", e.target.value)
+                    }
                     placeholder="(00) 00000-0000"
                     InputProps={{
                       startAdornment: (
-                        <PhoneOutlined sx={{ mr: 1, color: "text.secondary", fontSize: "1.1rem" }} />
+                        <PhoneOutlined
+                          sx={{
+                            mr: 1,
+                            color: "text.secondary",
+                            fontSize: "1.1rem",
+                          }}
+                        />
                       ),
                     }}
                   />
                 </Styled.Field>
 
                 <Styled.Field>
-                  <Typography variant="body2" fontWeight={600}>Especialidade</Typography>
+                  <Typography variant="body2" fontWeight={600}>
+                    Especialidade
+                  </Typography>
                   <TextField size="small" value={profile.specialty} disabled />
                 </Styled.Field>
 
                 <Styled.Field>
-                  <Typography variant="body2" fontWeight={600}>Registro profissional</Typography>
-                  <TextField size="small" value={profile.registration} disabled />
+                  <Typography variant="body2" fontWeight={600}>
+                    Registro profissional
+                  </Typography>
+                  <TextField
+                    size="small"
+                    value={profile.registration}
+                    disabled
+                  />
                 </Styled.Field>
               </Styled.FormGrid>
 
               <Styled.Actions>
-                <ButtonWhite text="Cancelar" onClick={handleCancel} disabled={!isDirty || saving} />
+                <ButtonWhite
+                  text="Cancelar"
+                  compact
+                  onClick={handleCancel}
+                  disabled={!isDirty || saving}
+                />
 
                 <ButtonBlue
                   text={saving ? "Salvando..." : "Salvar alterações"}
@@ -162,7 +210,7 @@ export const ProfessionalProfile = () => {
             </Styled.ProfileCard>
 
             <Styled.AvailabilityCard>
-              <Stack direction="row" justifyContent="space-between" alignItems="flex-start" gap={2}>
+              <Styled.AvailabilityHeader>
                 <Stack>
                   <Typography
                     variant="h6"
@@ -171,18 +219,20 @@ export const ProfessionalProfile = () => {
                     Disponibilidade de atendimento
                   </Typography>
 
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.75rem" }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: "0.75rem" }}
+                  >
                     Dias da semana em que você tem horários cadastrados.
                   </Typography>
                 </Stack>
 
-                <Button
-                  onClick={() => navigate("/my-schedule")}
-                  sx={{ textTransform: "none", whiteSpace: "nowrap" }}
-                >
+                <Styled.ManageButton onClick={() => navigate("/my-schedule")}>
+                  <EditCalendarOutlined fontSize="small" />
                   Gerenciar horários
-                </Button>
-              </Stack>
+                </Styled.ManageButton>
+              </Styled.AvailabilityHeader>
 
               <Styled.AvailabilityGrid>
                 {availability.map((day) => (

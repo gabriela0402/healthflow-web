@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Button } from "@mui/material";
 
 export const Container = styled(Stack)(({ theme }) => ({
   flexDirection: "column",
@@ -17,8 +17,6 @@ export const Container = styled(Stack)(({ theme }) => ({
     padding: "5rem 1rem 2rem",
   },
 }));
-
-
 
 export const ProfileCard = styled(Stack)(({ theme }) => ({
   width: "100%",
@@ -59,7 +57,6 @@ export const ProfileInfo = styled(Stack)({
   gap: "0.2rem",
 });
 
-
 export const FormGrid = styled(Box)(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "1fr 1fr",
@@ -77,11 +74,13 @@ export const Field = styled(Stack)({
 export const Actions = styled(Stack)(({ theme }) => ({
   flexDirection: "row",
   justifyContent: "flex-end",
+  alignItems: "center",
   gap: "0.75rem",
   marginTop: "0.25rem",
 
   [theme.breakpoints.down("sm")]: {
     flexDirection: "column-reverse",
+    alignItems: "stretch",
 
     "& > *": {
       width: "100%",
@@ -135,3 +134,39 @@ export const DayIcon = styled(Box)(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
+export const AvailabilityHeader = styled(Stack)(({ theme }) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: "1rem",
+
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    alignItems: "stretch",
+  },
+}));
+
+export const ManageButton = styled(Button)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: "0.5rem",
+  flexShrink: 0,
+  marginLeft: "auto",
+  padding: "0.5rem 1.1rem",
+  borderRadius: "0.55rem",
+  backgroundColor: theme.palette.primary.main,
+  color: "#FFFFFF",
+  fontSize: "0.8rem",
+  fontWeight: 600,
+  textTransform: "none",
+  whiteSpace: "nowrap",
+
+  "&:hover": {
+    backgroundColor: "#1769AA",
+  },
+
+  [theme.breakpoints.down("sm")]: {
+    marginLeft: 0,
+    width: "100%",
+  },
+}));

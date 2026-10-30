@@ -30,13 +30,20 @@ export const ButtonBlue = ({
   );
 };
 
-export const ButtonWhite = ({ text, onClick }: ButtonProps) => {
+export const ButtonWhite = ({
+  text,
+  onClick,
+  disabled = false,
+  compact = false,
+}: ButtonProps) => {
   return (
     <Button
       variant="outlined"
       onClick={onClick}
+      disabled={disabled}
       sx={{
-        width: "100%",
+        width: compact ? "auto" : "100%",
+        minWidth: compact ? "120px" : undefined,
         height: "50px",
         borderRadius: "0.6rem",
         color: theme.palette.text.primary,
