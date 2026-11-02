@@ -11,7 +11,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AddIcon from "@mui/icons-material/Add";
 
-
 export const itemsAdmin: SideBarItem[] = [
   {
     label: "Dashboard",
@@ -50,7 +49,6 @@ export const itemsAdmin: SideBarItem[] = [
   },
 ];
 
-
 export const itemsProfessional: SideBarItem[] = [
   {
     label: "Dashboard",
@@ -73,6 +71,11 @@ export const itemsProfessional: SideBarItem[] = [
     icon: CalendarTodayIcon,
   },
   {
+    label: "Notificações",
+    path: "/notifications-professional",
+    icon: NotificationsIcon,
+  },
+  {
     label: "Meu Perfil",
     path: "/profile",
     icon: PersonIcon,
@@ -83,7 +86,6 @@ export const itemsProfessional: SideBarItem[] = [
     icon: ExitToAppIcon,
   },
 ];
-
 
 export const itemsPatient: SideBarItem[] = [
   {

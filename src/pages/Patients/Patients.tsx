@@ -5,6 +5,7 @@ import DescriptionOutlined from "@mui/icons-material/DescriptionOutlined";
 import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import PeopleIcon from "@mui/icons-material/People";
 
+import { formatCpf } from "../PatientData/PatientData.utils";
 import {
   Alert,
   Button,
@@ -19,6 +20,12 @@ import {
   TableRow,
   TextField,
   Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Menu,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -28,7 +35,6 @@ import { Card } from "../../components/Card/Card";
 import * as Styled from "./Patients.styled";
 import { usePatients } from "./Patients.hook";
 import { getInitials } from "./Patients.utils";
-
 
 export const Patients = () => {
   const navigate = useNavigate();
@@ -46,6 +52,20 @@ export const Patients = () => {
     summary,
     loading,
     error,
+    menuAnchor,
+    menuPatient,
+    openMenu,
+    closeMenu,
+    askDelete,
+    toDelete,
+    setToDelete,
+    confirmDelete,
+    isDeleting,
+    detailsOpen,
+    details,
+    detailsLoading,
+    openDetails,
+    closeDetails,
     reload,
   } = usePatients();
 
@@ -288,9 +308,7 @@ export const Patients = () => {
                         <Styled.ActionButton
                           type="button"
                           title="Ver detalhes"
-                          onClick={() => {
-                            console.log("Ver paciente:", patient.id);
-                          }}
+                          onClick={() => openDetails(patient)}
                         >
                           <DescriptionOutlined fontSize="small" />
                         </Styled.ActionButton>
@@ -298,9 +316,9 @@ export const Patients = () => {
                         <Styled.ActionButton
                           type="button"
                           title="Mais opções"
-                          onClick={() => {
-                            console.log("Mais opções:", patient.id);
-                          }}
+                          onClick={(event) =>
+                            openMenu(event.currentTarget, patient)
+                          }
                         >
                           <MoreHoriz fontSize="small" />
                         </Styled.ActionButton>
@@ -311,6 +329,97 @@ export const Patients = () => {
             </TableBody>
           </Table>
         </Styled.TableContainer>
+        <Menu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={closeMenu}
+        >
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              navigate(`/patients/${menuPatient?.id}/edit`);
+            }}
+          >
+            Editar
+          </MenuItem>
+          <MenuItem onClick={askDelete} sx={{ color: "error.main" }}>
+            Excluir
+          </MenuItem>
+        </Menu>
+
+        <Dialog open={Boolean(toDelete)} onClose={() => setToDelete(null)}>
+          <DialogTitle>Excluir paciente</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Tem certeza que deseja excluir "{toDelete?.fullName}"? O login
+              dele também será removido. Essa ação não pode ser desfeita.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setToDelete(null)} disabled={isDeleting}>
+              Cancelar
+            </Button>
+            <Button color="error" onClick={confirmDelete} disabled={isDeleting}>
+              {isDeleting ? "Excluindo..." : "Excluir"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog
+          open={detailsOpen}
+          onClose={closeDetails}
+          fullWidth
+          maxWidth="sm"
+        >
+          <DialogTitle>Dados do paciente</DialogTitle>
+          <DialogContent>
+            {detailsLoading || !details ? (
+              <Stack alignItems="center" sx={{ py: 4 }}>
+                <CircularProgress size={26} />
+              </Stack>
+            ) : (
+              <Stack spacing={1.2} sx={{ pt: 1 }}>
+                {[
+                  ["Nome", details.fullName],
+                  ["E-mail", details.email],
+                  ["Telefone", details.phone],
+                  [
+                    "Nascimento",
+                    details.dateOfBirth
+                      ? new Date(details.dateOfBirth).toLocaleDateString(
+                          "pt-BR",
+                        )
+                      : null,
+                  ],
+                  ["Gênero", details.gender],
+                  ["CPF", details.cpf ? formatCpf(details.cpf) : null],
+                  ["Endereço", details.address],
+                  ["Contato de emergência", details.emergencyContactName],
+                  ["Telefone do contato", details.emergencyContactPhone],
+                ].map(([label, value]) => (
+                  <Stack key={label}>
+                    <Typography variant="caption" color="text.secondary">
+                      {label}
+                    </Typography>
+                    <Typography variant="body2">
+                      {value || "Não informado"}
+                    </Typography>
+                  </Stack>
+                ))}
+              </Stack>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeDetails}>Fechar</Button>
+            <Button
+              variant="contained"
+              disabled={!details}
+              onClick={() => navigate(`/patients/${details?.id}/edit`)}
+            >
+              Editar
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Styled.Container>
     </Stack>
   );

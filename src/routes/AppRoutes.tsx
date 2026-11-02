@@ -20,6 +20,7 @@ import { PatientCreate } from "../pages/PatientCreate/PatientCreate";
 import { ProfessionalCreate } from "../pages/ProfessionalCreate/ProfessionalCreate";
 import { SpecialtyCreate } from "../pages/SpecialtyCreate/SpecialtyCreate";
 import { AppointmentCreate } from "../pages/AppointmentCreate/AppointmentCreate";
+import { ProfessionalNotifications } from "../pages/ProfessionalNotifications/ProfessionalNotifications";
 import { PatientAppointments } from "../pages/PatientAppointments/PatientAppointments";
 import { PrivateRoute } from "./PrivateRoute";
 import { getHomeRoute } from "../auth/getHomeRoute";
@@ -37,6 +38,7 @@ export function AppRoutes() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/patients" element={<Patients />} />
         <Route path="/patients/new" element={<PatientCreate />} />
+        <Route path="/patients/:id/edit" element={<PatientCreate />} />
         <Route path="/professionals" element={<Professionals />} />
         <Route path="/professionals/new" element={<ProfessionalCreate />} />
         <Route path="/professionals/:id/edit" element={<ProfessionalCreate />} />
@@ -53,6 +55,7 @@ export function AppRoutes() {
         <Route path="/my-schedule" element={<ProfessionalSchedule />} />
         <Route path="/my-patients" element={<ProfessionalPatients />} />
         <Route path="/my-appointments" element={<ProfessioanlAppointments />} />
+        <Route path="/notifications-professional" element={<ProfessionalNotifications />} />
         <Route path="/profile" element={<ProfessionalProfile />} />
       </Route>
 

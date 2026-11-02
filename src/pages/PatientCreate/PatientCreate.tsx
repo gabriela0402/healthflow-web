@@ -1,11 +1,5 @@
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import {
-  Button,
-  MenuItem,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, MenuItem, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { SideBar } from "../../components/SideBar/SideBar";
@@ -16,8 +10,15 @@ import { usePatientCreate } from "./PatientCreate.hook";
 export const PatientCreate = () => {
   const navigate = useNavigate();
 
-  const { form, isLoading, handleChange, handleSubmit, handleCancel } =
-    usePatientCreate();
+  const {
+    form,
+    isEditing,
+    isFetching,
+    isLoading,
+    handleChange,
+    handleSubmit,
+    handleCancel,
+  } = usePatientCreate();
 
   return (
     <Stack direction="row">
@@ -41,11 +42,13 @@ export const PatientCreate = () => {
             variant="h4"
             sx={{ color: "#102A56", fontSize: "1.6rem", fontWeight: 700 }}
           >
-            Adicionar paciente
+            {isEditing ? "Editar paciente" : "Adicionar paciente"}
           </Typography>
 
           <Typography color="text.secondary" sx={{ fontSize: "0.85rem" }}>
-            Cadastre um novo paciente na clínica.
+            {isEditing
+              ? "Altere os dados do paciente."
+              : "Cadastre um novo paciente na clínica."}
           </Typography>
         </Styled.Header>
 
@@ -57,6 +60,7 @@ export const PatientCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isFetching}
                 size="small"
                 value={form.fullName}
                 onChange={(event) =>
@@ -72,30 +76,38 @@ export const PatientCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isFetching || isEditing}
                 size="small"
+                helperText={
+                  isEditing
+                    ? "O e-mail é o login e não pode ser alterado."
+                    : undefined
+                }
                 type="email"
                 value={form.email}
                 onChange={(event) => handleChange("email", event.target.value)}
                 placeholder="Digite o e-mail"
               />
             </Styled.Field>
+            {!isEditing && (
+              <Styled.Field>
+                <Typography variant="body2" fontWeight={600}>
+                  Senha inicial
+                </Typography>
 
-            <Styled.Field>
-              <Typography variant="body2" fontWeight={600}>
-                Senha inicial
-              </Typography>
-
-              <TextField
-                size="small"
-                type="password"
-                value={form.password}
-                onChange={(event) =>
-                  handleChange("password", event.target.value)
-                }
-                placeholder="Mínimo de 6 caracteres"
-                helperText="O paciente usará essa senha no primeiro acesso."
-              />
-            </Styled.Field>
+                <TextField
+                  disabled={isFetching}
+                  size="small"
+                  type="password"
+                  value={form.password}
+                  onChange={(event) =>
+                    handleChange("password", event.target.value)
+                  }
+                  placeholder="Mínimo de 6 caracteres"
+                  helperText="O paciente usará essa senha no primeiro acesso."
+                />
+              </Styled.Field>
+            )}
 
             <Styled.Field>
               <Typography variant="body2" fontWeight={600}>
@@ -103,6 +115,7 @@ export const PatientCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isFetching}
                 size="small"
                 value={form.phone}
                 onChange={(event) => handleChange("phone", event.target.value)}
@@ -116,6 +129,7 @@ export const PatientCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isFetching}
                 size="small"
                 type="date"
                 value={form.birthDate}
@@ -132,6 +146,7 @@ export const PatientCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isFetching}
                 select
                 size="small"
                 value={form.gender}
@@ -153,6 +168,7 @@ export const PatientCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isFetching}
                 size="small"
                 value={form.cpf}
                 onChange={(event) => handleChange("cpf", event.target.value)}
@@ -166,6 +182,7 @@ export const PatientCreate = () => {
               </Typography>
 
               <TextField
+                disabled={isFetching}
                 size="small"
                 value={form.address}
                 onChange={(event) =>
@@ -183,13 +200,19 @@ export const PatientCreate = () => {
               disabled={isLoading}
               sx={{ textTransform: "none" }}
             >
-              Limpar
+              {isEditing ? "Desfazer" : "Limpar"}
             </Button>
 
             <ButtonBlue
-              text={isLoading ? "Cadastrando..." : "Cadastrar paciente"}
+              text={
+                isLoading
+                  ? "Salvando..."
+                  : isEditing
+                    ? "Salvar alterações"
+                    : "Cadastrar paciente"
+              }
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={isLoading || isFetching}
             />
           </Styled.Actions>
         </Styled.FormCard>

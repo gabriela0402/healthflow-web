@@ -41,3 +41,20 @@ export async function getPatients(signal?: AbortSignal) {
   const { data } = await api.get<PatientSummary[]>("/patients", { signal });
   return data;
 }
+
+export async function getPatientProfile(id: number, signal?: AbortSignal) {
+  const { data } = await api.get<PatientProfileResponse>(
+    `/patients/${id}/profile`,
+    { signal },
+  );
+  return data;
+}
+
+export async function updatePatient(id: number, payload: UpdatePatientProfilePayload) {
+  const { data } = await api.put<PatientProfileResponse>(`/patients/${id}`, payload);
+  return data;
+}
+
+export async function deletePatient(id: number) {
+  await api.delete(`/patients/${id}`);
+}
