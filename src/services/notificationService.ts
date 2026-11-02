@@ -32,3 +32,19 @@ export async function updateNotificationPreferences(payload: NotificationPrefere
   );
   return data;
 }
+
+export async function getMyProfessionalNotifications(signal?: AbortSignal) {
+  const { data } = await api.get<NotificationResponse[]>(
+    "/professional-notifications/me",
+    { signal },
+  );
+  return data;
+}
+
+export async function markProfessionalNotificationAsRead(id: number) {
+  await api.put(`/professional-notifications/${id}/read`);
+}
+
+export async function markAllProfessionalNotificationsAsRead() {
+  await api.put("/professional-notifications/read-all");
+}

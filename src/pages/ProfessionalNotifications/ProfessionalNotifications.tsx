@@ -1,6 +1,5 @@
 import CalendarTodayOutlined from "@mui/icons-material/CalendarTodayOutlined";
 import CheckCircle from "@mui/icons-material/CheckCircle";
-import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import NotificationsNoneOutlined from "@mui/icons-material/NotificationsNoneOutlined";
 
 import {
@@ -8,47 +7,23 @@ import {
   Button,
   CircularProgress,
   Stack,
-  Switch,
   Typography,
 } from "@mui/material";
 
 import { SideBar } from "../../components/SideBar/SideBar";
 import * as Styled from "../PatientNotifications/PatientNotifications.styled";
-import { usePatientNotifications } from "../PatientNotifications/PatientNotifications.hook";
-
-const PREFERENCES = [
-  {
-    key: "email",
-    icon: EmailOutlined,
-    title: "E-mail",
-    description: "Receba informações importantes por e-mail.",
-  },
-  {
-    key: "reminders",
-    icon: NotificationsNoneOutlined,
-    title: "Lembretes",
-    description: "Receba lembretes dos seus atendimentos.",
-  },
-  {
-    key: "appointmentUpdates",
-    icon: CalendarTodayOutlined,
-    title: "Atualizações de agendamento",
-    description: "Saiba sobre novos agendamentos e cancelamentos.",
-  },
-] as const;
+import { useProfessionalNotifications } from "./ProfessionalNotifications.hook";
 
 export const ProfessionalNotifications = () => {
   const {
     notifications,
-    preferences,
     unreadCount,
     loading,
     error,
     reload,
     markAsRead,
     markAllAsRead,
-    togglePreference,
-  } = usePatientNotifications();
+  } = useProfessionalNotifications();
 
   return (
     <Stack direction="row">
@@ -68,7 +43,7 @@ export const ProfessionalNotifications = () => {
           </Typography>
         </Styled.Header>
 
-        <Styled.ContentGrid>
+        <Stack sx={{ mt: "1.5rem" }}>
           <Styled.NotificationCard>
             <Stack
               direction="row"
@@ -190,47 +165,7 @@ export const ProfessionalNotifications = () => {
               ))}
             </Stack>
           </Styled.NotificationCard>
-
-          <Styled.PreferencesCard>
-            <Stack spacing={0.3}>
-              <Typography
-                sx={{ color: "#102A56", fontSize: "1rem", fontWeight: 700 }}
-              >
-                Preferências de notificação
-              </Typography>
-
-              <Typography color="text.secondary" sx={{ fontSize: "0.8rem" }}>
-                Escolha como deseja receber nossas notificações.
-              </Typography>
-            </Stack>
-
-            {PREFERENCES.map(({ key, icon: Icon, title, description }) => (
-              <Styled.PreferenceItem key={key}>
-                <Styled.PreferenceInfo>
-                  <Icon color="primary" />
-
-                  <Stack sx={{ minWidth: 0 }}>
-                    <Typography sx={{ fontSize: "0.82rem", fontWeight: 600 }}>
-                      {title}
-                    </Typography>
-
-                    <Typography
-                      color="text.secondary"
-                      sx={{ fontSize: "0.7rem" }}
-                    >
-                      {description}
-                    </Typography>
-                  </Stack>
-                </Styled.PreferenceInfo>
-
-                <Switch
-                  checked={preferences[key]}
-                  onChange={() => togglePreference(key)}
-                />
-              </Styled.PreferenceItem>
-            ))}
-          </Styled.PreferencesCard>
-        </Styled.ContentGrid>
+        </Stack>
       </Styled.Container>
     </Stack>
   );
