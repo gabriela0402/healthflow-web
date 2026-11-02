@@ -15,7 +15,6 @@ O projeto foi desenvolvido como um projeto de portfólio, utilizando uma API em 
 <!-- Imagem 3: Agenda do profissional -->
 ![Agenda do profissional](./docs/images/professional-schedule.png)
 
-> Para adicionar as imagens, crie a pasta `docs/images` e coloque os arquivos com os nomes indicados acima. Caso prefira, substitua os caminhos pelas imagens utilizadas no seu projeto.
 
 ## Funcionalidades
 
@@ -415,55 +414,6 @@ Para executar somente os testes do projeto:
 dotnet test HealthFlow.Tests
 ```
 
-## Problemas comuns
-
-### A API não inicia
-
-Verifique:
-
-- Se o SQL Server LocalDB está instalado;
-- Se a connection string aponta para `HealthFlowDb`;
-- Se a porta da API já está sendo utilizada;
-- Se a chave JWT está configurada no `appsettings.Development.json`.
-
-### Erro de CORS
-
-Confira se o frontend está sendo executado em:
-
-```text
-http://localhost:5173
-```
-
-E se essa origem está liberada na configuração de CORS da API.
-
-### Erro 401 Unauthorized
-
-Faça login novamente e confirme se o token foi armazenado no `localStorage`. No Swagger, informe o token no formato:
-
-```text
-Bearer SEU_TOKEN
-```
-
-### Erro ao conectar com a API
-
-Confira:
-
-- Se a API está rodando;
-- Se a porta usada no `src/services/api.ts` é a mesma exibida pelo backend;
-- Se o endpoint começa com `/api`;
-- Se o navegador não está bloqueando a requisição por CORS.
-
-## Convenções de commit
-
-O projeto utiliza Conventional Commits, com o tipo em inglês e a descrição em português:
-
-```text
-feat: adiciona confirmação de consulta
-fix: corrige cadastro automático de pacientes
-docs: atualiza documentação do projeto
-refactor: reorganiza serviço de autenticação
-test: adiciona testes do serviço de agendamento
-```
 
 ## Objetivo do projeto
 
