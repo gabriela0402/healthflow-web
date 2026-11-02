@@ -51,7 +51,7 @@ export const ProfessionalDashboard = () => {
         <Styled.TitleContainer>
           <Stack spacing={0.4}>
             <Typography variant="h4" sx={{ fontSize: "1.2rem" }}>
-              Bem vindo(a){firstName ? `, ${firstName}` : ""}
+              Bem vindo(a) {firstName}
             </Typography>
             <Typography variant="body1" sx={{ fontSize: "0.9rem" }}>
               Veja um resumo dos seus atendimentos

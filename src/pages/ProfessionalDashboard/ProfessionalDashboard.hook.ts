@@ -19,7 +19,7 @@ export function useProfessionalDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  const firstName = getSession()?.name.split(" ")[0] ?? "";
+  const firstName = getSession()?.name;
 
   useEffect(() => {
     const controller = new AbortController();
